@@ -1,7 +1,62 @@
 {
-  "editor.codeActionsOnSave": {
-    "source.fixAll": "explicit",
-    "source.organizeImports": "explicit",
-    "source.sortMembers": "explicit"
-  }
+	"editor.codeActionsOnSave": {
+		"source.fixAll": "explicit",
+		"source.organizeImports": "explicit",
+		"source.sortMembers": "explicit"
+	},
+	// Claude Code Style
+	"workbench.colorTheme": "Catppuccin Latte",
+	"workbench.iconTheme": "vscode-icons",
+	"editor.fontFamily": "'JetBrains Mono', 'Cascadia Code', 'Fira Code', Menlo, Monaco, 'Courier New', monospace",
+	"editor.fontSize": 14,
+	"editor.fontLigatures": true,
+	"editor.lineHeight": 1.6,
+	"editor.lineNumbers": "relative",
+	"editor.minimap.enabled": false,
+	"editor.renderLineHighlight": "line",
+	"editor.cursorBlinking": "smooth",
+	"editor.cursorSmoothCaretAnimation": "on",
+	"editor.smoothScrolling": true,
+	"editor.tabSize": 2,
+	"editor.wordWrap": "on",
+	"editor.bracketPairColorization.enabled": true,
+	"editor.guides.bracketPairs": "active",
+	"explorer.compactFolders": false,
+	"explorer.fileNesting.enabled": true,
+	"workbench.statusBar.visible": true,
+	"workbench.editor.showTabs": "single",
+	"terminal.integrated.fontSize": 13,
+	"terminal.integrated.fontFamily": "'JetBrains Mono', 'Cascadia Code', 'Fira Code', monospace",
+	"breadcrumbs.enabled": false,
+	"editor.scrollbar.verticalScrollbarSize": 8,
+	"editor.scrollbar.horizontalScrollbarSize": 8,
+	"workbench.layoutControl.enabled": false,
+	"editor.padding.top": 16,
+	"editor.padding.bottom": 16,
+	"editor.padding.right": 16,
+	// Sepia custom colors
+	"workbench.colorCustomizations": {
+		"editor.background": "#F5F0E8",
+		"editor.foreground": "#5C4B37",
+		"sideBar.background": "#EDE6D8",
+		"sideBar.foreground": "#5C4B37",
+		"activityBar.background": "#E8DFD0",
+		"activityBar.foreground": "#6B5744",
+		"tab.activeBackground": "#F5F0E8",
+		"tab.inactiveBackground": "#EDE6D8",
+		"editor.lineHighlightBackground": "#E8DFD0",
+		"editorLineNumber.foreground": "#A89880",
+		"editorLineNumber.activeForeground": "#6B5744",
+		"terminal.background": "#F5F0E8",
+		"terminal.foreground": "#5C4B37",
+		"titleBar.activeBackground": "#E8DFD0",
+		"titleBar.activeForeground": "#5C4B37",
+		"statusBar.background": "#D8CDB8",
+		"statusBar.foreground": "#5C4B37",
+		"list.hoverBackground": "#E8DFD0",
+		"input.background": "#FAF6EE",
+		"editorWidget.background": "#EDE6D8",
+		"scrollbar.shadow": "#C8BAA5",
+		"editorCursor.foreground": "#B8860B"
+	}
 }
