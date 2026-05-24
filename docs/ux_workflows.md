@@ -132,7 +132,7 @@ Reglas:
 ### Settings
 
 - kg/lb.
-- Tema oscuro por defecto; claro/sistema como opción futura.
+- Tema claro por defecto; oscuro/sistema como opción futura.
 - Timer por defecto.
 - Objetivo semanal.
 - Exportar/importar datos.

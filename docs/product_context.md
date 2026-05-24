@@ -59,7 +59,7 @@ Toda feature debe evaluarse con esta pregunta: ¿mejora el loop core o lo distra
 - Simplicidad inicial con profundidad progresiva.
 - Offline-friendly desde el día 1.
 - Español nativo como ventaja inicial, no traducción tardía.
-- Tema oscuro por defecto con naranja atlético como color primario.
+- Tema claro por defecto con naranja atlético como color primario.
 
 ## Dirección visual
 
@@ -67,7 +67,7 @@ Zenlift debe sentirse fuerte, moderna y enfocada. El color primario es naranja a
 
 - Primary: `#F97316`
 - Primary pressed: `#EA580C`
-- Primary soft/dark surface: `#431407`
+- Primary soft/light surface: `#FFEDD5`
 
 El verde no debe usarse como color primario. Reservarlo para estados positivos como set completado, éxito o progreso confirmado.
 

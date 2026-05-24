@@ -255,24 +255,24 @@ La información principal debe guardarse localmente:
 
 ### 7.6 Tema visual
 
-Zenlift debe usar **tema oscuro por defecto** y **naranja atlético como color primario**.
+Zenlift debe usar **tema claro por defecto** y **naranja atlético como color primario**.
 
 Tokens base recomendados:
 
 ```text
-background: #090D12
-surface: #111827
-surfaceElevated: #1F2937
+background: #F7F8FA
+surface: #FFFFFF
+surfaceElevated: #F1F3F6
 primary: #F97316
 primaryPressed: #EA580C
-primarySoft: #431407
-accent: #38BDF8
+primarySoft: #FFEDD5
+accent: #0EA5E9
 success: #22C55E
 warning: #FBBF24
 danger: #F43F5E
-text: #F9FAFB
-mutedText: #9CA3AF
-border: #273244
+text: #111827
+mutedText: #6B7280
+border: #E5E7EB
 ```
 
 El verde no debe usarse como color primario. Reservarlo para estados positivos: set completado, éxito, progreso confirmado o confirmaciones discretas.
@@ -755,7 +755,7 @@ Permitir personalización sin complicar el producto.
 ### Opciones sugeridas
 
 - Unidad de peso: kg/lb.
-- Tema: oscuro por defecto; claro/sistema como opción configurable.
+- Tema: claro por defecto; oscuro/sistema como opción configurable.
 - Descanso por defecto.
 - Objetivo semanal de entrenamientos.
 - Idioma.
@@ -936,7 +936,7 @@ interface SettingsStore {
 }
 ```
 
-**Default:** `theme = 'dark'`. El tema oscuro es la experiencia base de Zenlift; `light` y `system` son opciones configurables.
+**Default:** `theme = 'light'`. El tema claro es la experiencia base de Zenlift; `dark` y `system` son opciones configurables.
 
 ### Reglas de estado
 
@@ -1293,7 +1293,7 @@ El estado global debe incluir solo lo necesario:
 - Workout activo.
 - Timer activo.
 - Preferencias del usuario.
-- Tema, con `dark` como default.
+- Tema, con `light` como default.
 - Unidad de peso.
 
 El resto debe cargarse desde storage mediante repositorios.
@@ -1563,7 +1563,7 @@ Esta es probablemente la pantalla más importante de todo Zenlift.
 ### Componentes
 
 - Peso: kg/lb.
-- Tema oscuro por defecto; claro/sistema como opción configurable.
+- Tema claro por defecto; oscuro/sistema como opción configurable.
 - Timer por defecto.
 - Objetivo semanal.
 - Exportar datos.
@@ -1720,7 +1720,7 @@ Validar que el usuario puede:
 - Repetir workout.
 - Notas.
 - Filtros en historial.
-- Tema claro/sistema opcional sobre dark mode por defecto.
+- Tema oscuro/sistema opcional sobre light mode por defecto.
 
 ### 17.4 Funciones P2
 
@@ -1790,7 +1790,7 @@ Incluye:
 - PRs.
 - Historial completo.
 - Progreso básico.
-- Tema oscuro por defecto con opción claro/sistema si se decide.
+- Tema claro por defecto con opción oscuro/sistema si se decide.
 - Onboarding.
 - Manejo de errores.
 - Performance optimizada.
@@ -2066,7 +2066,7 @@ Mitigación:
 - Editar sets.
 - Reordenar ejercicios.
 - Duplicar rutina.
-- Tema claro/sistema opcional sobre dark mode por defecto.
+- Tema oscuro/sistema opcional sobre light mode por defecto.
 - Settings kg/lb.
 
 ### P2 — Progreso
