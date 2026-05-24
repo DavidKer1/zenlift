@@ -59,6 +59,17 @@ Toda feature debe evaluarse con esta pregunta: ¿mejora el loop core o lo distra
 - Simplicidad inicial con profundidad progresiva.
 - Offline-friendly desde el día 1.
 - Español nativo como ventaja inicial, no traducción tardía.
+- Tema oscuro por defecto con naranja atlético como color primario.
+
+## Dirección visual
+
+Zenlift debe sentirse fuerte, moderna y enfocada. El color primario es naranja atlético:
+
+- Primary: `#F97316`
+- Primary pressed: `#EA580C`
+- Primary soft/dark surface: `#431407`
+
+El verde no debe usarse como color primario. Reservarlo para estados positivos como set completado, éxito o progreso confirmado.
 
 ## Competidores y diferenciación
 
@@ -86,4 +97,3 @@ Zenlift debe combinar:
 - Guardar historial sin pérdida de datos.
 - Ver progreso básico por ejercicio.
 - Sentirse suficientemente rápida para usarse en el gimnasio.
-

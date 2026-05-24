@@ -253,6 +253,30 @@ La información principal debe guardarse localmente:
 - Sets.
 - Estadísticas básicas.
 
+### 7.6 Tema visual
+
+Zenlift debe usar **tema oscuro por defecto** y **naranja atlético como color primario**.
+
+Tokens base recomendados:
+
+```text
+background: #090D12
+surface: #111827
+surfaceElevated: #1F2937
+primary: #F97316
+primaryPressed: #EA580C
+primarySoft: #431407
+accent: #38BDF8
+success: #22C55E
+warning: #FBBF24
+danger: #F43F5E
+text: #F9FAFB
+mutedText: #9CA3AF
+border: #273244
+```
+
+El verde no debe usarse como color primario. Reservarlo para estados positivos: set completado, éxito, progreso confirmado o confirmaciones discretas.
+
 ---
 
 ## 8. Modelo de dominio de alto nivel
@@ -731,7 +755,7 @@ Permitir personalización sin complicar el producto.
 ### Opciones sugeridas
 
 - Unidad de peso: kg/lb.
-- Tema: claro/oscuro/sistema.
+- Tema: oscuro por defecto; claro/sistema como opción configurable.
 - Descanso por defecto.
 - Objetivo semanal de entrenamientos.
 - Idioma.
@@ -911,6 +935,8 @@ interface SettingsStore {
   // Persistido en MMKV
 }
 ```
+
+**Default:** `theme = 'dark'`. El tema oscuro es la experiencia base de Zenlift; `light` y `system` son opciones configurables.
 
 ### Reglas de estado
 
@@ -1267,7 +1293,7 @@ El estado global debe incluir solo lo necesario:
 - Workout activo.
 - Timer activo.
 - Preferencias del usuario.
-- Tema.
+- Tema, con `dark` como default.
 - Unidad de peso.
 
 El resto debe cargarse desde storage mediante repositorios.
@@ -1537,7 +1563,7 @@ Esta es probablemente la pantalla más importante de todo Zenlift.
 ### Componentes
 
 - Peso: kg/lb.
-- Tema.
+- Tema oscuro por defecto; claro/sistema como opción configurable.
 - Timer por defecto.
 - Objetivo semanal.
 - Exportar datos.
@@ -1573,7 +1599,7 @@ Set | Previous     | kg [-] [input] [+] | reps [-] [input] [+] | ✓
 3   | 60kg × 8     |     [ 60.0 ]        |      [ 10 ]          | ☑
 ```
 
-- El set completado (✓ o ☑) muestra feedback visual (fondo verde suave, texto tachado).
+- El set completado (✓ o ☑) muestra feedback visual de éxito (verde suave reservado para estado completado, texto tachado).
 - Los inputs del siguiente set reciben foco automáticamente al completar el actual.
 - El botón +/- ajusta en incrementos de 2.5 kg (o 5 lb).
 
@@ -1694,7 +1720,7 @@ Validar que el usuario puede:
 - Repetir workout.
 - Notas.
 - Filtros en historial.
-- Tema oscuro.
+- Tema claro/sistema opcional sobre dark mode por defecto.
 
 ### 17.4 Funciones P2
 
@@ -1764,7 +1790,7 @@ Incluye:
 - PRs.
 - Historial completo.
 - Progreso básico.
-- Tema oscuro.
+- Tema oscuro por defecto con opción claro/sistema si se decide.
 - Onboarding.
 - Manejo de errores.
 - Performance optimizada.
@@ -2040,7 +2066,7 @@ Mitigación:
 - Editar sets.
 - Reordenar ejercicios.
 - Duplicar rutina.
-- Tema oscuro.
+- Tema claro/sistema opcional sobre dark mode por defecto.
 - Settings kg/lb.
 
 ### P2 — Progreso

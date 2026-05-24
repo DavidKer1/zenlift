@@ -43,6 +43,7 @@ If the installed Expo SDK differs from this instruction, verify the installed ve
 - Never risk losing workout data; autosave completed sets.
 - The app must work offline for core flows.
 - Use UUID text IDs from day 1.
+- Use dark theme by default and athletic orange (`#F97316`) as the primary color. Do not use green as primary; reserve green for success/completed states.
 - Editing routines must not mutate past workout sessions.
 - Prefer local-first data and simple architecture until a backend is explicitly required.
 

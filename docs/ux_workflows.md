@@ -132,7 +132,7 @@ Reglas:
 ### Settings
 
 - kg/lb.
-- Tema.
+- Tema oscuro por defecto; claro/sistema como opción futura.
 - Timer por defecto.
 - Objetivo semanal.
 - Exportar/importar datos.
@@ -160,6 +160,7 @@ Recomendaciones:
 - Evitar modales y alerts.
 - Haptic feedback al completar.
 - Siguiente set recibe foco automáticamente cuando aplique.
+- Usar naranja atlético para CTAs primarios y verde solo para set completado/éxito.
 
 Ejemplo:
 
@@ -187,4 +188,3 @@ Zenlift no solo muestra números; debe ayudar a interpretarlos:
 - "Este es tu mejor set histórico en Squat."
 - "Entrenaste piernas 2 veces esta semana."
 - "Llevas 3 semanas aumentando carga en Deadlift."
-

@@ -31,6 +31,32 @@ Objetivos técnicos:
 
 TanStack Query no es necesario mientras no haya API.
 
+## Theme
+
+Zenlift usa tema oscuro por defecto. El color primario es naranja atlético, no verde.
+
+Tokens base recomendados:
+
+```typescript
+export const colors = {
+  background: '#090D12',
+  surface: '#111827',
+  surfaceElevated: '#1F2937',
+  primary: '#F97316',
+  primaryPressed: '#EA580C',
+  primarySoft: '#431407',
+  accent: '#38BDF8',
+  success: '#22C55E',
+  warning: '#FBBF24',
+  danger: '#F43F5E',
+  text: '#F9FAFB',
+  mutedText: '#9CA3AF',
+  border: '#273244',
+};
+```
+
+Usar `success` solo para estados positivos o completados. CTAs principales como Start Workout, Save y Finish usan `primary`.
+
 ## Estructura sugerida
 
 ```text
@@ -66,7 +92,7 @@ Estado global mínimo:
 - Workout activo.
 - Timer activo.
 - Preferencias.
-- Tema.
+- Tema, con `dark` como default.
 - Unidad de peso.
 
 Reglas:
@@ -155,4 +181,3 @@ P2:
 - No pedir Location, Contacts, Camera o Microphone.
 - Usar consultas SQL parametrizadas siempre.
 - No hardcodear secretos.
-
