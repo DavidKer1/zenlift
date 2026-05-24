@@ -55,3 +55,11 @@ If the installed Expo SDK differs from this instruction, verify the installed ve
 - Use FlashList for large lists or lists with editable inputs.
 - Avoid UI kits that add unnecessary weight.
 - Add tests for calculations, PR detection, unit conversion, repositories, migrations, and active-session recovery when touching those areas.
+
+## AI Testing With agent-browser
+
+- Use `agent-browser` for smoke testing UI or navigation changes when an Expo web URL, preview, or local dev server is available.
+- Prioritize the core loop smoke path: create routine, start workout, log sets, finish session, and confirm history/progress.
+- Capture failures with reproducible steps, the URL, visible error text, and a screenshot when possible.
+- Do not treat `agent-browser` as a replacement for Jest, typecheck, SQLite repository tests, or Android physical-device validation.
+- Still test on Android hardware for keyboard ergonomics, haptics, offline behavior, performance, and active-session recovery.
