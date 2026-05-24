@@ -5,31 +5,19 @@ import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { useZenliftTheme } from '@/providers/ThemeProvider';
 
-export default function HomeScreen() {
+export default function SettingsScreen() {
   const { colors, spacing } = useZenliftTheme();
 
   return (
     <ThemedView style={styles.screen}>
       <SafeAreaView style={[styles.content, { padding: spacing.four }]}>
-        <ThemedView style={[styles.badge, { backgroundColor: colors.primarySoft }]}>
-          <ThemedText type="smallBold" style={{ color: colors.primary }}>
-            Workout tracker
-          </ThemedText>
-        </ThemedView>
-
-        <ThemedView style={styles.header}>
-          <ThemedText type="subtitle">Zenlift</ThemedText>
-          <ThemedText themeColor="mutedText">
-            Tu rutina, tus sets y tu progreso en un flujo rapido para el gym.
-          </ThemedText>
-        </ThemedView>
-
+        <ThemedText type="subtitle">Settings</ThemedText>
         <ThemedView
           type="surface"
           style={[styles.panel, { borderColor: colors.border, padding: spacing.three }]}>
-          <ThemedText type="smallBold">Proximo paso</ThemedText>
+          <ThemedText type="smallBold">Preferencias</ThemedText>
           <ThemedText themeColor="mutedText">
-            Aqui vivira la accion principal para iniciar o retomar un workout.
+            Aqui se configuraran unidad de peso, tema y ajustes locales de la app.
           </ThemedText>
         </ThemedView>
       </SafeAreaView>
@@ -45,15 +33,6 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     gap: 24,
-  },
-  badge: {
-    alignSelf: 'flex-start',
-    borderRadius: 999,
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-  },
-  header: {
-    gap: 8,
   },
   panel: {
     borderRadius: 8,

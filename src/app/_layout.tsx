@@ -1,16 +1,28 @@
-import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
+import { ThemeProvider as NavigationThemeProvider } from '@react-navigation/native';
 import React from 'react';
-import { useColorScheme } from 'react-native';
 
 import { AnimatedSplashOverlay } from '@/components/animated-icon';
 import AppTabs from '@/components/app-tabs';
+import {
+  ThemeProvider as ZenliftThemeProvider,
+  useZenliftTheme,
+} from '@/providers/ThemeProvider';
 
-export default function TabLayout() {
-  const colorScheme = useColorScheme();
+function RootNavigation() {
+  const { navigationTheme } = useZenliftTheme();
+
   return (
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+    <NavigationThemeProvider value={navigationTheme}>
       <AnimatedSplashOverlay />
       <AppTabs />
-    </ThemeProvider>
+    </NavigationThemeProvider>
+  );
+}
+
+export default function TabLayout() {
+  return (
+    <ZenliftThemeProvider>
+      <RootNavigation />
+    </ZenliftThemeProvider>
   );
 }
