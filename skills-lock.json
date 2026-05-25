@@ -21,6 +21,12 @@
       "sourceType": "autoskills-registry",
       "computedHash": "c124390cc3441844903ada94cb5820b23d922f2d0ad34e01e029e410197c8a32"
     },
+    "creating-reanimated-animations": {
+      "source": "estevg/skills",
+      "sourceType": "github",
+      "skillPath": "plugins/creating-reanimated-animations/skills/creating-reanimated-animations/SKILL.md",
+      "computedHash": "5406c06d9f9462e0562d419db34d75eeb0ae1e42fe34660a4a425e04acbbae91"
+    },
     "design-mobile-apps": {
       "source": "sleekdotdesign/agent-skills",
       "sourceType": "autoskills-registry",
