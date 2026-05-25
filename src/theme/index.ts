@@ -131,7 +131,7 @@ export const typography = {
     fontFamily: fontFamilies?.sans ?? 'Inter',
     fontSize: 20,
     fontWeight: '600' as const,
-    lineHeight: 26,
+    lineHeight: 36,
     letterSpacing: -0.2,
   },
   bodyLg: {

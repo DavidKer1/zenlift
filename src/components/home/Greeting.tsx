@@ -5,9 +5,9 @@ import { useZenliftTheme } from '@/providers/ThemeProvider';
 export function getTimeOfDayGreeting(date = new Date()): string {
   const hour = date.getHours();
 
-  if (hour >= 6 && hour <= 11) return 'Buenos días';
-  if (hour >= 12 && hour <= 18) return 'Buenas tardes';
-  return 'Buenas noches';
+  if (hour >= 6 && hour <= 11) return 'Good morning';
+  if (hour >= 12 && hour <= 18) return 'Good afternoon';
+  return 'Good evening';
 }
 
 type GreetingProps = {
@@ -32,7 +32,7 @@ export function Greeting({ name }: GreetingProps) {
             lineHeight: typography.bodyMd.lineHeight,
           },
         ]}>
-        ¡Bienvenido de nuevo!
+        Welcome back!
       </Text>
       <Text
         style={[
