@@ -24,15 +24,14 @@ export function ProgressChart({ data, title = 'Progreso' }: ProgressChartProps) 
     <ThemedView
       accessibilityLabel="Grafica de progreso"
       accessibilityRole="summary"
-      variant="glass"
       style={[styles.container, { padding: spacing.three }]}>
-      <ThemedText type="titleSm" themeColor="mutedText" style={styles.title}>
+      <ThemedText type="headlineMd" themeColor="textSecondary" style={styles.title}>
         {title}
       </ThemedText>
 
       {chartData.length === 0 ? (
         <View style={styles.emptyState}>
-          <ThemedText type="bodySm" themeColor="mutedText">
+          <ThemedText type="bodyMd" themeColor="textSecondary">
             Sin datos para mostrar
           </ThemedText>
         </View>

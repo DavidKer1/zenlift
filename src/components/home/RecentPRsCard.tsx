@@ -21,7 +21,7 @@ const PR_TYPE_LABELS: Record<PersonalRecordType, string> = {
 };
 
 export function RecentPRsCard({ prs }: RecentPRsCardProps) {
-  const { colors, radius, shadows, spacing, typography } = useZenliftTheme();
+  const { colors, radius, spacing, typography } = useZenliftTheme();
   const latestPrs = prs.slice(0, 3);
 
   return (
@@ -30,23 +30,20 @@ export function RecentPRsCard({ prs }: RecentPRsCardProps) {
       accessibilityLabel="Recent personal records card"
       style={[
         styles.card,
-        shadows.sm,
         {
           backgroundColor: colors.surface,
-          borderColor: colors.border,
           borderRadius: radius.md,
-          padding: spacing.three,
+          padding: spacing.paddingCard,
         },
       ]}>
       <Text
         style={[
           styles.sectionTitle,
           {
-            color: colors.text,
-            fontFamily: typography.families.sans,
-            fontSize: typography.size.md,
-            fontWeight: typography.weight.bold,
-            lineHeight: typography.lineHeight.md,
+            color: colors.textPrimary,
+            fontSize: typography.headlineMd.fontSize,
+            fontWeight: typography.headlineMd.fontWeight,
+            lineHeight: typography.headlineMd.lineHeight,
           },
         ]}>
         Recent PRs
@@ -61,11 +58,10 @@ export function RecentPRsCard({ prs }: RecentPRsCardProps) {
                   style={[
                     styles.exerciseName,
                     {
-                      color: colors.text,
-                      fontFamily: typography.families.sans,
-                      fontSize: typography.size.md,
-                      fontWeight: typography.weight.bold,
-                      lineHeight: typography.lineHeight.md,
+                      color: colors.textBody,
+                      fontSize: typography.bodyLg.fontSize,
+                      fontWeight: typography.bodyLg.fontWeight,
+                      lineHeight: typography.bodyLg.lineHeight,
                     },
                   ]}>
                   {pr.exercise_name ?? 'Exercise'}
@@ -74,10 +70,9 @@ export function RecentPRsCard({ prs }: RecentPRsCardProps) {
                   style={[
                     styles.subtitle,
                     {
-                      color: colors.mutedText,
-                      fontFamily: typography.families.sans,
-                      fontSize: typography.size.sm,
-                      lineHeight: typography.lineHeight.sm,
+                      color: colors.textSecondary,
+                      fontSize: typography.bodyMd.fontSize,
+                      lineHeight: typography.bodyMd.lineHeight,
                     },
                   ]}>
                   {PR_TYPE_LABELS[pr.type]} · {formatDate(pr.achieved_at)}
@@ -87,11 +82,11 @@ export function RecentPRsCard({ prs }: RecentPRsCardProps) {
                 style={[
                   styles.prValue,
                   {
-                    color: colors.success,
-                    fontFamily: typography.families.sans,
-                    fontSize: typography.size.md,
-                    fontWeight: typography.weight.bold,
-                    lineHeight: typography.lineHeight.md,
+                    color: colors.textPrimary,
+                    fontFamily: typography.families.mono,
+                    fontSize: typography.dataMd.fontSize,
+                    fontWeight: typography.dataMd.fontWeight,
+                    lineHeight: typography.dataMd.lineHeight,
                   },
                 ]}>
                 {formatPRValue(pr)}

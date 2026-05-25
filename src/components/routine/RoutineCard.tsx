@@ -92,10 +92,8 @@ export const RoutineCard = memo(function RoutineCard({
           type="surface"
           style={[
             styles.card,
-            shadows.sm,
             {
-              borderColor: colors.border,
-              borderRadius: radius.xl,
+              borderRadius: radius.md,
               padding: spacing.three,
             },
           ]}>

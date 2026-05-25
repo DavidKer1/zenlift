@@ -15,30 +15,27 @@ type CurrentRoutineCardProps = {
 };
 
 export function CurrentRoutineCard({ routine }: CurrentRoutineCardProps) {
-  const { colors, radius, shadows, spacing, typography } = useZenliftTheme();
+  const { colors, radius, spacing, typography } = useZenliftTheme();
 
   return (
     <View
       accessibilityLabel="Current routine card"
       style={[
         styles.card,
-        shadows.sm,
         {
           backgroundColor: colors.surface,
-          borderColor: colors.border,
           borderRadius: radius.md,
-          padding: spacing.three,
+          padding: spacing.paddingCard,
         },
       ]}>
       <Text
         style={[
           styles.sectionTitle,
           {
-            color: colors.text,
-            fontFamily: typography.families.sans,
-            fontSize: typography.size.md,
-            fontWeight: typography.weight.bold,
-            lineHeight: typography.lineHeight.md,
+            color: colors.textPrimary,
+            fontSize: typography.headlineMd.fontSize,
+            fontWeight: typography.headlineMd.fontWeight,
+            lineHeight: typography.headlineMd.lineHeight,
           },
         ]}>
         Current routine
@@ -51,11 +48,10 @@ export function CurrentRoutineCard({ routine }: CurrentRoutineCardProps) {
               style={[
                 styles.routineName,
                 {
-                  color: colors.text,
-                  fontFamily: typography.families.sans,
-                  fontSize: typography.size.lg,
-                  fontWeight: typography.weight.bold,
-                  lineHeight: typography.lineHeight.lg,
+                  color: colors.textBody,
+                  fontSize: typography.bodyLg.fontSize,
+                  fontWeight: typography.bodyLg.fontWeight,
+                  lineHeight: typography.bodyLg.lineHeight,
                 },
               ]}>
               {routine.name}
@@ -64,10 +60,9 @@ export function CurrentRoutineCard({ routine }: CurrentRoutineCardProps) {
               style={[
                 styles.subtitle,
                 {
-                  color: colors.mutedText,
-                  fontFamily: typography.families.sans,
-                  fontSize: typography.size.sm,
-                  lineHeight: typography.lineHeight.sm,
+                  color: colors.textSecondary,
+                  fontSize: typography.bodyMd.fontSize,
+                  lineHeight: typography.bodyMd.lineHeight,
                 },
               ]}>
               {routine.dayCount} {routine.dayCount === 1 ? 'day' : 'days'}
@@ -81,10 +76,10 @@ export function CurrentRoutineCard({ routine }: CurrentRoutineCardProps) {
             style={({ pressed }) => [
               styles.startButton,
               {
-                backgroundColor: colors.primary,
-                borderRadius: radius.lg,
+                backgroundColor: colors.buttonPrimary,
+                borderRadius: radius.md,
                 minHeight: 48,
-                opacity: pressed ? 0.72 : 1,
+                opacity: pressed ? 0.9 : 1,
                 paddingHorizontal: spacing.three,
               },
             ]}>
@@ -92,11 +87,10 @@ export function CurrentRoutineCard({ routine }: CurrentRoutineCardProps) {
               style={[
                 styles.startLabel,
                 {
-                  color: colors.surface,
-                  fontFamily: typography.families.sans,
-                  fontSize: typography.size.sm,
-                  fontWeight: typography.weight.bold,
-                  lineHeight: typography.lineHeight.sm,
+                  color: colors.buttonPrimaryText,
+                  fontSize: typography.bodyMd.fontSize,
+                  fontWeight: typography.bodyMd.fontWeight,
+                  lineHeight: typography.bodyMd.lineHeight,
                 },
               ]}>
               Start
@@ -108,18 +102,17 @@ export function CurrentRoutineCard({ routine }: CurrentRoutineCardProps) {
           <SymbolView
             name={'plus.circle.fill' as SymbolViewProps['name']}
             size={30}
-            tintColor={colors.primary}
+            tintColor={colors.textSecondary}
           />
           <View style={{ gap: spacing.one }}>
             <Text
               style={[
                 styles.emptyTitle,
                 {
-                  color: colors.text,
-                  fontFamily: typography.families.sans,
-                  fontSize: typography.size.md,
-                  fontWeight: typography.weight.bold,
-                  lineHeight: typography.lineHeight.md,
+                  color: colors.textBody,
+                  fontSize: typography.bodyLg.fontSize,
+                  fontWeight: typography.bodyLg.fontWeight,
+                  lineHeight: typography.bodyLg.lineHeight,
                 },
               ]}>
               No routine set
@@ -128,10 +121,9 @@ export function CurrentRoutineCard({ routine }: CurrentRoutineCardProps) {
               style={[
                 styles.subtitle,
                 {
-                  color: colors.mutedText,
-                  fontFamily: typography.families.sans,
-                  fontSize: typography.size.sm,
-                  lineHeight: typography.lineHeight.sm,
+                  color: colors.textSecondary,
+                  fontSize: typography.bodyMd.fontSize,
+                  lineHeight: typography.bodyMd.lineHeight,
                 },
               ]}>
               Create a routine to track your progress
@@ -145,11 +137,10 @@ export function CurrentRoutineCard({ routine }: CurrentRoutineCardProps) {
             style={({ pressed }) => [
               styles.createButton,
               {
-                backgroundColor: colors.primarySoft,
-                borderColor: colors.border,
-                borderRadius: radius.lg,
+                backgroundColor: colors.surfaceSecondary,
+                borderRadius: radius.md,
                 minHeight: 48,
-                opacity: pressed ? 0.72 : 1,
+                opacity: pressed ? 0.9 : 1,
                 paddingHorizontal: spacing.three,
               },
             ]}>
@@ -157,11 +148,10 @@ export function CurrentRoutineCard({ routine }: CurrentRoutineCardProps) {
               style={[
                 styles.createLabel,
                 {
-                  color: colors.text,
-                  fontFamily: typography.families.sans,
-                  fontSize: typography.size.md,
-                  fontWeight: typography.weight.bold,
-                  lineHeight: typography.lineHeight.md,
+                  color: colors.textBody,
+                  fontSize: typography.bodyLg.fontSize,
+                  fontWeight: typography.bodyLg.fontWeight,
+                  lineHeight: typography.bodyLg.lineHeight,
                 },
               ]}>
               Create Routine

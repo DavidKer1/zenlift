@@ -24,16 +24,15 @@ export function SearchBar({
       style={[
         styles.container,
         {
-          backgroundColor: colors.surface,
-          borderColor: colors.border,
-          borderRadius: radius.lg,
+          backgroundColor: colors.surfaceSecondary,
+          borderRadius: radius.md,
           paddingHorizontal: spacing.three,
         },
       ]}>
       <SymbolView
         name={{ ios: 'magnifyingglass', android: 'search', web: 'search' }}
         size={20}
-        tintColor={colors.mutedText}
+        tintColor={colors.textSecondary}
       />
 
       <TextInput
@@ -44,14 +43,13 @@ export function SearchBar({
         onChangeText={onChangeText}
         onSubmitEditing={Keyboard.dismiss}
         placeholder={placeholder}
-        placeholderTextColor={colors.mutedText}
+        placeholderTextColor={colors.textDisabled}
         returnKeyType="search"
         style={[
           styles.input,
           {
-            color: colors.text,
-            fontSize: typography.size.md,
-            lineHeight: typography.lineHeight.md,
+            color: colors.textBody,
+            fontSize: typography.bodyMd.fontSize,
           },
         ]}
         value={value}
@@ -68,7 +66,7 @@ export function SearchBar({
           <SymbolView
             name={{ ios: 'xmark.circle.fill', android: 'cancel', web: 'cancel' }}
             size={18}
-            tintColor={colors.mutedText}
+            tintColor={colors.textSecondary}
           />
         </Pressable>
       ) : null}
@@ -79,7 +77,6 @@ export function SearchBar({
 const styles = StyleSheet.create({
   container: {
     alignItems: 'center',
-    borderWidth: 1,
     flexDirection: 'row',
     gap: 10,
     minHeight: 52,

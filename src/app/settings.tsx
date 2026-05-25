@@ -461,7 +461,7 @@ function SegmentedControl<T extends string>({
             <ThemedText
               type="smallBold"
               style={{
-                color: selected ? colors.text : colors.mutedText,
+                color: selected ? colors.surface : colors.mutedText,
               }}>
               {option.label}
             </ThemedText>
@@ -540,7 +540,7 @@ function StepperButton({ accessibilityLabel, disabled, label, onPress }: Stepper
         },
       ]}
       onPress={onPress}>
-      <ThemedText type="smallBold" style={[styles.stepperButtonText, { color: colors.text }]}>
+      <ThemedText type="smallBold" style={[styles.stepperButtonText, { color: colors.surface }]}>
         {label}
       </ThemedText>
     </Pressable>
@@ -571,7 +571,7 @@ function ActionButton({
       : variant === 'danger'
         ? colors.danger
         : colors.surfaceElevated;
-  const textColor = variant === 'secondary' ? colors.text : variant === 'danger' ? colors.surface : colors.text;
+  const textColor = variant === 'secondary' ? colors.text : variant === 'danger' ? colors.surface : colors.surface;
 
   return (
     <Pressable

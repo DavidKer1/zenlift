@@ -8,10 +8,9 @@ import {
 } from 'expo-router/ui';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import React from 'react';
-import { Pressable, StyleSheet, View } from 'react-native';
+import { Platform, Pressable, StyleSheet, View } from 'react-native';
 
 import { ThemedText } from '@/components/themed-text';
-import { ThemedView } from '@/components/themed-view';
 import { useZenliftTheme } from '@/providers/ThemeProvider';
 
 type TabItem = {
@@ -79,8 +78,8 @@ function TabButton({
   isFocused,
   ...props
 }: TabTriggerSlotProps & Pick<TabItem, 'iconInactive' | 'iconActive'>) {
-  const { colors, spacing } = useZenliftTheme();
-  const color = isFocused ? colors.primary : colors.mutedText;
+  const { colors } = useZenliftTheme();
+  const iconTintColor = isFocused ? colors.textPrimary : colors.textSecondary;
   const iconName = isFocused ? iconActive : iconInactive;
 
   return (
@@ -89,14 +88,13 @@ function TabButton({
       style={({ pressed }) => [
         styles.tabButton,
         {
-          backgroundColor: isFocused ? colors.primarySoft : 'transparent',
-          paddingHorizontal: spacing.two,
-          paddingVertical: spacing.two,
           opacity: pressed ? 0.72 : 1,
         },
       ]}>
-      <MaterialCommunityIcons name={iconName} size={20} color={color} />
-      <ThemedText type="bodyStrong" style={[styles.tabLabel, { color }]}>
+      <MaterialCommunityIcons name={iconName} size={20} color={iconTintColor} />
+      <ThemedText
+        type="labelCaps"
+        themeColor={isFocused ? 'textPrimary' : 'textSecondary'}>
         {children}
       </ThemedText>
     </Pressable>
@@ -104,21 +102,9 @@ function TabButton({
 }
 
 function CustomTabList(props: TabListProps) {
-  const { colors, spacing } = useZenliftTheme();
-
   return (
-    <View pointerEvents="box-none" style={[styles.tabListContainer, { padding: spacing.three }]}>
-      <ThemedView
-        type="surface"
-        style={[
-          styles.innerContainer,
-          {
-            borderColor: colors.border,
-            shadowColor: colors.text,
-          },
-        ]}
-        {...props}
-      />
+    <View pointerEvents="box-none" style={styles.tabListContainer}>
+      <View style={styles.innerContainer} {...props} />
     </View>
   );
 }
@@ -129,36 +115,32 @@ const styles = StyleSheet.create({
   },
   tabListContainer: {
     alignItems: 'center',
-    bottom: 0,
+    bottom: 24,
     flexDirection: 'row',
     justifyContent: 'center',
+    paddingHorizontal: 8,
     position: 'absolute',
     width: '100%',
   },
   innerContainer: {
-    borderRadius: 8,
-    borderWidth: 1,
-    elevation: 6,
+    backgroundColor: Platform.select({
+      ios: 'rgba(24, 25, 29, 0.80)',
+      android: 'rgba(24, 25, 29, 0.95)',
+      default: 'rgba(24, 25, 29, 0.80)',
+    }),
+    borderRadius: 24,
     flexDirection: 'row',
-    gap: 4,
-    justifyContent: 'space-between',
+    justifyContent: 'space-around',
     maxWidth: 560,
     padding: 6,
-    shadowOffset: { width: 0, height: 6 },
-    shadowOpacity: 0.08,
-    shadowRadius: 18,
+    paddingHorizontal: 16,
     width: '100%',
   },
   tabButton: {
     alignItems: 'center',
-    borderRadius: 8,
     flex: 1,
-    gap: 3,
+    gap: 2,
     justifyContent: 'center',
-    minHeight: 56,
-  },
-  tabLabel: {
-    fontSize: 12,
-    lineHeight: 16,
+    paddingVertical: 8,
   },
 });

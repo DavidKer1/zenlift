@@ -2,9 +2,7 @@
 
 ## Purpose
 Specification for the Exercise Detail screen that displays exercise information, performance metrics, history, progress chart, and personal records.
-
 ## Requirements
-
 ### Requirement: Exercise Detail loads exercise data by ID
 The system SHALL load an exercise and its associated muscle groups from SQLite when navigating to the exercise detail screen with a valid exercise ID parameter.
 
@@ -113,3 +111,21 @@ The system SHALL provide a "Quick Workout" action that creates a new active work
 #### Scenario: Active session already exists
 - **WHEN** the user taps "Iniciar entrenamiento rápido" and an active session already exists
 - **THEN** the system displays a confirmation dialog asking whether to add the exercise to the existing session or start a new one
+
+### Requirement: Exercise detail uses tonal surfaces
+The system SHALL render the exercise detail screen with `#0C0B10` background, exercise info in `#18191D` cards with 12px radius, and data values in JetBrains Mono at appropriate opacity levels.
+
+#### Scenario: Exercise detail renders
+- **WHEN** an exercise detail screen renders
+- **THEN** info cards SHALL use `#18191D` background with 12px radius and 20px padding
+- **AND** numerical data SHALL use JetBrains Mono font
+- **AND** labels SHALL use Inter at 50% white opacity
+
+### Requirement: Chart and history use monochromatic styling
+The system SHALL render progress charts and history lists using white strokes/accents on `#18191D` card backgrounds without colored data series.
+
+#### Scenario: Progress chart renders
+- **WHEN** a progress chart renders
+- **THEN** chart lines and dots SHALL use white at varying opacities (80% for primary series, 50% for secondary)
+- **AND** the chart background SHALL be `#18191D`
+

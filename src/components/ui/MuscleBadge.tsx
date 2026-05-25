@@ -2,7 +2,7 @@ import { Pressable, StyleSheet, View } from 'react-native';
 
 import { ThemedText } from '@/components/themed-text';
 import { useZenliftTheme } from '@/providers/ThemeProvider';
-import { muscleColors, type MuscleGroupName } from '@/theme/muscleColors';
+import { type MuscleGroupName } from '@/theme/muscleColors';
 
 type MuscleBadgeProps = {
   muscleName: MuscleGroupName;
@@ -18,7 +18,6 @@ export function MuscleBadge({
   onPress,
 }: MuscleBadgeProps) {
   const { colors, radius, spacing } = useZenliftTheme();
-  const color = muscleColors[muscleName] ?? colors.mutedText;
   const label = accessibilityLabel ?? muscleName;
 
   const content = (
@@ -28,25 +27,15 @@ export function MuscleBadge({
       style={[
         styles.badge,
         {
-          backgroundColor: isPrimary ? color : colors.surface,
-          borderColor: color,
+          backgroundColor: isPrimary ? colors.surfaceSecondary : colors.surface,
           borderRadius: radius.pill,
           paddingHorizontal: spacing.three,
         },
       ]}>
-      <View
-        style={[
-          styles.dot,
-          {
-            backgroundColor: color,
-            borderRadius: radius.pill,
-          },
-        ]}
-      />
       <ThemedText
-        type="smallBold"
+        type="labelCaps"
         numberOfLines={1}
-        style={[styles.label, { color: isPrimary ? colors.surface : color }]}>
+        themeColor="textSecondary">
         {muscleName}
       </ThemedText>
     </View>
@@ -70,19 +59,9 @@ export function MuscleBadge({
 const styles = StyleSheet.create({
   badge: {
     alignItems: 'center',
-    borderWidth: 1.5,
     flexDirection: 'row',
-    gap: 6,
     justifyContent: 'center',
-    minHeight: 48,
-  },
-  dot: {
-    height: 8,
-    width: 8,
-  },
-  label: {
-    fontSize: 13,
-    lineHeight: 18,
+    minHeight: 32,
   },
   pressed: {
     opacity: 0.74,

@@ -9,7 +9,7 @@ type WeeklyActivityCardProps = {
 };
 
 export function WeeklyActivityCard({ activeDays }: WeeklyActivityCardProps) {
-  const { colors, radius, shadows, spacing, typography } = useZenliftTheme();
+  const { colors, radius, spacing, typography } = useZenliftTheme();
   const hasActivity = activeDays.some(Boolean);
 
   return (
@@ -18,12 +18,10 @@ export function WeeklyActivityCard({ activeDays }: WeeklyActivityCardProps) {
       accessibilityLabel="Weekly activity card"
       style={[
         styles.card,
-        shadows.sm,
         {
           backgroundColor: colors.surface,
-          borderColor: colors.border,
           borderRadius: radius.md,
-          padding: spacing.three,
+          padding: spacing.paddingCard,
         },
       ]}>
       <View style={{ gap: spacing.one }}>
@@ -31,11 +29,10 @@ export function WeeklyActivityCard({ activeDays }: WeeklyActivityCardProps) {
           style={[
             styles.sectionTitle,
             {
-              color: colors.text,
-              fontFamily: typography.families.sans,
-              fontSize: typography.size.md,
-              fontWeight: typography.weight.bold,
-              lineHeight: typography.lineHeight.md,
+              color: colors.textPrimary,
+              fontSize: typography.headlineMd.fontSize,
+              fontWeight: typography.headlineMd.fontWeight,
+              lineHeight: typography.headlineMd.lineHeight,
             },
           ]}>
           Weekly activity
@@ -45,10 +42,9 @@ export function WeeklyActivityCard({ activeDays }: WeeklyActivityCardProps) {
             style={[
               styles.subtitle,
               {
-                color: colors.mutedText,
-                fontFamily: typography.families.sans,
-                fontSize: typography.size.sm,
-                lineHeight: typography.lineHeight.sm,
+                color: colors.textSecondary,
+                fontSize: typography.bodyMd.fontSize,
+                lineHeight: typography.bodyMd.lineHeight,
               },
             ]}>
             No activity this week
@@ -66,7 +62,8 @@ export function WeeklyActivityCard({ activeDays }: WeeklyActivityCardProps) {
                 style={[
                   styles.segment,
                   {
-                    backgroundColor: isActive ? colors.primary : colors.border,
+                    backgroundColor: isActive ? colors.textPrimary : colors.outlineVariant,
+                    opacity: isActive ? 0.8 : 0.2,
                     borderRadius: radius.xs,
                   },
                 ]}
@@ -75,11 +72,10 @@ export function WeeklyActivityCard({ activeDays }: WeeklyActivityCardProps) {
                 style={[
                   styles.dayLabel,
                   {
-                    color: isActive ? colors.text : colors.mutedText,
-                    fontFamily: typography.families.sans,
-                    fontSize: typography.size.xs,
-                    fontWeight: typography.weight.semibold,
-                    lineHeight: typography.lineHeight.xs,
+                    color: isActive ? colors.textPrimary : colors.textSecondary,
+                    fontSize: typography.labelCaps.fontSize,
+                    fontWeight: typography.labelCaps.fontWeight,
+                    lineHeight: typography.labelCaps.lineHeight,
                   },
                 ]}>
                 {label}
@@ -94,10 +90,9 @@ export function WeeklyActivityCard({ activeDays }: WeeklyActivityCardProps) {
           style={[
             styles.subtitle,
             {
-              color: colors.mutedText,
-              fontFamily: typography.families.sans,
-              fontSize: typography.size.sm,
-              lineHeight: typography.lineHeight.sm,
+              color: colors.textSecondary,
+              fontSize: typography.bodyMd.fontSize,
+              lineHeight: typography.bodyMd.lineHeight,
             },
           ]}>
           Start a workout to see your progress
@@ -109,7 +104,6 @@ export function WeeklyActivityCard({ activeDays }: WeeklyActivityCardProps) {
 
 const styles = StyleSheet.create({
   card: {
-    borderWidth: 1,
     gap: 16,
   },
   dayColumn: {

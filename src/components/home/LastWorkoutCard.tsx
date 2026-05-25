@@ -18,7 +18,7 @@ type LastWorkoutCardProps = {
 };
 
 export function LastWorkoutCard({ isLoading, workout }: LastWorkoutCardProps) {
-  const { colors, radius, shadows, spacing, typography } = useZenliftTheme();
+  const { colors, radius, spacing, typography } = useZenliftTheme();
 
   return (
     <View
@@ -26,23 +26,20 @@ export function LastWorkoutCard({ isLoading, workout }: LastWorkoutCardProps) {
       accessibilityLabel="Last workout card"
       style={[
         styles.card,
-        shadows.sm,
         {
           backgroundColor: colors.surface,
-          borderColor: colors.border,
           borderRadius: radius.md,
-          padding: spacing.three,
+          padding: spacing.paddingCard,
         },
       ]}>
       <Text
         style={[
           styles.sectionTitle,
           {
-            color: colors.text,
-            fontFamily: typography.families.sans,
-            fontSize: typography.size.md,
-            fontWeight: typography.weight.bold,
-            lineHeight: typography.lineHeight.md,
+            color: colors.textPrimary,
+            fontSize: typography.headlineMd.fontSize,
+            fontWeight: typography.headlineMd.fontWeight,
+            lineHeight: typography.headlineMd.lineHeight,
           },
         ]}>
         Last workout
@@ -50,7 +47,7 @@ export function LastWorkoutCard({ isLoading, workout }: LastWorkoutCardProps) {
 
       {isLoading ? (
         <View style={[styles.loadingContainer, { minHeight: 96 }]}>
-          <ActivityIndicator color={colors.primary} />
+          <ActivityIndicator color={colors.textSecondary} />
         </View>
       ) : workout ? (
         <View style={{ gap: spacing.two }}>
@@ -59,11 +56,10 @@ export function LastWorkoutCard({ isLoading, workout }: LastWorkoutCardProps) {
               style={[
                 styles.workoutName,
                 {
-                  color: colors.text,
-                  fontFamily: typography.families.sans,
-                  fontSize: typography.size.lg,
-                  fontWeight: typography.weight.bold,
-                  lineHeight: typography.lineHeight.lg,
+                  color: colors.textBody,
+                  fontSize: typography.bodyLg.fontSize,
+                  fontWeight: typography.bodyLg.fontWeight,
+                  lineHeight: typography.bodyLg.lineHeight,
                 },
               ]}>
               {workout.sessionName}
@@ -72,10 +68,9 @@ export function LastWorkoutCard({ isLoading, workout }: LastWorkoutCardProps) {
               style={[
                 styles.mutedText,
                 {
-                  color: colors.mutedText,
-                  fontFamily: typography.families.sans,
-                  fontSize: typography.size.sm,
-                  lineHeight: typography.lineHeight.sm,
+                  color: colors.textSecondary,
+                  fontSize: typography.bodyMd.fontSize,
+                  lineHeight: typography.bodyMd.lineHeight,
                 },
               ]}>
               {workout.routineName ?? 'Freestyle'} · {workout.dateLabel}
@@ -103,11 +98,11 @@ function Metric({ label, value }: { label: string; value: string }) {
         style={[
           styles.metricLabel,
           {
-            color: colors.mutedText,
-            fontFamily: typography.families.sans,
-            fontSize: typography.size.xs,
-            fontWeight: typography.weight.bold,
-            lineHeight: typography.lineHeight.xs,
+            color: colors.textSecondary,
+            fontSize: typography.labelCaps.fontSize,
+            fontWeight: typography.labelCaps.fontWeight,
+            lineHeight: typography.labelCaps.lineHeight,
+            letterSpacing: typography.labelCaps.letterSpacing,
           },
         ]}>
         {label}
@@ -116,11 +111,10 @@ function Metric({ label, value }: { label: string; value: string }) {
         style={[
           styles.metricValue,
           {
-            color: colors.text,
-            fontFamily: typography.families.sans,
-            fontSize: typography.size.md,
-            fontWeight: typography.weight.bold,
-            lineHeight: typography.lineHeight.md,
+            color: colors.textPrimary,
+            fontSize: typography.bodyLg.fontSize,
+            fontWeight: typography.bodyLg.fontWeight,
+            lineHeight: typography.bodyLg.lineHeight,
           },
         ]}>
         {value}
@@ -137,18 +131,17 @@ function EmptyLastWorkout() {
       <SymbolView
         name={'dumbbell.fill' as SymbolViewProps['name']}
         size={28}
-        tintColor={colors.primary}
+        tintColor={colors.textSecondary}
       />
       <View style={{ gap: spacing.one }}>
         <Text
           style={[
             styles.emptyTitle,
             {
-              color: colors.text,
-              fontFamily: typography.families.sans,
-              fontSize: typography.size.md,
-              fontWeight: typography.weight.bold,
-              lineHeight: typography.lineHeight.md,
+              color: colors.textBody,
+              fontSize: typography.bodyLg.fontSize,
+              fontWeight: typography.bodyLg.fontWeight,
+              lineHeight: typography.bodyLg.lineHeight,
             },
           ]}>
           No workouts yet
@@ -157,10 +150,9 @@ function EmptyLastWorkout() {
           style={[
             styles.emptySubtitle,
             {
-              color: colors.mutedText,
-              fontFamily: typography.families.sans,
-              fontSize: typography.size.sm,
-              lineHeight: typography.lineHeight.sm,
+              color: colors.textSecondary,
+              fontSize: typography.bodyMd.fontSize,
+              lineHeight: typography.bodyMd.lineHeight,
             },
           ]}>
           Start your first workout
@@ -173,7 +165,6 @@ function EmptyLastWorkout() {
 
 const styles = StyleSheet.create({
   card: {
-    borderWidth: 1,
     gap: 16,
   },
   emptyContainer: {

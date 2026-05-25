@@ -70,11 +70,10 @@ function ExerciseCardComponent({ exercise, onPress, onFavoriteToggle }: Exercise
         styles.card,
         {
           backgroundColor: colors.surface,
-          borderColor: colors.border,
-          borderRadius: radius.lg,
+          borderRadius: radius.md,
           padding: spacing.three,
+          transform: pressed ? [{ scale: 0.98 }] : [{ scale: 1 }],
         },
-        pressed && styles.pressed,
       ]}>
       <View
         accessibilityElementsHidden
@@ -82,29 +81,28 @@ function ExerciseCardComponent({ exercise, onPress, onFavoriteToggle }: Exercise
         style={[
           styles.iconWell,
           {
-            backgroundColor: colors.surfaceElevated,
-            borderColor: colors.border,
-            borderRadius: radius.md,
+            backgroundColor: colors.surfaceSecondary,
+            borderRadius: radius.sm,
           },
         ]}>
-        <SymbolView name={getEquipmentIcon(exercise.equipment)} size={24} tintColor={colors.text} />
+        <SymbolView name={getEquipmentIcon(exercise.equipment)} size={24} tintColor={colors.textBody} />
       </View>
 
       <View style={styles.content}>
-        <ThemedText type="smallBold" numberOfLines={2} style={styles.name}>
+        <ThemedText type="bodyMd" numberOfLines={2} style={styles.name}>
           {exercise.name}
         </ThemedText>
 
         <View style={styles.metaRow}>
           <View style={[styles.muscleDot, { backgroundColor: muscleColor }]} />
-          <ThemedText themeColor="mutedText" type="small" numberOfLines={1} style={styles.metaText}>
+          <ThemedText themeColor="textSecondary" type="bodyMd" numberOfLines={1} style={styles.metaText}>
             {muscleLabel}
           </ThemedText>
-          <ThemedText themeColor="mutedText" type="small" style={styles.metaDivider}>
+          <ThemedText themeColor="textSecondary" type="bodyMd" style={styles.metaDivider}>
             /
           </ThemedText>
-          <SymbolView name={getEquipmentIcon(exercise.equipment)} size={13} tintColor={colors.mutedText} />
-          <ThemedText themeColor="mutedText" type="small" numberOfLines={1} style={styles.metaText}>
+          <SymbolView name={getEquipmentIcon(exercise.equipment)} size={13} tintColor={colors.textSecondary} />
+          <ThemedText themeColor="textSecondary" type="bodyMd" numberOfLines={1} style={styles.metaText}>
             {equipmentLabels[exercise.equipment]}
           </ThemedText>
         </View>
@@ -122,11 +120,10 @@ function ExerciseCardComponent({ exercise, onPress, onFavoriteToggle }: Exercise
         style={({ pressed }) => [
           styles.favoriteButton,
           {
-            backgroundColor: isFavorite ? colors.primarySoft : colors.surfaceElevated,
-            borderColor: isFavorite ? colors.primary : colors.border,
+            backgroundColor: isFavorite ? colors.surfaceElevated : colors.surfaceSecondary,
             borderRadius: radius.pill,
+            opacity: pressed ? 0.78 : 1,
           },
-          pressed && styles.favoritePressed,
         ]}>
         <SymbolView
           name={
@@ -135,7 +132,7 @@ function ExerciseCardComponent({ exercise, onPress, onFavoriteToggle }: Exercise
               : { ios: 'star', android: 'star_border', web: 'star_border' }
           }
           size={18}
-          tintColor={isFavorite ? colors.primary : colors.mutedText}
+          tintColor={isFavorite ? colors.textPrimary : colors.textSecondary}
         />
       </Pressable>
     </Pressable>
@@ -147,7 +144,6 @@ export const ExerciseCard = memo(ExerciseCardComponent);
 const styles = StyleSheet.create({
   card: {
     alignItems: 'center',
-    borderWidth: 1,
     flexDirection: 'row',
     gap: 12,
     minHeight: 72,
@@ -159,17 +155,12 @@ const styles = StyleSheet.create({
   },
   favoriteButton: {
     alignItems: 'center',
-    borderWidth: 1,
     height: 44,
     justifyContent: 'center',
     width: 44,
   },
-  favoritePressed: {
-    opacity: 0.78,
-  },
   iconWell: {
     alignItems: 'center',
-    borderWidth: 1,
     height: 48,
     justifyContent: 'center',
     width: 48,

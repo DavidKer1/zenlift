@@ -26,10 +26,10 @@ export function Greeting({ name }: GreetingProps) {
         style={[
           styles.kicker,
           {
-            color: colors.mutedText,
+            color: colors.textSecondary,
             fontFamily: typography.families.sans,
-            fontSize: typography.size.sm,
-            lineHeight: typography.lineHeight.sm,
+            fontSize: typography.bodyMd.fontSize,
+            lineHeight: typography.bodyMd.lineHeight,
           },
         ]}>
         ¡Bienvenido de nuevo!
@@ -38,11 +38,11 @@ export function Greeting({ name }: GreetingProps) {
         style={[
           styles.title,
           {
-            color: colors.text,
-            fontFamily: typography.families.sans,
-            fontSize: typography.size.xl,
-            fontWeight: typography.weight.bold,
-            lineHeight: typography.lineHeight.xl,
+            color: colors.textPrimary,
+            fontSize: typography.headlineLgMobile.fontSize,
+            fontWeight: typography.headlineLgMobile.fontWeight,
+            lineHeight: typography.headlineLgMobile.lineHeight,
+            letterSpacing: typography.headlineLgMobile.letterSpacing,
           },
         ]}>
         {getTimeOfDayGreeting()}

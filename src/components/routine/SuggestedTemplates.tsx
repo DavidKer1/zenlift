@@ -43,7 +43,7 @@ function formatDays(dayCount: number) {
 }
 
 export function SuggestedTemplates({ onTemplatePress }: SuggestedTemplatesProps) {
-  const { colors, radius, shadows, spacing } = useZenliftTheme();
+  const { colors, radius, spacing } = useZenliftTheme();
 
   return (
     <View style={styles.section}>
@@ -81,10 +81,8 @@ export function SuggestedTemplates({ onTemplatePress }: SuggestedTemplatesProps)
               type="surface"
               style={[
                 styles.templateCard,
-                shadows.sm,
                 {
-                  borderColor: colors.border,
-                  borderRadius: radius.xl,
+                  borderRadius: radius.md,
                   padding: spacing.three,
                 },
               ]}>
@@ -92,8 +90,8 @@ export function SuggestedTemplates({ onTemplatePress }: SuggestedTemplatesProps)
                 style={[
                   styles.templateIcon,
                   {
-                    backgroundColor: colors.primarySoft,
-                    borderRadius: radius.md,
+                    backgroundColor: colors.surfaceElevated,
+                    borderRadius: radius.sm,
                   },
                 ]}>
                 <SymbolView

@@ -3,9 +3,7 @@
 ## Purpose
 
 Specification for the Exercise Form Modal, which allows creating and editing custom exercises.
-
 ## Requirements
-
 ### Requirement: ExerciseFormModal renders form fields
 The ExerciseFormModal component SHALL render a form with the following fields: name (TextInput), primary muscle (single-select), secondary muscles (multi-select chips), equipment (single-select), category (single-select), and notes (TextArea, optional).
 
@@ -164,3 +162,17 @@ The equipment select SHALL offer the 9 equipment types defined in the `Equipment
 - **WHEN** the user opens the equipment select
 - **THEN** the options are: Barra, Mancuernas, Máquina, Cable, Peso corporal, Kettlebell, Smith, Barra Z, Cardio
 - **THEN** the selected value is stored using the corresponding English enum value (barbell, dumbbell, machine, cable, bodyweight, kettlebell, smith_machine, ez_bar, cardio_machine)
+
+### Requirement: Exercise form uses tonal surfaces
+The system SHALL render the exercise creation/edit form with `#0C0B10` background, form inputs in `#28272F` containers with 12px radius, and action buttons using monochromatic variants.
+
+#### Scenario: Form renders
+- **WHEN** the exercise form screen renders
+- **THEN** text inputs SHALL use `#28272F` background with 12px radius
+- **AND** placeholder text SHALL be white at 30% opacity
+- **AND** labels SHALL be white at 85% opacity
+
+#### Scenario: Submit button uses white background
+- **WHEN** the form submit/save button renders
+- **THEN** it SHALL use white (`#FFFFFF`) background with black (`#0C0B10`) text and 12px radius
+

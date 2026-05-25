@@ -15,7 +15,7 @@ export function FAB({
   onPress,
   style,
 }: FABProps) {
-  const { colors, radius, shadows } = useZenliftTheme();
+  const { colors, radius } = useZenliftTheme();
 
   return (
     <Pressable
@@ -24,14 +24,15 @@ export function FAB({
       onPress={onPress}
       style={({ pressed }) => [
         styles.button,
-        shadows.md,
         {
-          backgroundColor: pressed ? colors.primaryPressed : colors.primary,
+          backgroundColor: pressed ? colors.primaryPressed : colors.buttonPrimary,
           borderRadius: radius.pill,
+          opacity: pressed ? 0.9 : 1,
+          transform: pressed ? [{ scale: 0.95 }] : [{ scale: 1 }],
         },
         style,
       ]}>
-      <SymbolView name={'plus' as SymbolViewProps['name']} size={28} tintColor={colors.surface} />
+      <SymbolView name={'plus' as SymbolViewProps['name']} size={28} tintColor={colors.buttonPrimaryText} />
     </Pressable>
   );
 }

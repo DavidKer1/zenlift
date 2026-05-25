@@ -1,5 +1,9 @@
 # Specification for the Exercise Library screen with search, filtering, and favorites.
 
+## Purpose
+
+Provide a searchable, filterable exercise library so users can browse, discover, and favorite exercises.
+
 ## Requirements
 
 ### Requirement: Search exercises with debounce

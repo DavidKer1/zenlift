@@ -25,11 +25,11 @@ export function StartWorkoutButton({
       style={({ pressed }) => [
         styles.button,
         {
-          backgroundColor: isPrimary ? colors.primary : colors.primarySoft,
-          borderColor: isPrimary ? colors.primary : colors.border,
-          borderRadius: radius.lg,
+          backgroundColor: isPrimary ? colors.buttonPrimary : colors.surfaceSecondary,
+          borderRadius: radius.md,
           minHeight: 56,
-          opacity: pressed ? 0.72 : 1,
+          opacity: pressed ? 0.9 : 1,
+          transform: pressed ? [{ scale: 0.98 }] : [{ scale: 1 }],
           paddingHorizontal: spacing.three,
         },
       ]}>
@@ -37,11 +37,10 @@ export function StartWorkoutButton({
         style={[
           styles.label,
           {
-            color: isPrimary ? colors.surface : colors.text,
-            fontFamily: typography.families.sans,
-            fontSize: typography.size.md,
-            fontWeight: typography.weight.bold,
-            lineHeight: typography.lineHeight.md,
+            color: isPrimary ? colors.buttonPrimaryText : colors.textBody,
+            fontSize: typography.bodyLg.fontSize,
+            fontWeight: typography.bodyLg.fontWeight,
+            lineHeight: typography.bodyLg.lineHeight,
           },
         ]}>
         {label}
@@ -53,7 +52,6 @@ export function StartWorkoutButton({
 const styles = StyleSheet.create({
   button: {
     alignItems: 'center',
-    borderWidth: 1,
     justifyContent: 'center',
     width: '100%',
   },

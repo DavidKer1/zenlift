@@ -22,17 +22,16 @@ export function FilterChip({ label, selected = false, onPress, accessibilityLabe
       style={({ pressed }) => [
         styles.chip,
         {
-          backgroundColor: selected ? colors.primary : 'transparent',
-          borderColor: selected ? colors.primary : colors.border,
+          backgroundColor: selected ? colors.buttonPrimary : colors.surfaceSecondary,
           borderRadius: radius.pill,
           paddingHorizontal: spacing.three,
+          opacity: pressed ? 0.8 : 1,
         },
-        pressed && styles.pressed,
       ]}>
       <ThemedText
-        type="smallBold"
+        type="labelCaps"
         numberOfLines={1}
-        style={[styles.label, { color: selected ? colors.surface : colors.mutedText }]}>
+        themeColor={selected ? 'buttonPrimaryText' : 'textSecondary'}>
         {label}
       </ThemedText>
     </Pressable>
@@ -42,14 +41,7 @@ export function FilterChip({ label, selected = false, onPress, accessibilityLabe
 const styles = StyleSheet.create({
   chip: {
     alignItems: 'center',
-    borderWidth: 1,
     justifyContent: 'center',
-    minHeight: 48,
-  },
-  label: {
-    lineHeight: 18,
-  },
-  pressed: {
-    opacity: 0.74,
+    minHeight: 40,
   },
 });

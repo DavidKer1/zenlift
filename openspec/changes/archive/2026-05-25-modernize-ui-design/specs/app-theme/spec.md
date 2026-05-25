@@ -1,9 +1,7 @@
-# App Theme
+# App Theme (Delta)
 
-## Purpose
+## MODIFIED Requirements
 
-Define and provide the Zenlift design system through a theme provider with color tokens, typography, spacing, and theme mode persistence.
-## Requirements
 ### Requirement: Theme tokens
 The app theme SHALL expose Zenlift color tokens for the monochromatic dark palette with 4 surface levels and white text at 4 opacity tiers. Typography SHALL use Inter for UI and JetBrains Mono for data. No shadow tokens SHALL be exposed.
 
@@ -40,4 +38,3 @@ The root app layout SHALL wrap the app with the Zenlift theme provider.
 #### Scenario: App routes can read theme
 - **WHEN** a route component calls the Zenlift theme hook
 - **THEN** it receives the active tokens from the provider
-
