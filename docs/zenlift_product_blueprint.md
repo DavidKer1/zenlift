@@ -255,7 +255,7 @@ La información principal debe guardarse localmente:
 
 ### 7.6 Tema visual
 
-Zenlift debe usar **tema claro por defecto** y **naranja atlético como color primario**.
+Zenlift debe usar **tema oscuro por defecto** y **naranja atlético como color primario**.
 
 Tokens base recomendados:
 
@@ -755,7 +755,7 @@ Permitir personalización sin complicar el producto.
 ### Opciones sugeridas
 
 - Unidad de peso: kg/lb.
-- Tema: claro por defecto; oscuro/sistema como opción configurable.
+- Tema: oscuro por defecto; claro/sistema como opción configurable.
 - Descanso por defecto.
 - Objetivo semanal de entrenamientos.
 - Idioma.
@@ -936,7 +936,7 @@ interface SettingsStore {
 }
 ```
 
-**Default:** `theme = 'light'`. El tema claro es la experiencia base de Zenlift; `dark` y `system` son opciones configurables.
+**Default:** `theme = 'dark'`. El tema oscuro es la experiencia base de Zenlift; `light` y `system` son opciones configurables.
 
 ### Reglas de estado
 
@@ -1293,7 +1293,7 @@ El estado global debe incluir solo lo necesario:
 - Workout activo.
 - Timer activo.
 - Preferencias del usuario.
-- Tema, con `light` como default.
+- Tema, con `dark` como default.
 - Unidad de peso.
 
 El resto debe cargarse desde storage mediante repositorios.
@@ -1563,7 +1563,7 @@ Esta es probablemente la pantalla más importante de todo Zenlift.
 ### Componentes
 
 - Peso: kg/lb.
-- Tema claro por defecto; oscuro/sistema como opción configurable.
+- Tema oscuro por defecto; claro/sistema como opción configurable.
 - Timer por defecto.
 - Objetivo semanal.
 - Exportar datos.
@@ -1720,7 +1720,7 @@ Validar que el usuario puede:
 - Repetir workout.
 - Notas.
 - Filtros en historial.
-- Tema oscuro/sistema opcional sobre light mode por defecto.
+- Tema oscuro por defecto, con modo claro/sistema opcional.
 
 ### 17.4 Funciones P2
 
@@ -1790,7 +1790,7 @@ Incluye:
 - PRs.
 - Historial completo.
 - Progreso básico.
-- Tema claro por defecto con opción oscuro/sistema si se decide.
+- Tema oscuro por defecto con opción claro/sistema si se decide.
 - Onboarding.
 - Manejo de errores.
 - Performance optimizada.
@@ -2066,7 +2066,7 @@ Mitigación:
 - Editar sets.
 - Reordenar ejercicios.
 - Duplicar rutina.
-- Tema oscuro/sistema opcional sobre light mode por defecto.
+- Tema oscuro por defecto, con modo claro/sistema opcional.
 - Settings kg/lb.
 
 ### P2 — Progreso

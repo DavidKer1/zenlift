@@ -18,7 +18,7 @@ The app theme SHALL expose Zenlift color, typography, spacing, radius, and shado
 - **THEN** those tokens are distinct from the primary orange token
 
 ### Requirement: Theme mode preference
-The app theme SHALL support `light`, `dark`, and `system` theme modes and persist the selected mode in MMKV.
+The app theme SHALL support `light`, `dark`, and `system` theme modes and persist the selected mode in MMKV. The default mode SHALL be `dark` when no stored preference exists.
 
 #### Scenario: User preference persists
 - **WHEN** a theme mode is saved and the app restarts
@@ -27,6 +27,10 @@ The app theme SHALL support `light`, `dark`, and `system` theme modes and persis
 #### Scenario: System mode follows device scheme
 - **WHEN** the saved theme mode is `system`
 - **THEN** the active palette follows the current device color scheme
+
+#### Scenario: Default theme is dark
+- **WHEN** no theme mode preference has ever been stored
+- **THEN** the provider initializes with dark mode
 
 ### Requirement: Muscle group colors
 The app theme SHALL define stable display colors for the 13 seeded muscle groups.

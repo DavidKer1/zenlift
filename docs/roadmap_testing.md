@@ -31,7 +31,7 @@ Objetivo: validar que el usuario puede crear rutinas, iniciar workouts, registra
 - Repetir workout.
 - Notas.
 - Filtros en historial.
-- Tema oscuro/sistema opcional sobre light mode por defecto.
+- Tema oscuro por defecto, con modo claro/sistema opcional.
 
 ### P2
 
@@ -81,7 +81,7 @@ Objetivo: validar que el usuario puede crear rutinas, iniciar workouts, registra
 - PRs.
 - Historial completo.
 - Progreso básico.
-- Tema claro por defecto con opción oscuro/sistema si se decide.
+- Tema oscuro por defecto con opción claro/sistema si se decide.
 - Onboarding.
 - Manejo de errores.
 - Performance optimizada.

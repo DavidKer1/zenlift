@@ -33,7 +33,7 @@ TanStack Query no es necesario mientras no haya API.
 
 ## Theme
 
-Zenlift usa tema claro por defecto. El color primario es naranja atlético, no verde.
+Zenlift usa tema oscuro por defecto. El color primario es naranja atlético, no verde.
 
 Tokens base recomendados:
 
@@ -92,7 +92,7 @@ Estado global mínimo:
 - Workout activo.
 - Timer activo.
 - Preferencias.
-- Tema, con `light` como default.
+- Tema, con `dark` como default.
 - Unidad de peso.
 
 Reglas:

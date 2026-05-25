@@ -59,7 +59,7 @@ Toda feature debe evaluarse con esta pregunta: ¿mejora el loop core o lo distra
 - Simplicidad inicial con profundidad progresiva.
 - Offline-friendly desde el día 1.
 - Español nativo como ventaja inicial, no traducción tardía.
-- Tema claro por defecto con naranja atlético como color primario.
+- Tema oscuro por defecto con naranja atlético como color primario.
 
 ## Dirección visual
 

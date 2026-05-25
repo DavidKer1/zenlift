@@ -27,12 +27,17 @@ The system SHALL persist the user's weight unit preference (`kg` or `lb`) in MMK
 
 ### Requirement: Theme mode preference storage
 
-The system SHALL persist the theme mode (`light`, `dark`, or `system`) in MMKV under the key `zenlift.settings.theme_mode` and default to `light` when no value is stored.
+The system SHALL persist the theme mode (`light`, `dark`, or `system`) in MMKV under the key `zenlift.settings.theme_mode` and default to `dark` when no value is stored.
 
-#### Scenario: Default theme is light
+#### Scenario: Default theme is dark
 
 - **WHEN** no theme_mode value exists in MMKV
-- **THEN** the settings hook returns `light`
+- **THEN** the settings hook returns `dark`
+
+#### Scenario: User selects light mode
+
+- **WHEN** theme mode is set to `light`
+- **THEN** subsequent reads return `light` and the theme updates immediately
 
 #### Scenario: User selects dark mode
 
