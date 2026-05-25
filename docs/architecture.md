@@ -33,29 +33,9 @@ TanStack Query no es necesario mientras no haya API.
 
 ## Theme
 
-Zenlift usa tema oscuro por defecto. El color primario es naranja atlético, no verde.
+Zenlift usa tema oscuro por defecto. El sistema de color, tipografía, espaciado y componentes está definido en `DESIGN.md`.
 
-Tokens base recomendados:
-
-```typescript
-export const colors = {
-  background: '#F7F8FA',
-  surface: '#FFFFFF',
-  surfaceElevated: '#F1F3F6',
-  primary: '#F97316',
-  primaryPressed: '#EA580C',
-  primarySoft: '#FFEDD5',
-  accent: '#0EA5E9',
-  success: '#22C55E',
-  warning: '#FBBF24',
-  danger: '#F43F5E',
-  text: '#111827',
-  mutedText: '#6B7280',
-  border: '#E5E7EB',
-};
-```
-
-Usar `success` solo para estados positivos o completados. CTAs principales como Start Workout, Save y Finish usan `primary`.
+El tema es monocromático con profundidad por capas tonales (surface hierarchy). El color primario es purple/lavender (`#cfbcff`). El verde se reserva para estados de éxito/completado. Consultar `DESIGN.md` para los tokens completos.
 
 ## Estructura sugerida
 

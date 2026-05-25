@@ -255,27 +255,9 @@ La información principal debe guardarse localmente:
 
 ### 7.6 Tema visual
 
-Zenlift debe usar **tema oscuro por defecto** y **naranja atlético como color primario**.
+Zenlift debe usar **tema oscuro por defecto**. El sistema de diseño completo (colores, tipografía, espaciado, componentes) está definido en `DESIGN.md`.
 
-Tokens base recomendados:
-
-```text
-background: #F7F8FA
-surface: #FFFFFF
-surfaceElevated: #F1F3F6
-primary: #F97316
-primaryPressed: #EA580C
-primarySoft: #FFEDD5
-accent: #0EA5E9
-success: #22C55E
-warning: #FBBF24
-danger: #F43F5E
-text: #111827
-mutedText: #6B7280
-border: #E5E7EB
-```
-
-El verde no debe usarse como color primario. Reservarlo para estados positivos: set completado, éxito, progreso confirmado o confirmaciones discretas.
+La paleta es monocromática con jerarquía por capas tonales (surface hierarchy). El color primario es purple/lavender (`#cfbcff`). El verde no debe usarse como color primario. Reservarlo para estados positivos: set completado, éxito, progreso confirmado o confirmaciones discretas.
 
 ---
 
@@ -1599,7 +1581,7 @@ Set | Previous     | kg [-] [input] [+] | reps [-] [input] [+] | ✓
 3   | 60kg × 8     |     [ 60.0 ]        |      [ 10 ]          | ☑
 ```
 
-- El set completado (✓ o ☑) muestra feedback visual de éxito (verde suave reservado para estado completado, texto tachado).
+- El set completado (✓ o ☑) muestra feedback visual de éxito (color de éxito reservado para estado completado, texto tachado).
 - Los inputs del siguiente set reciben foco automáticamente al completar el actual.
 - El botón +/- ajusta en incrementos de 2.5 kg (o 5 lb).
 

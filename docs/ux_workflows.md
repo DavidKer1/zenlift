@@ -132,7 +132,7 @@ Reglas:
 ### Settings
 
 - kg/lb.
-- Tema claro por defecto; oscuro/sistema como opción futura.
+- Tema oscuro por defecto; claro/sistema como opción futura.
 - Timer por defecto.
 - Objetivo semanal.
 - Exportar/importar datos.
@@ -160,7 +160,7 @@ Recomendaciones:
 - Evitar modales y alerts.
 - Haptic feedback al completar.
 - Siguiente set recibe foco automáticamente cuando aplique.
-- Usar naranja atlético para CTAs primarios y verde solo para set completado/éxito.
+- Usar los colores del sistema definido en `DESIGN.md`. El primario es purple/lavender; el verde solo para set completado/éxito.
 
 Ejemplo:
 

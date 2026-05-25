@@ -59,15 +59,11 @@ Toda feature debe evaluarse con esta pregunta: ¿mejora el loop core o lo distra
 - Simplicidad inicial con profundidad progresiva.
 - Offline-friendly desde el día 1.
 - Español nativo como ventaja inicial, no traducción tardía.
-- Tema oscuro por defecto con naranja atlético como color primario.
+- Tema oscuro por defecto con el sistema de color definido en `DESIGN.md`.
 
 ## Dirección visual
 
-Zenlift debe sentirse fuerte, moderna y enfocada. El color primario es naranja atlético:
-
-- Primary: `#F97316`
-- Primary pressed: `#EA580C`
-- Primary soft/light surface: `#FFEDD5`
+Zenlift debe sentirse fuerte, moderna y enfocada. El sistema de diseño completo está definido en `DESIGN.md` (paleta monocromática con acentos purple/lavender, tipografía Inter + JetBrains Mono, espaciado y componentes).
 
 El verde no debe usarse como color primario. Reservarlo para estados positivos como set completado, éxito o progreso confirmado.
 
