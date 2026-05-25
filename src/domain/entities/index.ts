@@ -1,3 +1,5 @@
+import type { DetectedPR } from '@/domain/services/prDetection';
+
 export type MuscleRole = 'primary' | 'secondary';
 
 export type Equipment =
@@ -183,4 +185,5 @@ export interface WorkoutSummary {
   completed_set_count: number;
   total_volume: number;
   personal_record_count: number;
+  prs: DetectedPR[];
 }

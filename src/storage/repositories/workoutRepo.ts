@@ -262,6 +262,21 @@ export class WorkoutRepo {
     }
   }
 
+  async updateSessionNotes(sessionId: string, notes: string): Promise<void> {
+    try {
+      await this.db.runAsync(
+        'UPDATE workout_sessions SET notes = ?, updated_at = ? WHERE id = ?',
+        notes,
+        new Date().toISOString(),
+        sessionId,
+      );
+    } catch (error) {
+      throw new Error(
+        `[WorkoutRepo] updateSessionNotes(${sessionId}) failed: ${(error as Error).message}`,
+      );
+    }
+  }
+
   async deleteSession(id: string): Promise<void> {
     try {
       await this.db.runAsync('DELETE FROM workout_sessions WHERE id = ?', id);

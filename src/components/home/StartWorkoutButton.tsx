@@ -6,11 +6,13 @@ import { useZenliftTheme } from '@/providers/ThemeProvider';
 type StartWorkoutButtonProps = {
   label?: string;
   variant?: 'primary' | 'secondary';
+  onPress?: () => void;
 };
 
 export function StartWorkoutButton({
   label = 'Start Workout',
   variant = 'primary',
+  onPress,
 }: StartWorkoutButtonProps) {
   const { colors, radius, spacing, typography } = useZenliftTheme();
   const isPrimary = variant === 'primary';
@@ -19,7 +21,7 @@ export function StartWorkoutButton({
     <Pressable
       accessibilityLabel={label}
       accessibilityRole="button"
-      onPress={() => router.push('/routines')}
+      onPress={onPress ?? (() => router.push('/routines'))}
       style={({ pressed }) => [
         styles.button,
         {

@@ -1,12 +1,10 @@
-import { useRouter } from 'expo-router';
 import React, { useCallback } from 'react';
-import { Alert, Pressable, StyleSheet } from 'react-native';
+import { Pressable, StyleSheet } from 'react-native';
 
 import { ThemedText } from '@/components/themed-text';
 import type { FullRoutineDay } from '@/domain/entities';
+import { startWorkoutFlow } from '@/features/workout/StartWorkoutFlow';
 import { useZenliftTheme } from '@/providers/ThemeProvider';
-import { getDatabase } from '@/storage/database/connection';
-import { WorkoutRepo } from '@/storage/repositories/workoutRepo';
 
 type StartWorkoutButtonProps = {
   day: FullRoutineDay;
@@ -19,40 +17,15 @@ export function StartWorkoutButton({
   routineId,
   routineName,
 }: StartWorkoutButtonProps) {
-  const router = useRouter();
   const { colors, radius, spacing, typography } = useZenliftTheme();
 
-  const handlePress = useCallback(async () => {
-    try {
-      const db = await getDatabase();
-      const workoutRepo = new WorkoutRepo(db);
-
-      const activeSession = await workoutRepo.getActiveSession();
-
-      if (activeSession) {
-        Alert.alert(
-          'Sesion activa',
-          'Ya tienes una sesion de workout activa. ¿Quieres iniciar una nueva? La sesion activa se cancelara.',
-          [
-            { text: 'Cancelar', style: 'cancel' },
-            {
-              text: 'Nueva sesion',
-              onPress: async () => {
-                await workoutRepo.cancelSession(activeSession.id);
-                await createAndNavigate(workoutRepo, router, day, routineId, routineName);
-              },
-            },
-          ],
-        );
-        return;
-      }
-
-      await createAndNavigate(workoutRepo, router, day, routineId, routineName);
-    } catch (error) {
-      console.error('[StartWorkoutButton] Failed:', error);
-      Alert.alert('Error', 'No se pudo iniciar la sesion de workout.');
-    }
-  }, [day, routineId, routineName, router]);
+  const handlePress = useCallback(() => {
+    void startWorkoutFlow({
+      routineId,
+      routineDayId: day.id,
+      name: `${routineName} - ${day.name}`,
+    });
+  }, [day.id, day.name, routineId, routineName]);
 
   return (
     <Pressable
@@ -73,26 +46,6 @@ export function StartWorkoutButton({
       </ThemedText>
     </Pressable>
   );
-}
-
-async function createAndNavigate(
-  workoutRepo: WorkoutRepo,
-  router: ReturnType<typeof useRouter>,
-  day: FullRoutineDay,
-  routineId: string,
-  routineName: string,
-) {
-  const session = await workoutRepo.createSession({
-    name: `${routineName} - ${day.name}`,
-    routineId,
-    routineDayId: day.id,
-  });
-
-  for (const exercise of day.exercises) {
-    await workoutRepo.addExercise(session.id, exercise.exercise.id);
-  }
-
-  router.push(`/workout/${session.id}` as never);
 }
 
 const styles = StyleSheet.create({

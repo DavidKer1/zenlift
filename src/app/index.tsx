@@ -15,6 +15,7 @@ import { RecentPRsCard, type RecentPR } from '@/components/home/RecentPRsCard';
 import { StartWorkoutButton } from '@/components/home/StartWorkoutButton';
 import { WeeklyActivityCard } from '@/components/home/WeeklyActivityCard';
 import type { FullWorkoutSession, WorkoutSession } from '@/domain/entities';
+import { startWorkoutFlow } from '@/features/workout/StartWorkoutFlow';
 import { useZenliftTheme } from '@/providers/ThemeProvider';
 import { getDatabase } from '@/storage/database/connection';
 import { RoutineRepo } from '@/storage/repositories/RoutineRepo';
@@ -131,6 +132,13 @@ export default function HomeScreen() {
         style={[styles.scrollView, { backgroundColor: colors.background }]}>
         <Greeting />
         <StartWorkoutButton />
+        <StartWorkoutButton
+          label="Quick Workout"
+          variant="secondary"
+          onPress={() => {
+            void startWorkoutFlow({});
+          }}
+        />
         <LastWorkoutCard isLoading={isLastWorkoutLoading} workout={lastWorkout} />
         <WeeklyActivityCard activeDays={weeklyActivity} />
         <CurrentRoutineCard routine={currentRoutine} />
