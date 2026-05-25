@@ -2,6 +2,7 @@ import { LineChart } from 'react-native-gifted-charts';
 import { StyleSheet, View } from 'react-native';
 
 import { ThemedText } from '@/components/themed-text';
+import { ThemedView } from '@/components/themed-view';
 import { useZenliftTheme } from '@/providers/ThemeProvider';
 import type { ProgressDataPoint } from '@/domain/services/exerciseStats';
 
@@ -11,33 +12,27 @@ type ProgressChartProps = {
 };
 
 export function ProgressChart({ data, title = 'Progreso' }: ProgressChartProps) {
-  const { colors, radius, spacing } = useZenliftTheme();
+  const { colors, spacing } = useZenliftTheme();
 
   const chartData = data.map((point) => ({
     value: point.y,
     label: point.x,
+    dataPointText: point.y > 0 ? `${point.y}` : '',
   }));
 
   return (
-    <View
+    <ThemedView
       accessibilityLabel="Grafica de progreso"
       accessibilityRole="summary"
-      style={[
-        styles.container,
-        {
-          backgroundColor: colors.surface,
-          borderColor: colors.border,
-          borderRadius: radius.lg,
-          padding: spacing.three,
-        },
-      ]}>
-      <ThemedText type="smallBold" themeColor="mutedText" style={styles.title}>
+      variant="glass"
+      style={[styles.container, { padding: spacing.three }]}>
+      <ThemedText type="titleSm" themeColor="mutedText" style={styles.title}>
         {title}
       </ThemedText>
 
       {chartData.length === 0 ? (
         <View style={styles.emptyState}>
-          <ThemedText type="small" themeColor="mutedText" style={styles.emptyText}>
+          <ThemedText type="bodySm" themeColor="mutedText">
             Sin datos para mostrar
           </ThemedText>
         </View>
@@ -49,19 +44,26 @@ export function ProgressChart({ data, title = 'Progreso' }: ProgressChartProps) 
             curved
             data={chartData}
             dataPointsColor={colors.primary}
+            dataPointsRadius={5}
+            dataPointsShape="circular"
+            focusEnabled
             height={200}
             hideDataPoints={chartData.length < 2}
             initialSpacing={chartData.length === 1 ? 40 : 20}
             noOfSections={4}
             scrollToEnd
+            showDataPointOnFocus
+            showStripOnFocus
             spacing={chartData.length < 5 ? 60 : undefined}
             startFillColor={colors.primary}
-            startOpacity={0.15}
+            startOpacity={0.2}
+            stripColor={colors.primarySoft}
+            stripOpacity={0.15}
             textColor={colors.mutedText}
             textFontSize={11}
             thickness={3}
             xAxisColor={colors.border}
-            yAxisColor={colors.border}
+            yAxisColor="transparent"
             yAxisTextStyle={{
               color: colors.mutedText,
               fontSize: 11,
@@ -69,7 +71,7 @@ export function ProgressChart({ data, title = 'Progreso' }: ProgressChartProps) 
           />
         </View>
       )}
-    </View>
+    </ThemedView>
   );
 }
 
@@ -78,7 +80,6 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
   },
   container: {
-    borderWidth: 1,
     gap: 12,
   },
   emptyState: {
@@ -86,12 +87,7 @@ const styles = StyleSheet.create({
     height: 200,
     justifyContent: 'center',
   },
-  emptyText: {
-    textAlign: 'center',
-  },
   title: {
-    fontSize: 12,
-    lineHeight: 16,
-    textTransform: 'uppercase',
+    marginBottom: 4,
   },
 });

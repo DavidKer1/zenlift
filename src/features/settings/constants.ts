@@ -16,7 +16,7 @@ export type WeightUnit = 'kg' | 'lb';
 
 export const DEFAULT_SETTINGS = {
   weightUnit: 'kg',
-  themeMode: 'light',
+  themeMode: 'dark',
   weeklyGoal: 3,
   defaultRest: 90,
 } as const satisfies {

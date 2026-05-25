@@ -1,7 +1,7 @@
 export const muscleColors = {
   Chest: '#EF4444',
   Back: '#3B82F6',
-  Shoulders: '#F97316',
+  Shoulders: '#FB923C',
   Biceps: '#22C55E',
   Triceps: '#A855F7',
   Forearms: '#EC4899',

@@ -6,7 +6,7 @@ import {
   type TabListProps,
   type TabTriggerSlotProps,
 } from 'expo-router/ui';
-import { SymbolView, type SymbolViewProps } from 'expo-symbols';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 import React from 'react';
 import { Pressable, StyleSheet, View } from 'react-native';
 
@@ -16,30 +16,40 @@ import { useZenliftTheme } from '@/providers/ThemeProvider';
 
 type TabItem = {
   href: '/' | '/routines' | '/history' | '/settings';
-  icon: string;
+  iconInactive: keyof typeof MaterialCommunityIcons.glyphMap;
+  iconActive: keyof typeof MaterialCommunityIcons.glyphMap;
   label: string;
   name: string;
 };
 
 const tabs: TabItem[] = [
-  { name: 'home', href: '/', label: 'Home', icon: 'home' },
+  {
+    name: 'home',
+    href: '/',
+    label: 'Home',
+    iconInactive: 'home-outline',
+    iconActive: 'home',
+  },
   {
     name: 'routines',
     href: '/routines',
     label: 'Rutinas',
-    icon: 'list',
+    iconInactive: 'dumbbell',
+    iconActive: 'dumbbell',
   },
   {
     name: 'history',
     href: '/history',
     label: 'Historial',
-    icon: 'history',
+    iconInactive: 'chart-bar',
+    iconActive: 'chart-bar',
   },
   {
     name: 'settings',
     href: '/settings',
     label: 'Settings',
-    icon: 'settings',
+    iconInactive: 'cog-outline',
+    iconActive: 'cog',
   },
 ];
 
@@ -51,7 +61,9 @@ export default function AppTabs() {
         <CustomTabList>
           {tabs.map((tab) => (
             <TabTrigger key={tab.name} name={tab.name} href={tab.href} asChild>
-              <TabButton icon={tab.icon}>{tab.label}</TabButton>
+              <TabButton iconInactive={tab.iconInactive} iconActive={tab.iconActive}>
+                {tab.label}
+              </TabButton>
             </TabTrigger>
           ))}
         </CustomTabList>
@@ -60,9 +72,16 @@ export default function AppTabs() {
   );
 }
 
-function TabButton({ children, icon, isFocused, ...props }: TabTriggerSlotProps & Pick<TabItem, 'icon'>) {
+function TabButton({
+  children,
+  iconInactive,
+  iconActive,
+  isFocused,
+  ...props
+}: TabTriggerSlotProps & Pick<TabItem, 'iconInactive' | 'iconActive'>) {
   const { colors, spacing } = useZenliftTheme();
   const color = isFocused ? colors.primary : colors.mutedText;
+  const iconName = isFocused ? iconActive : iconInactive;
 
   return (
     <Pressable
@@ -76,8 +95,8 @@ function TabButton({ children, icon, isFocused, ...props }: TabTriggerSlotProps 
           opacity: pressed ? 0.72 : 1,
         },
       ]}>
-      <SymbolView name={icon as SymbolViewProps['name']} tintColor={color} size={18} />
-      <ThemedText type="smallBold" style={[styles.tabLabel, { color }]}>
+      <MaterialCommunityIcons name={iconName} size={20} color={color} />
+      <ThemedText type="bodyStrong" style={[styles.tabLabel, { color }]}>
         {children}
       </ThemedText>
     </Pressable>

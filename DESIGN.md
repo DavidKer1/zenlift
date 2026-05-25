@@ -1,103 +1,82 @@
 ---
 version: alpha
 name: Zenlift-design-system
-description: A calm, premium workout tracker app whose surfaces feel focused, spacious, and quietly confident. The base canvas is pure white; the primary blue (`#0052ff`) is the single action voltage, used scarcely on primary CTAs, signature glyphs, progress emphasis, and inline accent moments. Type uses the configured display and body families at modest weights, with display at weight 400 rather than 700, signaling control and clarity rather than fitness-app noise. Page rhythm rotates between bright white sections, soft gray elevation bands, and full-bleed dark coaching or progress heroes (`#0a0b0d`) carrying layered workout UI cards. Iconography is geometric and minimal; depth comes from card-on-card layering, never decorative shadows.
-
+description: A bold, athletic workout tracker with dark-first canvas and vibrant orange (`#F97316`) as the primary action color. The design uses system UI fonts at clean weights, glassmorphism cards for depth, and gradient hero sections for premium visual impact.
 colors:
-   primary: "#0052ff"
-   primary-active: "#003ecc"
-   primary-disabled: "#a8b8cc"
-   ink: "#0a0b0d"
-   body: "#5b616e"
-   body-strong: "#0a0b0d"
-   muted: "#7c828a"
-   muted-soft: "#a8acb3"
-   hairline: "#dee1e6"
-   hairline-soft: "#eef0f3"
-   canvas: "#ffffff"
-   surface-soft: "#f7f7f7"
-   surface-card: "#ffffff"
-   surface-strong: "#eef0f3"
-   surface-dark: "#0a0b0d"
-   surface-dark-elevated: "#16181c"
-   on-primary: "#ffffff"
-   on-dark: "#ffffff"
-   on-dark-soft: "#a8acb3"
-   semantic-up: "#05b169"
-   semantic-down: "#cf202f"
-   accent-yellow: "#f4b000"
+   primary: "#F97316"
+   primary-active: "#EA580C"
+   primary-disabled: "#8B5E3C"
+   ink: "#0A0B0D"
+   body: "#A8ACB3"
+   body-strong: "#FFFFFF"
+   muted: "#7C828A"
+   muted-soft: "#5B616E"
+   hairline: "#374151"
+   hairline-soft: "#1E2026"
+   canvas: "#0A0B0D"
+   surface-soft: "#16181C"
+   surface-card: "#16181C"
+   surface-glass: "rgba(22, 24, 28, 0.85)"
+   border-glass: "rgba(255, 255, 255, 0.10)"
+   surface-strong: "#1E2026"
+   surface-dark: "#0A0B0D"
+   surface-dark-elevated: "#16181C"
+   on-primary: "#FFFFFF"
+   on-dark: "#FFFFFF"
+   on-dark-soft: "#A8ACB3"
+   semantic-up: "#05B169"
+   semantic-down: "#CF202F"
+   accent-yellow: "#F4B000"
 
 typography:
-   display-mega:
-      fontFamily: "'Coinbase Display', -apple-system, system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif"
-      fontSize: 80px
+   display:
+      fontFamily: "System, -apple-system, 'Segoe UI', Roboto, sans-serif"
+      fontSize: 48px
       fontWeight: 400
-      lineHeight: 1.0
+      lineHeight: 1.08
       letterSpacing: -2px
-   display-xl:
-      fontFamily: "'Coinbase Display', sans-serif"
-      fontSize: 64px
-      fontWeight: 400
-      lineHeight: 1.0
-      letterSpacing: -1.6px
-   display-lg:
-      fontFamily: "'Coinbase Display', sans-serif"
-      fontSize: 52px
-      fontWeight: 400
-      lineHeight: 1.0
-      letterSpacing: -1.3px
-   display-md:
-      fontFamily: "'Coinbase Display', sans-serif"
-      fontSize: 44px
-      fontWeight: 400
-      lineHeight: 1.09
-      letterSpacing: -1px
-   display-sm:
-      fontFamily: "'Coinbase Sans', sans-serif"
-      fontSize: 36px
-      fontWeight: 400
-      lineHeight: 1.11
-      letterSpacing: -0.5px
-   title-lg:
-      fontFamily: "'Coinbase Sans', sans-serif"
+   titleLg:
+      fontFamily: "System, -apple-system, 'Segoe UI', Roboto, sans-serif"
       fontSize: 32px
       fontWeight: 400
       lineHeight: 1.13
       letterSpacing: -0.4px
-   title-md:
-      fontFamily: "'Coinbase Sans', sans-serif"
+   titleMd:
+      fontFamily: "System, -apple-system, 'Segoe UI', Roboto, sans-serif"
       fontSize: 18px
       fontWeight: 600
       lineHeight: 1.33
       letterSpacing: 0
-   title-sm:
-      fontFamily: "'Coinbase Sans', sans-serif"
+   titleSm:
+      fontFamily: "System, -apple-system, 'Segoe UI', Roboto, sans-serif"
       fontSize: 16px
       fontWeight: 600
       lineHeight: 1.25
       letterSpacing: 0
-   body-md:
-      fontFamily: "'Coinbase Sans', sans-serif"
+   bodyMd:
+      fontFamily: "System, -apple-system, 'Segoe UI', Roboto, sans-serif"
       fontSize: 16px
       fontWeight: 400
       lineHeight: 1.5
       letterSpacing: 0
-   body-strong:
-      fontFamily: "'Coinbase Sans', sans-serif"
+   bodyStrong:
+      fontFamily: "System, -apple-system, 'Segoe UI', Roboto, sans-serif"
       fontSize: 16px
       fontWeight: 700
       lineHeight: 1.5
       letterSpacing: 0
-   body-sm:
-      fontFamily: "'Coinbase Sans', sans-serif"
+   bodySm:
+      fontFamily: "System, -apple-system, 'Segoe UI', Roboto, sans-serif"
       fontSize: 14px
       fontWeight: 400
       lineHeight: 1.5
       letterSpacing: 0
    caption:
-      fontFamily: "'Coinbase Sans', sans-serif"
+      fontFamily: "System, -apple-system, 'Segoe UI', Roboto, sans-serif"
       fontSize: 13px
       fontWeight: 400
+      lineHeight: 1.38
+      letterSpacing: 0
       lineHeight: 1.5
       letterSpacing: 0
    caption-strong:

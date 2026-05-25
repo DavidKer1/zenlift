@@ -37,7 +37,7 @@ function isThemeMode(value: string | undefined): value is ThemeMode {
 function getStoredThemeMode(): ThemeMode {
   const storedMode = themeStorage.getString(THEME_MODE_STORAGE_KEY);
 
-  return isThemeMode(storedMode) ? storedMode : 'light';
+  return isThemeMode(storedMode) ? storedMode : 'dark';
 }
 
 function resolveThemeMode(mode: ThemeMode, systemScheme: string | null | undefined): ThemeColorScheme {
