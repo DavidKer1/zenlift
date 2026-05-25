@@ -588,12 +588,76 @@ describe('activeWorkoutStore', () => {
       expect(mockMMKVStore['zenlift.workout.session_id']).toBeUndefined();
     });
 
-    it('does nothing when no session in MMKV', async () => {
+    it('does nothing when no session in MMKV and no SQLite active session', async () => {
       const { useActiveWorkoutStore } = require('@/features/workout/stores/activeWorkoutStore');
+
+      jest.spyOn(WorkoutRepo.prototype, 'getActiveSession').mockResolvedValue(null);
 
       await useActiveWorkoutStore.getState().recoverSession();
 
       expect(useActiveWorkoutStore.getState().session).toBeNull();
+    });
+
+    it('falls back to SQLite when MMKV has no session ID but SQLite has an active session', async () => {
+      const session = makeSession({ status: 'active' });
+      const exercise = makeWorkoutExerciseWithSets({ id: 'we-1' }, [makeSetLog()]);
+      const fullSession: FullSession = {
+        ...session,
+        routine: null,
+        routine_day: null,
+        exercises: [exercise],
+        personal_records: [],
+      };
+
+      // No MMKV session ID set
+      delete mockMMKVStore['zenlift.workout.session_id'];
+
+      (mockDb.getFirstAsync as jest.Mock)
+        .mockResolvedValueOnce(null) // getFullSession with no MMKV id → null
+        .mockResolvedValueOnce(session) // getActiveSession → found
+        .mockResolvedValueOnce(fullSession); // getFullSession with active session id
+
+      jest.spyOn(WorkoutRepo.prototype, 'getActiveSession').mockResolvedValue(session);
+      jest.spyOn(WorkoutRepo.prototype, 'getFullSession').mockResolvedValue(fullSession);
+
+      const { useActiveWorkoutStore } = require('@/features/workout/stores/activeWorkoutStore');
+
+      await useActiveWorkoutStore.getState().recoverSession();
+
+      const state = useActiveWorkoutStore.getState();
+      expect(state.session).not.toBeNull();
+      expect(state.session?.id).toBe('ws-1');
+      expect(state.exercises.length).toBe(1);
+      // Should have set MMKV for future recovery
+      expect(mockMMKVStore['zenlift.workout.session_id']).toBe('ws-1');
+    });
+
+    it('clears stale MMKV and falls back to SQLite when MMKV session is not active', async () => {
+      const staleSession = makeSession({ id: 'ws-stale', status: 'cancelled' });
+      const activeSession = makeSession({ id: 'ws-active', status: 'active' });
+      const exercise = makeWorkoutExerciseWithSets({ id: 'we-1' });
+      const fullSession: FullSession = {
+        ...activeSession,
+        routine: null,
+        routine_day: null,
+        exercises: [exercise],
+        personal_records: [],
+      };
+
+      mockMMKVStore['zenlift.workout.session_id'] = 'ws-stale';
+
+      jest.spyOn(WorkoutRepo.prototype, 'getFullSession')
+        .mockResolvedValueOnce({ ...staleSession, routine: null, routine_day: null, exercises: [], personal_records: [] } as FullSession)
+        .mockResolvedValueOnce(fullSession);
+      jest.spyOn(WorkoutRepo.prototype, 'getActiveSession').mockResolvedValue(activeSession);
+
+      const { useActiveWorkoutStore } = require('@/features/workout/stores/activeWorkoutStore');
+
+      await useActiveWorkoutStore.getState().recoverSession();
+
+      const state = useActiveWorkoutStore.getState();
+      expect(state.session?.id).toBe('ws-active');
+      expect(mockMMKVStore['zenlift.workout.session_id']).toBe('ws-active');
     });
   });
 });

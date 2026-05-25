@@ -26,6 +26,8 @@ export interface StartWorkoutParams {
   routineId?: string;
   routineDayId?: string;
   name?: string;
+  /** If set, the exercise will be added to the session after creation/recovery. */
+  exerciseId?: string;
 }
 
 export interface ActiveWorkoutState {
@@ -443,10 +445,25 @@ export const useActiveWorkoutStore = create<ActiveWorkoutStore>((set, get) => ({
 
   recoverSession: async () => {
     const mmkvSessionId = getSessionId();
-    if (!mmkvSessionId) return;
-
     const repo = await getRepo();
-    const fullSession = await repo.getFullSession(mmkvSessionId);
+
+    // Try MMKV first, fall back to SQLite active-session lookup
+    let fullSession: FullSession | null = null;
+
+    if (mmkvSessionId) {
+      fullSession = await repo.getFullSession(mmkvSessionId);
+    }
+
+    if (!fullSession || fullSession.status !== 'active') {
+      // Fallback: check SQLite for any active session not tracked by MMKV
+      const activeSession = await repo.getActiveSession();
+      if (activeSession) {
+        fullSession = await repo.getFullSession(activeSession.id);
+        if (fullSession && fullSession.status === 'active') {
+          setSessionId(fullSession.id);
+        }
+      }
+    }
 
     if (!fullSession || fullSession.status !== 'active') {
       clearSessionId();

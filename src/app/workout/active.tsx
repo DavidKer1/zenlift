@@ -50,14 +50,32 @@ export default function ActiveWorkoutScreen() {
 
   useEffect(() => {
     async function init() {
-      await recoverSession();
+      console.log('[ActiveWorkout] Mount — store session:', useActiveWorkoutStore.getState().session?.id ?? 'null');
+
+      // If the store is already hydrated (e.g. from startWorkoutFlow), skip recovery
+      if (useActiveWorkoutStore.getState().session) {
+        console.log('[ActiveWorkout] Store already hydrated, skipping recoverSession');
+        setIsRecovering(false);
+        return;
+      }
+
+      console.log('[ActiveWorkout] Calling recoverSession');
+      try {
+        await recoverSession();
+        const state = useActiveWorkoutStore.getState();
+        console.log('[ActiveWorkout] recoverSession done — session:', state.session?.id ?? 'null', 'exercises:', state.exercises.length);
+      } catch (err) {
+        console.error('[ActiveWorkout] recoverSession failed:', err);
+      }
       setIsRecovering(false);
     }
     init();
   }, [recoverSession]);
 
   useEffect(() => {
+    console.log('[ActiveWorkout] isRecovering:', isRecovering, 'session:', session?.id ?? 'null');
     if (!isRecovering && !session) {
+      console.log('[ActiveWorkout] No session after recovery — redirecting to /');
       router.replace('/');
     }
   }, [isRecovering, session]);
@@ -300,12 +318,12 @@ export default function ActiveWorkoutScreen() {
       />
 
       <BottomBar onAddExercise={handleAddExercise} onFinish={handleFinish} finishDisabled={exercises.length === 0} />
-
       <ExercisePicker
         visible={pickerVisible}
         onClose={() => setPickerVisible(false)}
         onSelect={handleExerciseSelected}
       />
+
     </SafeAreaView>
   );
 }

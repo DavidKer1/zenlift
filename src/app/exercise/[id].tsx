@@ -25,6 +25,7 @@ import {
   type SessionSets,
 } from '@/domain/services/exerciseStats';
 import { useZenliftTheme } from '@/providers/ThemeProvider';
+import { startWorkoutFlow } from '@/features/workout/StartWorkoutFlow';
 import { getDatabase } from '@/storage/database/connection';
 import { ExerciseRepo } from '@/storage/repositories/exerciseRepo';
 import { WorkoutRepo } from '@/storage/repositories/workoutRepo';
@@ -224,45 +225,9 @@ export default function ExerciseDetailScreen() {
     router.push(`/exercise/edit/${id}` as never);
   }, [id, router]);
 
-  const handleQuickWorkout = useCallback(async () => {
-    try {
-      const db = await getDatabase();
-      const workoutRepo = new WorkoutRepo(db);
-
-      const activeSession = await workoutRepo.getActiveSession();
-
-      if (activeSession) {
-        Alert.alert(
-          'Sesion activa',
-          'Ya tienes una sesion en curso.',
-          [
-            {
-              text: 'Nueva sesion',
-              onPress: async () => {
-                const session = await workoutRepo.createSession({});
-                await workoutRepo.addExercise(session.id, id!);
-                router.push('/');
-              },
-            },
-            {
-              text: 'Anadir a sesion actual',
-              onPress: async () => {
-                await workoutRepo.addExercise(activeSession.id, id!);
-                router.push('/');
-              },
-            },
-            { text: 'Cancelar', style: 'cancel' },
-          ],
-        );
-      } else {
-        const session = await workoutRepo.createSession({});
-        await workoutRepo.addExercise(session.id, id!);
-        router.push('/');
-      }
-            } catch {
-              Alert.alert('Error', 'No se pudo iniciar el entrenamiento');
-    }
-  }, [id, router]);
+  const handleQuickWorkout = useCallback(() => {
+    void startWorkoutFlow({ exerciseId: id });
+  }, [id]);
 
   if (isLoading) {
     return (
