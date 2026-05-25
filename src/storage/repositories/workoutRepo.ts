@@ -20,6 +20,64 @@ export type PersonalRecordWithExerciseName = PersonalRecord & {
   exercise_name: string;
 };
 
+export type HomeCalendarActivityDate = {
+  date: string;
+  session_count: number;
+};
+
+export type HomeCalendarFrequencyKind =
+  | 'routine_day'
+  | 'routine'
+  | 'session_name'
+  | 'total';
+
+export type HomeCalendarRepeatParams = {
+  routineId: string;
+  routineDayId?: string;
+  name: string;
+};
+
+export type HomeCalendarLatestWorkout = {
+  id: string;
+  started_at: string;
+  session_name: string | null;
+  routine_id: string | null;
+  routine_day_id: string | null;
+  routine_name: string | null;
+  routine_day_name: string | null;
+  display_label: string;
+  frequency_count: number;
+  frequency_kind: HomeCalendarFrequencyKind;
+  is_repeatable: boolean;
+  repeat_params: HomeCalendarRepeatParams | null;
+};
+
+export type HomeCalendarSummary = {
+  activity_dates: HomeCalendarActivityDate[];
+  latest_workout: HomeCalendarLatestWorkout | null;
+};
+
+type HomeCalendarLatestWorkoutRow = WorkoutSession & {
+  routine_name: string | null;
+  routine_day_name: string | null;
+};
+
+type CountRow = {
+  count: number;
+};
+
+function getHomeCalendarDisplayLabel(
+  workout: HomeCalendarLatestWorkoutRow,
+): string {
+  if (workout.routine_day_name && workout.routine_name) {
+    return `${workout.routine_name} - ${workout.routine_day_name}`;
+  }
+  if (workout.routine_day_name) return workout.routine_day_name;
+  if (workout.routine_name) return workout.routine_name;
+  if (workout.name?.trim()) return workout.name.trim();
+  return 'Workout session';
+}
+
 export class WorkoutRepo {
   private db: SQLiteDatabase;
 
@@ -141,6 +199,118 @@ export class WorkoutRepo {
         `[WorkoutRepo] getHistoryByRoutine(${routineId}) failed: ${(error as Error).message}`,
       );
     }
+  }
+
+  async getHomeCalendarSummary(months = 3): Promise<HomeCalendarSummary> {
+    const safeMonths = Number.isFinite(months)
+      ? Math.max(1, Math.min(12, Math.trunc(months)))
+      : 3;
+    const now = new Date();
+    const windowStart = new Date(
+      now.getFullYear(),
+      now.getMonth() - safeMonths + 1,
+      1,
+    );
+    windowStart.setHours(0, 0, 0, 0);
+
+    try {
+      const activityDates = await this.db.getAllAsync<HomeCalendarActivityDate>(
+        `SELECT date(started_at) AS date, COUNT(*) AS session_count
+         FROM workout_sessions
+         WHERE status = 'completed' AND started_at >= ? AND started_at <= ?
+         GROUP BY date(started_at)
+         ORDER BY started_at ASC`,
+        windowStart.toISOString(),
+        now.toISOString(),
+      );
+
+      const latestWorkout = await this.db.getFirstAsync<HomeCalendarLatestWorkoutRow>(
+        `SELECT
+           ws.*,
+           r.name AS routine_name,
+           rd.name AS routine_day_name
+         FROM workout_sessions ws
+         LEFT JOIN routines r ON r.id = ws.routine_id
+         LEFT JOIN routine_days rd ON rd.id = ws.routine_day_id
+         WHERE ws.status = 'completed'
+         ORDER BY ws.started_at DESC
+         LIMIT ?`,
+        1,
+      );
+
+      if (!latestWorkout) {
+        return {
+          activity_dates: activityDates,
+          latest_workout: null,
+        };
+      }
+
+      const frequency = await this.getHomeCalendarFrequency(latestWorkout);
+      const displayLabel = getHomeCalendarDisplayLabel(latestWorkout);
+      const repeatParams = latestWorkout.routine_id
+        ? {
+            routineId: latestWorkout.routine_id,
+            routineDayId: latestWorkout.routine_day_id ?? undefined,
+            name: displayLabel,
+          }
+        : null;
+
+      return {
+        activity_dates: activityDates,
+        latest_workout: {
+          id: latestWorkout.id,
+          started_at: latestWorkout.started_at,
+          session_name: latestWorkout.name,
+          routine_id: latestWorkout.routine_id,
+          routine_day_id: latestWorkout.routine_day_id,
+          routine_name: latestWorkout.routine_name,
+          routine_day_name: latestWorkout.routine_day_name,
+          display_label: displayLabel,
+          frequency_count: frequency.count,
+          frequency_kind: frequency.kind,
+          is_repeatable: repeatParams !== null,
+          repeat_params: repeatParams,
+        },
+      };
+    } catch (error) {
+      throw new Error(
+        `[WorkoutRepo] getHomeCalendarSummary(${months}) failed: ${(error as Error).message}`,
+      );
+    }
+  }
+
+  private async getHomeCalendarFrequency(
+    latestWorkout: HomeCalendarLatestWorkoutRow,
+  ): Promise<{ count: number; kind: HomeCalendarFrequencyKind }> {
+    if (latestWorkout.routine_day_id) {
+      const row = await this.db.getFirstAsync<CountRow>(
+        "SELECT COUNT(*) AS count FROM workout_sessions WHERE status = 'completed' AND routine_day_id = ?",
+        latestWorkout.routine_day_id,
+      );
+      return { count: row?.count ?? 0, kind: 'routine_day' };
+    }
+
+    if (latestWorkout.routine_id) {
+      const row = await this.db.getFirstAsync<CountRow>(
+        "SELECT COUNT(*) AS count FROM workout_sessions WHERE status = 'completed' AND routine_id = ?",
+        latestWorkout.routine_id,
+      );
+      return { count: row?.count ?? 0, kind: 'routine' };
+    }
+
+    const sessionName = latestWorkout.name?.trim();
+    if (sessionName) {
+      const row = await this.db.getFirstAsync<CountRow>(
+        "SELECT COUNT(*) AS count FROM workout_sessions WHERE status = 'completed' AND name = ?",
+        sessionName,
+      );
+      return { count: row?.count ?? 0, kind: 'session_name' };
+    }
+
+    const row = await this.db.getFirstAsync<CountRow>(
+      "SELECT COUNT(*) AS count FROM workout_sessions WHERE status = 'completed'",
+    );
+    return { count: row?.count ?? 0, kind: 'total' };
   }
 
   async getFullSession(id: string): Promise<FullWorkoutSession | null> {
@@ -324,6 +494,46 @@ export class WorkoutRepo {
     }
   }
 
+  async addRoutineDayExercisesToSession(
+    sessionId: string,
+    routineDayId: string,
+  ): Promise<WorkoutExercise[]> {
+    try {
+      const routineExercises = await this.db.getAllAsync<{
+        exercise_id: string;
+        sort_order: number;
+      }>(
+        'SELECT exercise_id, sort_order FROM routine_exercises WHERE routine_day_id = ? ORDER BY sort_order ASC',
+        routineDayId,
+      );
+
+      const workoutExercises: WorkoutExercise[] = [];
+      for (const routineExercise of routineExercises) {
+        const id = this.generateId();
+        await this.db.runAsync(
+          'INSERT INTO workout_exercises (id, workout_session_id, exercise_id, sort_order) VALUES (?, ?, ?, ?)',
+          id,
+          sessionId,
+          routineExercise.exercise_id,
+          routineExercise.sort_order,
+        );
+        workoutExercises.push({
+          id,
+          workout_session_id: sessionId,
+          exercise_id: routineExercise.exercise_id,
+          sort_order: routineExercise.sort_order,
+          notes: null,
+        });
+      }
+
+      return workoutExercises;
+    } catch (error) {
+      throw new Error(
+        `[WorkoutRepo] addRoutineDayExercisesToSession(${sessionId}, ${routineDayId}) failed: ${(error as Error).message}`,
+      );
+    }
+  }
+
   async removeExercise(id: string): Promise<void> {
     try {
       await this.db.runAsync(
@@ -353,14 +563,12 @@ export class WorkoutRepo {
   async getPreviousPerformance(
     exerciseId: string,
     limit = 5,
-  ): Promise<
-    Array<{
+  ): Promise<{
       started_at: string;
       weight: number;
       reps: number;
       set_type: SetType;
-    }>
-  > {
+    }[]> {
     try {
       return await this.db.getAllAsync<{
         started_at: string;
@@ -522,7 +730,7 @@ export class WorkoutRepo {
   ): Promise<void> {
     try {
       const fields: string[] = [];
-      const values: Array<number | string> = [];
+      const values: (number | string)[] = [];
 
       if (data.weight !== undefined) {
         fields.push('weight = ?');

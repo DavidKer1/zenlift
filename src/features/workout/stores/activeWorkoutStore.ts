@@ -152,6 +152,34 @@ export const useActiveWorkoutStore = create<ActiveWorkoutStore>((set, get) => ({
       routineDayId: params.routineDayId,
     });
 
+    if (params.routineDayId) {
+      await repo.addRoutineDayExercisesToSession(session.id, params.routineDayId);
+      const fullSession = await repo.getFullSession(session.id);
+
+      if (fullSession) {
+        setSessionId(fullSession.id);
+        set({
+          session: {
+            id: fullSession.id,
+            routine_id: fullSession.routine_id,
+            routine_day_id: fullSession.routine_day_id,
+            name: fullSession.name,
+            started_at: fullSession.started_at,
+            ended_at: fullSession.ended_at,
+            duration_seconds: fullSession.duration_seconds,
+            status: fullSession.status,
+            notes: fullSession.notes,
+            created_at: fullSession.created_at,
+            updated_at: fullSession.updated_at,
+          },
+          exercises: fullSession.exercises,
+          isResting: false,
+          timerTargetEnd: null,
+        });
+        return session;
+      }
+    }
+
     setSessionId(session.id);
     set({
       session,

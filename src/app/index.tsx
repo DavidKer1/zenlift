@@ -7,50 +7,44 @@ import {
   type CurrentRoutineCardData,
 } from '@/components/home/CurrentRoutineCard';
 import { Greeting } from '@/components/home/Greeting';
-import {
-  LastWorkoutCard,
-  type LastWorkoutCardData,
-} from '@/components/home/LastWorkoutCard';
 import { RecentPRsCard, type RecentPR } from '@/components/home/RecentPRsCard';
 import { StartWorkoutButton } from '@/components/home/StartWorkoutButton';
 import { WeeklyActivityCard } from '@/components/home/WeeklyActivityCard';
-import type { FullWorkoutSession, WorkoutSession } from '@/domain/entities';
+import { WorkoutCalendarWidget } from '@/components/home/WorkoutCalendarWidget';
+import type { WorkoutSession } from '@/domain/entities';
 import { startWorkoutFlow } from '@/features/workout/StartWorkoutFlow';
 import { useZenliftTheme } from '@/providers/ThemeProvider';
 import { getDatabase } from '@/storage/database/connection';
 import { RoutineRepo } from '@/storage/repositories/RoutineRepo';
-import { WorkoutRepo } from '@/storage/repositories/workoutRepo';
+import {
+  WorkoutRepo,
+  type HomeCalendarRepeatParams,
+  type HomeCalendarSummary,
+} from '@/storage/repositories/workoutRepo';
 
 const EMPTY_WEEK = [false, false, false, false, false, false, false];
 
 export default function HomeScreen() {
   const { colors, spacing } = useZenliftTheme();
-  const [lastWorkout, setLastWorkout] = useState<LastWorkoutCardData | null>(null);
-  const [isLastWorkoutLoading, setIsLastWorkoutLoading] = useState(true);
+  const [calendarSummary, setCalendarSummary] = useState<HomeCalendarSummary | null>(null);
+  const [isCalendarLoading, setIsCalendarLoading] = useState(true);
   const [weeklyActivity, setWeeklyActivity] = useState<boolean[]>(EMPTY_WEEK);
   const [currentRoutine, setCurrentRoutine] = useState<CurrentRoutineCardData | null>(null);
   const [recentPRs, setRecentPRs] = useState<RecentPR[]>([]);
 
-  const fetchLastWorkout = useCallback(async () => {
-    setIsLastWorkoutLoading(true);
+  const fetchCalendarSummary = useCallback(async () => {
+    setIsCalendarLoading(true);
 
     try {
       const db = await getDatabase();
       const workoutRepo = new WorkoutRepo(db);
-      const [session] = await workoutRepo.getHistory(1, 0);
-
-      if (!session || session.status !== 'completed') {
-        setLastWorkout(null);
-        return;
-      }
-
-      const fullSession = await workoutRepo.getFullSession(session.id);
-      setLastWorkout(fullSession ? mapLastWorkout(fullSession) : mapSessionFallback(session));
+      const summary = await workoutRepo.getHomeCalendarSummary();
+      setCalendarSummary(summary);
     } catch (error) {
-      console.error('[HomeScreen] Failed to fetch last workout:', error);
-      setLastWorkout(null);
+      console.error('[HomeScreen] Failed to fetch calendar summary:', error);
+      setCalendarSummary(null);
     } finally {
-      setIsLastWorkoutLoading(false);
+      setIsCalendarLoading(false);
     }
   }, []);
 
@@ -107,8 +101,16 @@ export default function HomeScreen() {
     }
   }, []);
 
+  const handleRepeatWorkout = useCallback((params: HomeCalendarRepeatParams) => {
+    void startWorkoutFlow({
+      name: params.name,
+      routineDayId: params.routineDayId,
+      routineId: params.routineId,
+    });
+  }, []);
+
   useEffect(() => {
-    void fetchLastWorkout();
+    void fetchCalendarSummary();
     void fetchWeeklyActivity();
     void fetchCurrentRoutine();
     void fetchRecentPRs();
@@ -139,33 +141,17 @@ export default function HomeScreen() {
             void startWorkoutFlow({});
           }}
         />
-        <LastWorkoutCard isLoading={isLastWorkoutLoading} workout={lastWorkout} />
+        <WorkoutCalendarWidget
+          isLoading={isCalendarLoading}
+          onRepeatWorkout={handleRepeatWorkout}
+          summary={calendarSummary}
+        />
         <WeeklyActivityCard activeDays={weeklyActivity} />
         <CurrentRoutineCard routine={currentRoutine} />
         <RecentPRsCard prs={recentPRs} />
       </ScrollView>
     </SafeAreaView>
   );
-}
-
-function mapLastWorkout(session: FullWorkoutSession): LastWorkoutCardData {
-  return {
-    dateLabel: formatDate(session.started_at),
-    durationLabel: formatDuration(session.duration_seconds),
-    exerciseCount: session.exercises.length,
-    routineName: session.routine?.name ?? null,
-    sessionName: session.name ?? session.routine_day?.name ?? 'Workout session',
-  };
-}
-
-function mapSessionFallback(session: WorkoutSession): LastWorkoutCardData {
-  return {
-    dateLabel: formatDate(session.started_at),
-    durationLabel: formatDuration(session.duration_seconds),
-    exerciseCount: 0,
-    routineName: null,
-    sessionName: session.name ?? 'Workout session',
-  };
 }
 
 function mapWeeklyActivity(sessions: WorkoutSession[]): boolean[] {
@@ -200,28 +186,6 @@ function formatDateOnly(date: Date): string {
     `${date.getMonth() + 1}`.padStart(2, '0'),
     `${date.getDate()}`.padStart(2, '0'),
   ].join('-');
-}
-
-function formatDate(value: string): string {
-  const date = new Date(value);
-
-  if (Number.isNaN(date.getTime())) return value;
-
-  return new Intl.DateTimeFormat('en', {
-    day: 'numeric',
-    month: 'short',
-  }).format(date);
-}
-
-function formatDuration(seconds: number | null): string {
-  if (!seconds || seconds < 1) return '0 min';
-
-  const hours = Math.floor(seconds / 3600);
-  const minutes = Math.round((seconds % 3600) / 60);
-
-  if (hours > 0 && minutes > 0) return `${hours}h ${minutes}m`;
-  if (hours > 0) return `${hours}h`;
-  return `${minutes} min`;
 }
 
 const styles = StyleSheet.create({

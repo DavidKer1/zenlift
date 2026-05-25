@@ -1,45 +1,4 @@
-# Base Tab Navigation
-
-## Purpose
-
-Provide the primary tab-based navigation shell for the Zenlift app with four main tabs and theme-aware styling.
-## Requirements
-### Requirement: Four primary tabs
-The app shell SHALL expose four primary tabs: Home, Routines, History, and Settings.
-
-#### Scenario: Tabs are visible
-- **WHEN** the app root layout renders
-- **THEN** the tab bar shows Home, Routines, History, and Settings
-
-### Requirement: Tab routes render placeholders
-Each primary tab route SHALL render a stable placeholder screen for its product area.
-
-#### Scenario: Home route renders
-- **WHEN** the user opens the Home tab
-- **THEN** a Home placeholder screen renders without starter instructional copy
-
-#### Scenario: Routines route renders
-- **WHEN** the user opens the Routines tab
-- **THEN** a Routines placeholder screen renders without crashing
-
-#### Scenario: History route renders
-- **WHEN** the user opens the History tab
-- **THEN** a History placeholder screen renders without crashing
-
-#### Scenario: Settings route renders
-- **WHEN** the user opens the Settings tab
-- **THEN** a Settings placeholder screen renders without crashing
-
-### Requirement: Theme-aware tab styling
-The tab navigator SHALL use opacity-based styling for active and inactive states instead of color tinting.
-
-#### Scenario: Active tab uses full opacity
-- **WHEN** a tab is active
-- **THEN** its icon and label SHALL render at 100% white opacity
-
-#### Scenario: Inactive tabs use reduced opacity
-- **WHEN** a tab is inactive
-- **THEN** its icon and label SHALL render at 40% white opacity
+## ADDED Requirements
 
 ### Requirement: Tab bar uses straight black bottom design
 The tab bar SHALL render as a full-width bottom navigation surface with a black background, straight edges, no border radius, no shadow, no visible border, and no blur-dependent styling. It SHALL preserve safe-area spacing and appropriate tab proportions for mobile use.
@@ -85,10 +44,9 @@ The tab bar SHALL use `react-native-reanimated` for modern, minimal focus and pr
 - **WHEN** tab animations run
 - **THEN** they SHALL NOT loop, pulse indefinitely, bounce heavily, glow, or block navigation input
 
-### Requirement: Starter navigation is retired
-The active navigation surface SHALL not expose the default Expo starter Explore tab.
+## REMOVED Requirements
 
-#### Scenario: Starter tab is absent
-- **WHEN** the tab bar renders
-- **THEN** it does not include an Explore tab
+### Requirement: Tab bar uses frosted glass pill design
+**Reason**: The requested visual direction replaces the floating rounded frosted pill with a modern minimal black bottom bar that has straight edges and no border radius.
 
+**Migration**: Replace the floating pill container styles with the straight black bottom bar requirements above and remove blur-dependent styling from the active navigation surface.

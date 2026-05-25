@@ -5,7 +5,6 @@ import type {
   SetLog,
   Exercise,
   FullSession,
-  WorkoutSummary,
 } from '@/domain/entities';
 import { WorkoutRepo } from '@/storage/repositories/workoutRepo';
 
@@ -124,6 +123,7 @@ function makeWorkoutExerciseWithSets(
 function clearStore() {
   const { useActiveWorkoutStore } =
     require('@/features/workout/stores/activeWorkoutStore');
+  jest.restoreAllMocks();
   useActiveWorkoutStore.setState({
     session: null,
     exercises: [],
@@ -148,6 +148,17 @@ describe('activeWorkoutStore', () => {
   describe('startWorkout', () => {
     it('creates a new session with routine details', async () => {
       const session = makeSession({ routine_id: 'r-1', routine_day_id: 'rd-1', name: 'Push Day' });
+      const routineExercise = makeWorkoutExerciseWithSets({
+        id: 'we-routine',
+        workout_session_id: session.id,
+      });
+      const fullSession: FullSession = {
+        ...session,
+        routine: null,
+        routine_day: null,
+        exercises: [routineExercise],
+        personal_records: [],
+      };
       (mockDb.runAsync as jest.Mock).mockResolvedValue(undefined);
       (mockDb.getFirstAsync as jest.Mock)
         .mockResolvedValueOnce(null)
@@ -159,6 +170,16 @@ describe('activeWorkoutStore', () => {
 
       jest.spyOn(WorkoutRepo.prototype, 'createSession').mockResolvedValue(session);
       jest.spyOn(WorkoutRepo.prototype, 'getActiveSession').mockResolvedValue(null);
+      jest.spyOn(WorkoutRepo.prototype, 'addRoutineDayExercisesToSession').mockResolvedValue([
+        {
+          id: routineExercise.id,
+          workout_session_id: routineExercise.workout_session_id,
+          exercise_id: routineExercise.exercise_id,
+          sort_order: routineExercise.sort_order,
+          notes: routineExercise.notes,
+        },
+      ]);
+      jest.spyOn(WorkoutRepo.prototype, 'getFullSession').mockResolvedValue(fullSession);
 
       const result = await useActiveWorkoutStore.getState().startWorkout({
         routineId: 'r-1',
@@ -167,8 +188,9 @@ describe('activeWorkoutStore', () => {
       });
 
       expect(result).toEqual(session);
+      expect(WorkoutRepo.prototype.addRoutineDayExercisesToSession).toHaveBeenCalledWith('ws-1', 'rd-1');
       expect(useActiveWorkoutStore.getState().session).toEqual(session);
-      expect(useActiveWorkoutStore.getState().exercises).toEqual([]);
+      expect(useActiveWorkoutStore.getState().exercises).toEqual([routineExercise]);
     });
 
     it('creates a freestyle session without routine', async () => {
@@ -181,11 +203,13 @@ describe('activeWorkoutStore', () => {
 
       jest.spyOn(WorkoutRepo.prototype, 'createSession').mockResolvedValue(session);
       jest.spyOn(WorkoutRepo.prototype, 'getActiveSession').mockResolvedValue(null);
+      const preloadSpy = jest.spyOn(WorkoutRepo.prototype, 'addRoutineDayExercisesToSession');
 
       const result = await useActiveWorkoutStore.getState().startWorkout({ name: 'Freestyle' });
 
       expect(result.routine_id).toBeNull();
       expect(result.routine_day_id).toBeNull();
+      expect(preloadSpy).not.toHaveBeenCalled();
     });
 
     it('returns existing active session when one exists', async () => {

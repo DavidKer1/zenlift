@@ -7,8 +7,15 @@ import {
   type TabTriggerSlotProps,
 } from 'expo-router/ui';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import React from 'react';
-import { Platform, Pressable, StyleSheet, View } from 'react-native';
+import React, { useEffect } from 'react';
+import { Pressable, StyleSheet, View, type GestureResponderEvent } from 'react-native';
+import Animated, {
+  ReduceMotion,
+  useAnimatedStyle,
+  useSharedValue,
+  withTiming,
+} from 'react-native-reanimated';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { ThemedText } from '@/components/themed-text';
 import { useZenliftTheme } from '@/providers/ThemeProvider';
@@ -76,34 +83,76 @@ function TabButton({
   iconInactive,
   iconActive,
   isFocused,
+  onPressIn,
+  onPressOut,
   ...props
 }: TabTriggerSlotProps & Pick<TabItem, 'iconInactive' | 'iconActive'>) {
   const { colors } = useZenliftTheme();
-  const iconTintColor = isFocused ? colors.textPrimary : colors.textSecondary;
+  const focusProgress = useSharedValue(isFocused ? 1 : 0);
+  const pressProgress = useSharedValue(0);
   const iconName = isFocused ? iconActive : iconInactive;
+
+  useEffect(() => {
+    focusProgress.value = withTiming(isFocused ? 1 : 0, {
+      duration: 180,
+      reduceMotion: ReduceMotion.System,
+    });
+  }, [focusProgress, isFocused]);
+
+  const animatedContentStyle = useAnimatedStyle(() => ({
+    opacity: 0.5 + focusProgress.value * 0.5 - pressProgress.value * 0.08,
+    transform: [
+      { translateY: -2 * focusProgress.value + pressProgress.value },
+      { scale: 1 + focusProgress.value * 0.08 - pressProgress.value * 0.03 },
+    ],
+  }));
+
+  const handlePressIn = (event: GestureResponderEvent) => {
+    pressProgress.value = withTiming(1, {
+      duration: 80,
+      reduceMotion: ReduceMotion.System,
+    });
+    onPressIn?.(event);
+  };
+
+  const handlePressOut = (event: GestureResponderEvent) => {
+    pressProgress.value = withTiming(0, {
+      duration: 120,
+      reduceMotion: ReduceMotion.System,
+    });
+    onPressOut?.(event);
+  };
 
   return (
     <Pressable
       {...props}
-      style={({ pressed }) => [
-        styles.tabButton,
-        {
-          opacity: pressed ? 0.72 : 1,
-        },
-      ]}>
-      <MaterialCommunityIcons name={iconName} size={20} color={iconTintColor} />
-      <ThemedText
-        type="labelCaps"
-        themeColor={isFocused ? 'textPrimary' : 'textSecondary'}>
-        {children}
-      </ThemedText>
+      onPressIn={handlePressIn}
+      onPressOut={handlePressOut}
+      style={styles.tabButton}>
+      <Animated.View style={[styles.tabContent, animatedContentStyle]}>
+        <MaterialCommunityIcons name={iconName} size={21} color={colors.textPrimary} />
+        <ThemedText type="labelCaps" themeColor="textPrimary" style={styles.tabLabel}>
+          {children}
+        </ThemedText>
+      </Animated.View>
     </Pressable>
   );
 }
 
 function CustomTabList(props: TabListProps) {
+  const { colors } = useZenliftTheme();
+  const insets = useSafeAreaInsets();
+
   return (
-    <View pointerEvents="box-none" style={styles.tabListContainer}>
+    <View
+      pointerEvents="box-none"
+      style={[
+        styles.tabListContainer,
+        {
+          backgroundColor: colors.background,
+          paddingBottom: Math.max(insets.bottom, 8),
+        },
+      ]}>
       <View style={styles.innerContainer} {...props} />
     </View>
   );
@@ -115,32 +164,35 @@ const styles = StyleSheet.create({
   },
   tabListContainer: {
     alignItems: 'center',
-    bottom: 24,
+    bottom: 0,
     flexDirection: 'row',
     justifyContent: 'center',
-    paddingHorizontal: 8,
+    left: 0,
+    paddingTop: 6,
     position: 'absolute',
+    right: 0,
     width: '100%',
   },
   innerContainer: {
-    backgroundColor: Platform.select({
-      ios: 'rgba(24, 25, 29, 0.80)',
-      android: 'rgba(24, 25, 29, 0.95)',
-      default: 'rgba(24, 25, 29, 0.80)',
-    }),
-    borderRadius: 24,
     flexDirection: 'row',
     justifyContent: 'space-around',
-    maxWidth: 560,
-    padding: 6,
-    paddingHorizontal: 16,
+    paddingHorizontal: 8,
     width: '100%',
   },
   tabButton: {
     alignItems: 'center',
     flex: 1,
-    gap: 2,
     justifyContent: 'center',
-    paddingVertical: 8,
+    minHeight: 56,
+    paddingVertical: 6,
+  },
+  tabContent: {
+    alignItems: 'center',
+    gap: 3,
+    justifyContent: 'center',
+    minHeight: 44,
+  },
+  tabLabel: {
+    lineHeight: 12,
   },
 });
