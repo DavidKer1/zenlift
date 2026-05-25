@@ -33,11 +33,15 @@ Each primary tab route SHALL render a stable placeholder screen for its product 
 - **THEN** a Settings placeholder screen renders without crashing
 
 ### Requirement: Theme-aware tab styling
-The tab navigator SHALL use Zenlift theme colors for active and inactive states.
+The tab navigator SHALL use Zenlift theme colors for active and inactive states, applying tinted image icons that render on both iOS and Android.
 
 #### Scenario: Active tab uses primary color
 - **WHEN** a tab is active
-- **THEN** its active indicator or icon/text color uses the Zenlift primary orange
+- **THEN** its icon displays the filled variant and uses the Zenlift primary color for tinting
+
+#### Scenario: Inactive tab uses muted color
+- **WHEN** a tab is inactive
+- **THEN** its icon displays the outlined variant and uses the Zenlift mutedText color for tinting
 
 ### Requirement: Starter navigation is retired
 The active navigation surface SHALL not expose the default Expo starter Explore tab.
