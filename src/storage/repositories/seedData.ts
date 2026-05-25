@@ -69,17 +69,17 @@ function normalizeCategory(raw: string): string {
 const FALLBACK_MUSCLE_GROUPS: JsonMuscleGroup[] = [
   { id: 'a1b2c3d4-0001-4000-8000-000000000001', name: 'Chest', displayNameEs: 'Pecho', color: '#EF4444' },
   { id: 'a1b2c3d4-0001-4000-8000-000000000002', name: 'Back', displayNameEs: 'Espalda', color: '#3B82F6' },
-  { id: 'a1b2c3d4-0001-4000-8000-000000000003', name: 'Shoulders', displayNameEs: 'Hombros', color: '#F59E0B' },
-  { id: 'a1b2c3d4-0001-4000-8000-000000000004', name: 'Biceps', displayNameEs: 'Biceps', color: '#8B5CF6' },
-  { id: 'a1b2c3d4-0001-4000-8000-000000000005', name: 'Triceps', displayNameEs: 'Triceps', color: '#EC4899' },
-  { id: 'a1b2c3d4-0001-4000-8000-000000000006', name: 'Forearms', displayNameEs: 'Antebrazos', color: '#14B8A6' },
-  { id: 'a1b2c3d4-0001-4000-8000-000000000007', name: 'Abs', displayNameEs: 'Abdominales', color: '#F97316' },
-  { id: 'a1b2c3d4-0001-4000-8000-000000000008', name: 'Quads', displayNameEs: 'Cuadriceps', color: '#22C55E' },
-  { id: 'a1b2c3d4-0001-4000-8000-000000000009', name: 'Hamstrings', displayNameEs: 'Isquiotibiales', color: '#6366F1' },
-  { id: 'a1b2c3d4-0001-4000-8000-00000000000a', name: 'Glutes', displayNameEs: 'Gluteos', color: '#A855F7' },
-  { id: 'a1b2c3d4-0001-4000-8000-00000000000b', name: 'Calves', displayNameEs: 'Gemelos', color: '#84CC16' },
+  { id: 'a1b2c3d4-0001-4000-8000-000000000003', name: 'Shoulders', displayNameEs: 'Hombros', color: '#F97316' },
+  { id: 'a1b2c3d4-0001-4000-8000-000000000004', name: 'Biceps', displayNameEs: 'Biceps', color: '#22C55E' },
+  { id: 'a1b2c3d4-0001-4000-8000-000000000005', name: 'Triceps', displayNameEs: 'Triceps', color: '#A855F7' },
+  { id: 'a1b2c3d4-0001-4000-8000-000000000006', name: 'Forearms', displayNameEs: 'Antebrazos', color: '#EC4899' },
+  { id: 'a1b2c3d4-0001-4000-8000-000000000007', name: 'Abs', displayNameEs: 'Abdominales', color: '#FBBF24' },
+  { id: 'a1b2c3d4-0001-4000-8000-000000000008', name: 'Quads', displayNameEs: 'Cuadriceps', color: '#06B6D4' },
+  { id: 'a1b2c3d4-0001-4000-8000-000000000009', name: 'Hamstrings', displayNameEs: 'Isquiotibiales', color: '#84CC16' },
+  { id: 'a1b2c3d4-0001-4000-8000-00000000000a', name: 'Glutes', displayNameEs: 'Gluteos', color: '#EAB308' },
+  { id: 'a1b2c3d4-0001-4000-8000-00000000000b', name: 'Calves', displayNameEs: 'Gemelos', color: '#14B8A6' },
   { id: 'a1b2c3d4-0001-4000-8000-00000000000c', name: 'Full Body', displayNameEs: 'Cuerpo Completo', color: '#6B7280' },
-  { id: 'a1b2c3d4-0001-4000-8000-00000000000d', name: 'Cardio', displayNameEs: 'Cardio', color: '#0EA5E9' },
+  { id: 'a1b2c3d4-0001-4000-8000-00000000000d', name: 'Cardio', displayNameEs: 'Cardio', color: '#F472B6' },
 ];
 
 const FALLBACK_EXERCISES: JsonExercise[] = [

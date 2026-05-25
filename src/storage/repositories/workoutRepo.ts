@@ -10,10 +10,15 @@ import type {
   Routine,
   RoutineDay,
   SetType,
+  SQLiteBoolean,
   PersonalRecordType,
 } from '@/domain/entities';
 import type { SQLiteDatabase } from 'expo-sqlite';
 import { generateId } from '@/utils/id';
+
+export type PersonalRecordWithExerciseName = PersonalRecord & {
+  exercise_name: string;
+};
 
 export class WorkoutRepo {
   private db: SQLiteDatabase;
@@ -365,6 +370,53 @@ export class WorkoutRepo {
     }
   }
 
+  async getExerciseSetHistory(
+    exerciseId: string,
+  ): Promise<
+    {
+      id: string;
+      workout_exercise_id: string;
+      set_number: number;
+      weight: number;
+      reps: number;
+      set_type: SetType;
+      is_completed: SQLiteBoolean;
+      completed_at: string | null;
+      notes: string | null;
+      session_id: string;
+      started_at: string;
+    }[]
+  > {
+    try {
+      return await this.db.getAllAsync<{
+        id: string;
+        workout_exercise_id: string;
+        set_number: number;
+        weight: number;
+        reps: number;
+        set_type: SetType;
+        is_completed: SQLiteBoolean;
+        completed_at: string | null;
+        notes: string | null;
+        session_id: string;
+        started_at: string;
+      }>(
+        `SELECT sl.*, ws.id AS session_id, ws.started_at
+         FROM set_logs sl
+         JOIN workout_exercises we ON sl.workout_exercise_id = we.id
+         JOIN workout_sessions ws ON we.workout_session_id = ws.id
+         WHERE we.exercise_id = ? AND sl.is_completed = 1 AND sl.set_type != 'warmup'
+         AND ws.status IN ('completed', 'cancelled')
+         ORDER BY ws.started_at DESC, sl.set_number ASC`,
+        exerciseId,
+      );
+    } catch (error) {
+      throw new Error(
+        `[WorkoutRepo] getExerciseSetHistory(${exerciseId}) failed: ${(error as Error).message}`,
+      );
+    }
+  }
+
   async getLastWorkoutExerciseData(
     exerciseId: string,
   ): Promise<{ weight: number; reps: number } | null> {
@@ -567,10 +619,14 @@ export class WorkoutRepo {
     }
   }
 
-  async getLatestPRs(limit = 10): Promise<PersonalRecord[]> {
+  async getLatestPRs(limit = 10): Promise<PersonalRecordWithExerciseName[]> {
     try {
-      return await this.db.getAllAsync<PersonalRecord>(
-        'SELECT * FROM personal_records ORDER BY achieved_at DESC LIMIT ?',
+      return await this.db.getAllAsync<PersonalRecordWithExerciseName>(
+        `SELECT pr.*, e.name AS exercise_name
+         FROM personal_records pr
+         JOIN exercises e ON pr.exercise_id = e.id
+         ORDER BY pr.achieved_at DESC
+         LIMIT ?`,
         limit,
       );
     } catch (error) {

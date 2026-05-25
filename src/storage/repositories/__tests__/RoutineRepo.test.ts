@@ -531,6 +531,57 @@ describe('RoutineRepo', () => {
     });
   });
 
+  describe('getAllWithDayCount', () => {
+    it('returns active routines with day and exercise counts', async () => {
+      const mock = mockDb();
+      const repo = new RoutineRepo(mock as never);
+
+      const push = { ...makeRoutine({ id: 'r-1', name: 'Push' }), day_count: 2, exercise_count: 8 };
+      const empty = { ...makeRoutine({ id: 'r-2', name: 'Empty', sort_order: 1 }), day_count: 0, exercise_count: 0 };
+
+      mock.setGetAllAsync((sql: string) => {
+        expect(sql).toContain('LEFT JOIN');
+        expect(sql).toContain('day_count');
+        expect(sql).toContain('exercise_count');
+        expect(sql).toContain('r.is_archived = 0');
+        return Promise.resolve([push, empty]);
+      });
+
+      const result = await repo.getAllWithDayCount();
+
+      expect(result).toEqual([push, empty]);
+      expect(result[0].day_count).toBe(2);
+      expect(result[0].exercise_count).toBe(8);
+      expect(result[1].day_count).toBe(0);
+      expect(result[1].exercise_count).toBe(0);
+    });
+
+    it('includes archived routines when requested', async () => {
+      const mock = mockDb();
+      const repo = new RoutineRepo(mock as never);
+
+      const active = { ...makeRoutine({ id: 'r-1' }), day_count: 1, exercise_count: 4 };
+      const archived = {
+        ...makeRoutine({ id: 'r-2', is_archived: 1, sort_order: 1 }),
+        day_count: 3,
+        exercise_count: 12,
+      };
+
+      mock.setGetAllAsync((sql: string) => {
+        expect(sql).toContain('ORDER BY r.sort_order ASC');
+        expect(sql).not.toContain('WHERE r.is_archived = 0');
+        return Promise.resolve([active, archived]);
+      });
+
+      const result = await repo.getAllWithDayCount({ includeArchived: true });
+
+      expect(result).toHaveLength(2);
+      expect(result[1].is_archived).toBe(1);
+      expect(result[1].day_count).toBe(3);
+      expect(result[1].exercise_count).toBe(12);
+    });
+  });
+
   describe('create', () => {
     it('creates routine with UUID and timestamps', async () => {
       const mock = mockDb();

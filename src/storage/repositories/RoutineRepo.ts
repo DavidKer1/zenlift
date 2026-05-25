@@ -10,6 +10,11 @@ import type {
   Exercise,
 } from '@/domain/entities';
 
+export type RoutineWithCounts = Routine & {
+  day_count: number;
+  exercise_count: number;
+};
+
 interface RoutineJoinRow {
   id: string;
   routine_day_id: string;
@@ -131,6 +136,36 @@ export class RoutineRepo {
     }
     return this.db.getAllAsync<Routine>(
       'SELECT * FROM routines WHERE is_archived = 0 ORDER BY sort_order ASC',
+    );
+  }
+
+  async getAllWithDayCount(options?: {
+    includeArchived?: boolean;
+  }): Promise<RoutineWithCounts[]> {
+    const includeArchived = options?.includeArchived ?? false;
+    const archiveFilter = includeArchived ? '' : 'WHERE r.is_archived = 0';
+
+    return this.db.getAllAsync<RoutineWithCounts>(
+      `
+        SELECT
+          r.*,
+          COALESCE(day_counts.day_count, 0) AS day_count,
+          COALESCE(exercise_counts.exercise_count, 0) AS exercise_count
+        FROM routines r
+        LEFT JOIN (
+          SELECT routine_id, COUNT(*) AS day_count
+          FROM routine_days
+          GROUP BY routine_id
+        ) day_counts ON day_counts.routine_id = r.id
+        LEFT JOIN (
+          SELECT rd.routine_id, COUNT(re.id) AS exercise_count
+          FROM routine_days rd
+          LEFT JOIN routine_exercises re ON re.routine_day_id = rd.id
+          GROUP BY rd.routine_id
+        ) exercise_counts ON exercise_counts.routine_id = r.id
+        ${archiveFilter}
+        ORDER BY r.sort_order ASC
+      `,
     );
   }
 
