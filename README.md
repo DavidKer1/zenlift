@@ -48,6 +48,14 @@ To learn more about developing your project with Expo, look at the following res
 - [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
 - [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
 
+## Knowledge Graph
+
+This project includes a [graphify](https://github.com/ai-ng/graphify) knowledge graph for codebase navigation. The graph maps 726 nodes across 55 communities, covering domain entities, repositories, UI components, and calculation services.
+
+- **Interactive graph:** open `.graphify/graph.html` in any browser
+- **Audit report:** `.graphify/GRAPH_REPORT.md`
+- **Rebuild:** run `/graphify src` in Claude Code or `graphify src` in the terminal
+
 ## Join the community
 
 Join our community of developers creating universal apps.

@@ -1,0 +1,354 @@
+{
+  "/Users/victorsanchez/Documents/portfolio/projects/zenlift/src/app/_layout.tsx": {
+    "mtime": 1779672234472.6917,
+    "hash": "f52e0730bfff1296bb4825244fe65d46"
+  },
+  "/Users/victorsanchez/Documents/portfolio/projects/zenlift/src/app/exercise/[id].tsx": {
+    "mtime": 1779672895024.4905,
+    "hash": "e4e2b709ab3437f6ec51cc827d366e2e"
+  },
+  "/Users/victorsanchez/Documents/portfolio/projects/zenlift/src/app/exercise/index.tsx": {
+    "mtime": 1779671247383.1296,
+    "hash": "09dfd5a8a93ef6c36fe0674ff77895b1"
+  },
+  "/Users/victorsanchez/Documents/portfolio/projects/zenlift/src/app/history.tsx": {
+    "mtime": 1779657071739.5693,
+    "hash": "73fbd8c0b67b0dfd2a119296ba25c6b7"
+  },
+  "/Users/victorsanchez/Documents/portfolio/projects/zenlift/src/app/index.tsx": {
+    "mtime": 1779670906642.5757,
+    "hash": "44e30f31d9d2ec26d11151e892773e37"
+  },
+  "/Users/victorsanchez/Documents/portfolio/projects/zenlift/src/app/onboarding.tsx": {
+    "mtime": 1779672215790.6382,
+    "hash": "c18f07e1171df29ad50674dc11e26b6e"
+  },
+  "/Users/victorsanchez/Documents/portfolio/projects/zenlift/src/app/routine/[id].tsx": {
+    "mtime": 1779672871323.5603,
+    "hash": "b449dc644316bdaf50b3f56fce5b17b4"
+  },
+  "/Users/victorsanchez/Documents/portfolio/projects/zenlift/src/app/routine/create.tsx": {
+    "mtime": 1779671272721.558,
+    "hash": "d24d59cae2823af222c47751c8a5898a"
+  },
+  "/Users/victorsanchez/Documents/portfolio/projects/zenlift/src/app/routine/edit/[id].tsx": {
+    "mtime": 1779672873603.7979,
+    "hash": "5f11860665f671b788bb4e284b4e30fa"
+  },
+  "/Users/victorsanchez/Documents/portfolio/projects/zenlift/src/app/routines.tsx": {
+    "mtime": 1779672315153.9326,
+    "hash": "810a5bdd0afa9832cb9e6f23d23d87f6"
+  },
+  "/Users/victorsanchez/Documents/portfolio/projects/zenlift/src/app/settings.tsx": {
+    "mtime": 1779672767706.4993,
+    "hash": "b9d7f9d63fb293ed32bfb9cb41ef4a80"
+  },
+  "/Users/victorsanchez/Documents/portfolio/projects/zenlift/src/components/animated-icon.tsx": {
+    "mtime": 1778979426253.3198,
+    "hash": "59f1e91a2dce968f82121c4deed4c63e"
+  },
+  "/Users/victorsanchez/Documents/portfolio/projects/zenlift/src/components/animated-icon.web.tsx": {
+    "mtime": 1778979426253.4143,
+    "hash": "2defa175163e104a6e2232436fa77e30"
+  },
+  "/Users/victorsanchez/Documents/portfolio/projects/zenlift/src/components/app-tabs.tsx": {
+    "mtime": 1779657097629.3975,
+    "hash": "4fbf89701b4d48a6703f23991ac57e95"
+  },
+  "/Users/victorsanchez/Documents/portfolio/projects/zenlift/src/components/charts/ProgressChart.tsx": {
+    "mtime": 1779672212393.3992,
+    "hash": "ac21230f625e48d729b9a121b529a55c"
+  },
+  "/Users/victorsanchez/Documents/portfolio/projects/zenlift/src/components/exercise/BestPerformanceCard.tsx": {
+    "mtime": 1779672178187.874,
+    "hash": "54ef21f02efb8e47bdedc31e991e1bd5"
+  },
+  "/Users/victorsanchez/Documents/portfolio/projects/zenlift/src/components/exercise/ExercisePRList.tsx": {
+    "mtime": 1779672202969.6868,
+    "hash": "dfbe0beb3bbe6dab837b3440d6d2a935"
+  },
+  "/Users/victorsanchez/Documents/portfolio/projects/zenlift/src/components/exercise/RecentHistoryList.tsx": {
+    "mtime": 1779672189296.2092,
+    "hash": "caa9db246350a05a755bad1a827aadc3"
+  },
+  "/Users/victorsanchez/Documents/portfolio/projects/zenlift/src/components/external-link.tsx": {
+    "mtime": 1778979426254.0251,
+    "hash": "a71bdc8e0bd55812a1e97662ade442d1"
+  },
+  "/Users/victorsanchez/Documents/portfolio/projects/zenlift/src/components/hint-row.tsx": {
+    "mtime": 1778979426254.1365,
+    "hash": "ee6a0915fb6e06b31bfff82c50a6621a"
+  },
+  "/Users/victorsanchez/Documents/portfolio/projects/zenlift/src/components/home/CurrentRoutineCard.tsx": {
+    "mtime": 1779672787007.9211,
+    "hash": "e49ddcf30ef96d86676c6db2182da2d1"
+  },
+  "/Users/victorsanchez/Documents/portfolio/projects/zenlift/src/components/home/Greeting.tsx": {
+    "mtime": 1779670854558.9,
+    "hash": "c72fd194cf81ade256f6987a02c25930"
+  },
+  "/Users/victorsanchez/Documents/portfolio/projects/zenlift/src/components/home/LastWorkoutCard.tsx": {
+    "mtime": 1779671187539.1243,
+    "hash": "7c34c9a0674f20d3babc2f5a291ffe99"
+  },
+  "/Users/victorsanchez/Documents/portfolio/projects/zenlift/src/components/home/RecentPRsCard.tsx": {
+    "mtime": 1779670949182.189,
+    "hash": "97b25fc2f917192aa8c87ae038cce47d"
+  },
+  "/Users/victorsanchez/Documents/portfolio/projects/zenlift/src/components/home/StartWorkoutButton.tsx": {
+    "mtime": 1779672788315.862,
+    "hash": "671ed4a5034b438745f94448596e949c"
+  },
+  "/Users/victorsanchez/Documents/portfolio/projects/zenlift/src/components/home/WeeklyActivityCard.tsx": {
+    "mtime": 1779670854560.1104,
+    "hash": "d497c3265506f59e4e2980bbf021cfd5"
+  },
+  "/Users/victorsanchez/Documents/portfolio/projects/zenlift/src/components/routine/DayEditor.tsx": {
+    "mtime": 1779671064152.152,
+    "hash": "263852741f39c2b330ae3d007b82486b"
+  },
+  "/Users/victorsanchez/Documents/portfolio/projects/zenlift/src/components/routine/DaySection.tsx": {
+    "mtime": 1779672214910.419,
+    "hash": "89dbbc47ddb30cae2c28fb1502b7ea7e"
+  },
+  "/Users/victorsanchez/Documents/portfolio/projects/zenlift/src/components/routine/EmptyState.tsx": {
+    "mtime": 1779672829195.394,
+    "hash": "53b0dd054885720001601c995bd31f02"
+  },
+  "/Users/victorsanchez/Documents/portfolio/projects/zenlift/src/components/routine/ExerciseConfigurator.tsx": {
+    "mtime": 1779672843749.534,
+    "hash": "0deb66adc5b66b94faddf7b5ed57729b"
+  },
+  "/Users/victorsanchez/Documents/portfolio/projects/zenlift/src/components/routine/ExercisePicker.tsx": {
+    "mtime": 1779672849906.9453,
+    "hash": "c28ac0e35a56b0d792d2f1d3a75e7b61"
+  },
+  "/Users/victorsanchez/Documents/portfolio/projects/zenlift/src/components/routine/ExerciseRow.tsx": {
+    "mtime": 1779672190575.161,
+    "hash": "947a2e8cd54999f2a779d639fb9663cf"
+  },
+  "/Users/victorsanchez/Documents/portfolio/projects/zenlift/src/components/routine/MuscleDot.tsx": {
+    "mtime": 1779672144674.6409,
+    "hash": "7a485618660de208d2f2ad173e891a72"
+  },
+  "/Users/victorsanchez/Documents/portfolio/projects/zenlift/src/components/routine/RoutineCard.tsx": {
+    "mtime": 1779672836294.1802,
+    "hash": "14633a0d9b72b85fdf55e221b8a861ba"
+  },
+  "/Users/victorsanchez/Documents/portfolio/projects/zenlift/src/components/routine/RoutineForm.tsx": {
+    "mtime": 1779672823174.7192,
+    "hash": "272a25d27d0f16f0a8aa417e818cd619"
+  },
+  "/Users/victorsanchez/Documents/portfolio/projects/zenlift/src/components/routine/RoutineHeader.tsx": {
+    "mtime": 1779672285763.4487,
+    "hash": "f4b9ad44fb763848a9c85043babb1fe2"
+  },
+  "/Users/victorsanchez/Documents/portfolio/projects/zenlift/src/components/routine/StartWorkoutButton.tsx": {
+    "mtime": 1779672814328.0593,
+    "hash": "3f32916f811770f97b3b9ca2a6878e9a"
+  },
+  "/Users/victorsanchez/Documents/portfolio/projects/zenlift/src/components/routine/SuggestedTemplates.tsx": {
+    "mtime": 1779671015146.2183,
+    "hash": "6e26972e3a2d661030f665dc65b9b721"
+  },
+  "/Users/victorsanchez/Documents/portfolio/projects/zenlift/src/components/themed-text.tsx": {
+    "mtime": 1779656913132.1306,
+    "hash": "9579546e1d7a36d25fd79a92d5751ea2"
+  },
+  "/Users/victorsanchez/Documents/portfolio/projects/zenlift/src/components/themed-view.tsx": {
+    "mtime": 1779656907366.2158,
+    "hash": "629f03b4b5d382d9e0420e822b24b53f"
+  },
+  "/Users/victorsanchez/Documents/portfolio/projects/zenlift/src/components/ui/ExerciseCard.tsx": {
+    "mtime": 1779672806356.038,
+    "hash": "e0233aeb24a94885aaf9cb0bc5782d1f"
+  },
+  "/Users/victorsanchez/Documents/portfolio/projects/zenlift/src/components/ui/FAB.tsx": {
+    "mtime": 1779672790922.9075,
+    "hash": "e41895ecea04d32a95680b8b8539a2dc"
+  },
+  "/Users/victorsanchez/Documents/portfolio/projects/zenlift/src/components/ui/FilterChip.tsx": {
+    "mtime": 1779672792395.4802,
+    "hash": "e5638ec26e58bde55159496c79a36057"
+  },
+  "/Users/victorsanchez/Documents/portfolio/projects/zenlift/src/components/ui/MuscleBadge.tsx": {
+    "mtime": 1779672789737.5447,
+    "hash": "b7281a3f5cb7886ebb087f6f4e36ac6f"
+  },
+  "/Users/victorsanchez/Documents/portfolio/projects/zenlift/src/components/ui/SearchBar.tsx": {
+    "mtime": 1779670886400.2136,
+    "hash": "ce854e2ff28e63add456203345571ce3"
+  },
+  "/Users/victorsanchez/Documents/portfolio/projects/zenlift/src/components/ui/collapsible.tsx": {
+    "mtime": 1778979426253.8044,
+    "hash": "24105f00e6631a1cb1daeaef9d4aa808"
+  },
+  "/Users/victorsanchez/Documents/portfolio/projects/zenlift/src/components/web-badge.tsx": {
+    "mtime": 1778979426254.5923,
+    "hash": "f87b4ccdf60d257a6ee5da3e48b04e6d"
+  },
+  "/Users/victorsanchez/Documents/portfolio/projects/zenlift/src/constants/theme.ts": {
+    "mtime": 1778979426252.7588,
+    "hash": "9507bd7aa3ee042af2ad8a99ebbaa8b6"
+  },
+  "/Users/victorsanchez/Documents/portfolio/projects/zenlift/src/domain/calculations/__tests__/oneRM.test.ts": {
+    "mtime": 1779666035262.557,
+    "hash": "6fc121f608f222916e82da6450005371"
+  },
+  "/Users/victorsanchez/Documents/portfolio/projects/zenlift/src/domain/calculations/__tests__/volume.test.ts": {
+    "mtime": 1779666110370.8506,
+    "hash": "c494b3ab479125af9c2305e1a8fd5c43"
+  },
+  "/Users/victorsanchez/Documents/portfolio/projects/zenlift/src/domain/calculations/oneRM.ts": {
+    "mtime": 1779665995232.8186,
+    "hash": "68dc272deeb8c1e46f629460733a3ded"
+  },
+  "/Users/victorsanchez/Documents/portfolio/projects/zenlift/src/domain/calculations/volume.ts": {
+    "mtime": 1779666010117.7046,
+    "hash": "06652a471f27e2a3d35844c85a420090"
+  },
+  "/Users/victorsanchez/Documents/portfolio/projects/zenlift/src/domain/entities/index.ts": {
+    "mtime": 1779656822983.4858,
+    "hash": "b6ac557905d0dcbbed0a01d72d123e52"
+  },
+  "/Users/victorsanchez/Documents/portfolio/projects/zenlift/src/domain/services/__tests__/exerciseStats.test.ts": {
+    "mtime": 1779672157983.3767,
+    "hash": "cae447bd09e3e184160be52dae890aee"
+  },
+  "/Users/victorsanchez/Documents/portfolio/projects/zenlift/src/domain/services/__tests__/prDetection.test.ts": {
+    "mtime": 1779666435885.4192,
+    "hash": "d185bb558c27a00e790c136a49be8c74"
+  },
+  "/Users/victorsanchez/Documents/portfolio/projects/zenlift/src/domain/services/exerciseStats.ts": {
+    "mtime": 1779672132508.059,
+    "hash": "7774f57b7432f07c616888b3ee972fdf"
+  },
+  "/Users/victorsanchez/Documents/portfolio/projects/zenlift/src/domain/services/prDetection.ts": {
+    "mtime": 1779666454237.8665,
+    "hash": "c27802421f53a7375c58c063b7a1277e"
+  },
+  "/Users/victorsanchez/Documents/portfolio/projects/zenlift/src/features/exercises/ExerciseFormModal.tsx": {
+    "mtime": 1779671931736.043,
+    "hash": "03dcc5d21f6dc7700818d59b932cdea4"
+  },
+  "/Users/victorsanchez/Documents/portfolio/projects/zenlift/src/features/onboarding/OnboardingScreen.tsx": {
+    "mtime": 1779672899203.7654,
+    "hash": "3d12f892771ca8b99673de33c67b6bb3"
+  },
+  "/Users/victorsanchez/Documents/portfolio/projects/zenlift/src/features/routine/routineFormMapping.ts": {
+    "mtime": 1779670882558.133,
+    "hash": "fce77718eef0c83a2ac66692a306d6c1"
+  },
+  "/Users/victorsanchez/Documents/portfolio/projects/zenlift/src/features/routine/routineFormPersistence.ts": {
+    "mtime": 1779671468811.9844,
+    "hash": "9a5280801667ccc2d75c670285460408"
+  },
+  "/Users/victorsanchez/Documents/portfolio/projects/zenlift/src/features/routine/routineFormSchema.test.ts": {
+    "mtime": 1779670882558.6218,
+    "hash": "791c1ea8969786d6713df27ed5e6e341"
+  },
+  "/Users/victorsanchez/Documents/portfolio/projects/zenlift/src/features/routine/routineFormSchema.ts": {
+    "mtime": 1779671294485.8735,
+    "hash": "fddfdc8d65521c950c062cd5e59c3d38"
+  },
+  "/Users/victorsanchez/Documents/portfolio/projects/zenlift/src/features/settings/constants.ts": {
+    "mtime": 1779672136822.16,
+    "hash": "54fe2cd6c01988227f9134a124fc6d13"
+  },
+  "/Users/victorsanchez/Documents/portfolio/projects/zenlift/src/features/settings/dataPortability.ts": {
+    "mtime": 1779670928299.3914,
+    "hash": "c2b0ec12108610f6c7efbd1b1e6a20fd"
+  },
+  "/Users/victorsanchez/Documents/portfolio/projects/zenlift/src/features/settings/useSettings.ts": {
+    "mtime": 1779670856120.0422,
+    "hash": "8723df25ada63076e6afe9a924d33264"
+  },
+  "/Users/victorsanchez/Documents/portfolio/projects/zenlift/src/hooks/use-color-scheme.ts": {
+    "mtime": 1778979426252.9053,
+    "hash": "6f3444fcb9c7013a839a7832be518831"
+  },
+  "/Users/victorsanchez/Documents/portfolio/projects/zenlift/src/hooks/use-color-scheme.web.ts": {
+    "mtime": 1778979426252.9998,
+    "hash": "071fbb9a1a05ffb8af4b7d3b1ffa72d6"
+  },
+  "/Users/victorsanchez/Documents/portfolio/projects/zenlift/src/hooks/use-theme.ts": {
+    "mtime": 1779656907365.4458,
+    "hash": "e349109a0e8e05857630ff879bc31e1f"
+  },
+  "/Users/victorsanchez/Documents/portfolio/projects/zenlift/src/providers/ThemeProvider.tsx": {
+    "mtime": 1779656944198.0042,
+    "hash": "726ace9784dba041d7449e2ba6c946b6"
+  },
+  "/Users/victorsanchez/Documents/portfolio/projects/zenlift/src/storage/database/connection.ts": {
+    "mtime": 1779667273453.724,
+    "hash": "ff022a0eee59418d726cd47b2e5ff355"
+  },
+  "/Users/victorsanchez/Documents/portfolio/projects/zenlift/src/storage/database/schema.ts": {
+    "mtime": 1779666019202.6294,
+    "hash": "d98ff78df0dd94529eb754c1d630d4ca"
+  },
+  "/Users/victorsanchez/Documents/portfolio/projects/zenlift/src/storage/migrations/index.ts": {
+    "mtime": 1779666223053.0137,
+    "hash": "9d96e4edf7543943126736e4ebca7146"
+  },
+  "/Users/victorsanchez/Documents/portfolio/projects/zenlift/src/storage/repositories/RoutineRepo.ts": {
+    "mtime": 1779670793864.886,
+    "hash": "2309b5750e9cd1bce385f730b9110739"
+  },
+  "/Users/victorsanchez/Documents/portfolio/projects/zenlift/src/storage/repositories/__tests__/RoutineRepo.test.ts": {
+    "mtime": 1779670808094.9797,
+    "hash": "f83fd860f5de940bfbca302b69c77a20"
+  },
+  "/Users/victorsanchez/Documents/portfolio/projects/zenlift/src/storage/repositories/__tests__/exerciseRepo.test.ts": {
+    "mtime": 1779666851285.3364,
+    "hash": "9eba8c01491108b071a0511582371dff"
+  },
+  "/Users/victorsanchez/Documents/portfolio/projects/zenlift/src/storage/repositories/__tests__/muscleGroupRepo.test.ts": {
+    "mtime": 1779666790996.6292,
+    "hash": "e1659d0dededdccfc4dc8c2bc93231dd"
+  },
+  "/Users/victorsanchez/Documents/portfolio/projects/zenlift/src/storage/repositories/__tests__/seedData.test.ts": {
+    "mtime": 1779667421872.198,
+    "hash": "7d10cb8bf70a181f77c5d985ec227e92"
+  },
+  "/Users/victorsanchez/Documents/portfolio/projects/zenlift/src/storage/repositories/exerciseRepo.ts": {
+    "mtime": 1779666847882.617,
+    "hash": "42a394154c635dab65757970289678c8"
+  },
+  "/Users/victorsanchez/Documents/portfolio/projects/zenlift/src/storage/repositories/muscleGroupRepo.ts": {
+    "mtime": 1779666709113.812,
+    "hash": "7126e0362f10139ce503ccc1ca449f25"
+  },
+  "/Users/victorsanchez/Documents/portfolio/projects/zenlift/src/storage/repositories/seedData.ts": {
+    "mtime": 1779672925571.2305,
+    "hash": "4613648bcae602c1c8c0a88672ba75b6"
+  },
+  "/Users/victorsanchez/Documents/portfolio/projects/zenlift/src/storage/repositories/workoutRepo.ts": {
+    "mtime": 1779672378727.3916,
+    "hash": "d04eb3040659c6d486625004fc0c94ee"
+  },
+  "/Users/victorsanchez/Documents/portfolio/projects/zenlift/src/theme/index.ts": {
+    "mtime": 1779671894767.6094,
+    "hash": "77f1c827cc540bb4f8e5ff14844db034"
+  },
+  "/Users/victorsanchez/Documents/portfolio/projects/zenlift/src/theme/muscleColors.ts": {
+    "mtime": 1779656892851.169,
+    "hash": "2e0d54a04365b4b4a87750382e4ff240"
+  },
+  "/Users/victorsanchez/Documents/portfolio/projects/zenlift/src/utils/id.test.ts": {
+    "mtime": 1779656844138.902,
+    "hash": "d09485d59932569bae77d190670332ba"
+  },
+  "/Users/victorsanchez/Documents/portfolio/projects/zenlift/src/utils/id.ts": {
+    "mtime": 1779656844138.1045,
+    "hash": "7e916cad859689851cbec530369646b0"
+  },
+  "/Users/victorsanchez/Documents/portfolio/projects/zenlift/src/utils/units.test.ts": {
+    "mtime": 1779666004497.1528,
+    "hash": "a8d3a3058a105c12c0247dfed001f406"
+  },
+  "/Users/victorsanchez/Documents/portfolio/projects/zenlift/src/utils/units.ts": {
+    "mtime": 1779665953393.0605,
+    "hash": "58ca9e98ccbbd8893187419b17bbe7f3"
+  }
+}

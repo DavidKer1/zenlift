@@ -63,3 +63,13 @@ If the installed Expo SDK differs from this instruction, verify the installed ve
 - Capture failures with reproducible steps, the URL, visible error text, and a screenshot when possible.
 - Do not treat `agent-browser` as a replacement for Jest, typecheck, SQLite repository tests, or Android physical-device validation.
 - Still test on Android hardware for keyboard ergonomics, haptics, offline behavior, performance, and active-session recovery.
+
+## Graphify
+
+This project maintains a graphify knowledge graph under `.graphify/`. Before answering architecture or codebase questions, check `.graphify/GRAPH_REPORT.md` and `.graphify/graph.json` — the graph may already have the answer at lower token cost than reading raw files.
+
+- **Graph exists at** `.graphify/graph.json` (726 nodes, 952 edges, 55 communities).
+- **Rebuild after significant code changes:** run `/graphify src` to refresh AST extraction. No LLM needed for code-only rebuilds.
+- **Query the graph:** use `/graphify query "<question>"` to traverse the graph instead of searching raw files.
+- **Never commit** `.graphify/branch.json`, `.graphify/worktree.json`, `.graphify/needs_update`, or `.graphify/cache/` (gitignored).
+- If `.graphify/needs_update` exists or the graph is stale, warn the user and suggest a rebuild before relying on semantic results.

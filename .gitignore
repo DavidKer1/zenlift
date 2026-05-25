@@ -45,3 +45,15 @@ app-example
 
 tmp/
 coverage/
+
+# Graphify (knowledge graph)
+.graphify/branch.json
+.graphify/worktree.json
+.graphify/needs_update
+*/.graphify/cache/
+.graphify/cost.json
+.graphify/.graphify_*
+.graphify/transcripts/
+.graphify/converted/
+.graphify/obsidian/
+.graphify/memory/
