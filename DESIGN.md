@@ -1,567 +1,186 @@
 ---
-version: alpha
-name: Zenlift-design-system
-description: A bold, athletic workout tracker with dark-first canvas and vibrant orange (`#F97316`) as the primary action color. The design uses system UI fonts at clean weights, glassmorphism cards for depth, and gradient hero sections for premium visual impact.
+name: Zenlift
 colors:
-   primary: "#F97316"
-   primary-active: "#EA580C"
-   primary-disabled: "#8B5E3C"
-   ink: "#0A0B0D"
-   body: "#A8ACB3"
-   body-strong: "#FFFFFF"
-   muted: "#7C828A"
-   muted-soft: "#5B616E"
-   hairline: "#374151"
-   hairline-soft: "#1E2026"
-   canvas: "#0A0B0D"
-   surface-soft: "#16181C"
-   surface-card: "#16181C"
-   surface-glass: "rgba(22, 24, 28, 0.85)"
-   border-glass: "rgba(255, 255, 255, 0.10)"
-   surface-strong: "#1E2026"
-   surface-dark: "#0A0B0D"
-   surface-dark-elevated: "#16181C"
-   on-primary: "#FFFFFF"
-   on-dark: "#FFFFFF"
-   on-dark-soft: "#A8ACB3"
-   semantic-up: "#05B169"
-   semantic-down: "#CF202F"
-   accent-yellow: "#F4B000"
-
+  surface: '#141218'
+  surface-dim: '#141218'
+  surface-bright: '#3b383e'
+  surface-container-lowest: '#0f0d13'
+  surface-container-low: '#1d1b20'
+  surface-container: '#211f24'
+  surface-container-high: '#2b292f'
+  surface-container-highest: '#36343a'
+  on-surface: '#e6e0e9'
+  on-surface-variant: '#cbc4d2'
+  inverse-surface: '#e6e0e9'
+  inverse-on-surface: '#322f35'
+  outline: '#948e9c'
+  outline-variant: '#494551'
+  surface-tint: '#cfbcff'
+  primary: '#cfbcff'
+  on-primary: '#381e72'
+  primary-container: '#6750a4'
+  on-primary-container: '#e0d2ff'
+  inverse-primary: '#6750a4'
+  secondary: '#cdc0e9'
+  on-secondary: '#342b4b'
+  secondary-container: '#4d4465'
+  on-secondary-container: '#bfb2da'
+  tertiary: '#e7c365'
+  on-tertiary: '#3e2e00'
+  tertiary-container: '#c9a74d'
+  on-tertiary-container: '#503d00'
+  error: '#ffb4ab'
+  on-error: '#690005'
+  error-container: '#93000a'
+  on-error-container: '#ffdad6'
+  primary-fixed: '#e9ddff'
+  primary-fixed-dim: '#cfbcff'
+  on-primary-fixed: '#22005d'
+  on-primary-fixed-variant: '#4f378a'
+  secondary-fixed: '#e9ddff'
+  secondary-fixed-dim: '#cdc0e9'
+  on-secondary-fixed: '#1f1635'
+  on-secondary-fixed-variant: '#4b4263'
+  tertiary-fixed: '#ffdf93'
+  tertiary-fixed-dim: '#e7c365'
+  on-tertiary-fixed: '#241a00'
+  on-tertiary-fixed-variant: '#594400'
+  background: '#141218'
+  on-background: '#e6e0e9'
+  surface-variant: '#36343a'
 typography:
-   display:
-      fontFamily: "System, -apple-system, 'Segoe UI', Roboto, sans-serif"
-      fontSize: 48px
-      fontWeight: 400
-      lineHeight: 1.08
-      letterSpacing: -2px
-   titleLg:
-      fontFamily: "System, -apple-system, 'Segoe UI', Roboto, sans-serif"
-      fontSize: 32px
-      fontWeight: 400
-      lineHeight: 1.13
-      letterSpacing: -0.4px
-   titleMd:
-      fontFamily: "System, -apple-system, 'Segoe UI', Roboto, sans-serif"
-      fontSize: 18px
-      fontWeight: 600
-      lineHeight: 1.33
-      letterSpacing: 0
-   titleSm:
-      fontFamily: "System, -apple-system, 'Segoe UI', Roboto, sans-serif"
-      fontSize: 16px
-      fontWeight: 600
-      lineHeight: 1.25
-      letterSpacing: 0
-   bodyMd:
-      fontFamily: "System, -apple-system, 'Segoe UI', Roboto, sans-serif"
-      fontSize: 16px
-      fontWeight: 400
-      lineHeight: 1.5
-      letterSpacing: 0
-   bodyStrong:
-      fontFamily: "System, -apple-system, 'Segoe UI', Roboto, sans-serif"
-      fontSize: 16px
-      fontWeight: 700
-      lineHeight: 1.5
-      letterSpacing: 0
-   bodySm:
-      fontFamily: "System, -apple-system, 'Segoe UI', Roboto, sans-serif"
-      fontSize: 14px
-      fontWeight: 400
-      lineHeight: 1.5
-      letterSpacing: 0
-   caption:
-      fontFamily: "System, -apple-system, 'Segoe UI', Roboto, sans-serif"
-      fontSize: 13px
-      fontWeight: 400
-      lineHeight: 1.38
-      letterSpacing: 0
-      lineHeight: 1.5
-      letterSpacing: 0
-   caption-strong:
-      fontFamily: "'Coinbase Sans', sans-serif"
-      fontSize: 12px
-      fontWeight: 600
-      lineHeight: 1.5
-      letterSpacing: 0
-   number-display:
-      fontFamily: "'Coinbase Mono', 'Coinbase Sans', monospace"
-      fontSize: 18px
-      fontWeight: 500
-      lineHeight: 1.4
-      letterSpacing: 0
-   button:
-      fontFamily: "'Coinbase Sans', sans-serif"
-      fontSize: 16px
-      fontWeight: 600
-      lineHeight: 1.15
-      letterSpacing: 0
-   nav-link:
-      fontFamily: "'Coinbase Sans', sans-serif"
-      fontSize: 14px
-      fontWeight: 500
-      lineHeight: 1.4
-      letterSpacing: 0
-
+  display-lg:
+    fontFamily: Inter
+    fontSize: 40px
+    fontWeight: '700'
+    lineHeight: '1.1'
+    letterSpacing: -0.02em
+  headline-lg:
+    fontFamily: Inter
+    fontSize: 32px
+    fontWeight: '600'
+    lineHeight: '1.2'
+    letterSpacing: -0.02em
+  headline-lg-mobile:
+    fontFamily: Inter
+    fontSize: 28px
+    fontWeight: '600'
+    lineHeight: '1.2'
+    letterSpacing: -0.01em
+  headline-md:
+    fontFamily: Inter
+    fontSize: 20px
+    fontWeight: '600'
+    lineHeight: '1.3'
+    letterSpacing: -0.01em
+  body-lg:
+    fontFamily: Inter
+    fontSize: 16px
+    fontWeight: '400'
+    lineHeight: '1.5'
+    letterSpacing: '0'
+  body-md:
+    fontFamily: Inter
+    fontSize: 14px
+    fontWeight: '400'
+    lineHeight: '1.5'
+    letterSpacing: '0'
+  data-lg:
+    fontFamily: JetBrains Mono
+    fontSize: 24px
+    fontWeight: '500'
+    lineHeight: '1.2'
+    letterSpacing: -0.02em
+  data-md:
+    fontFamily: JetBrains Mono
+    fontSize: 14px
+    fontWeight: '500'
+    lineHeight: '1.4'
+    letterSpacing: '0'
+  label-caps:
+    fontFamily: Inter
+    fontSize: 12px
+    fontWeight: '600'
+    lineHeight: '1'
+    letterSpacing: 0.05em
 rounded:
-   none: 0px
-   xs: 4px
-   sm: 8px
-   md: 12px
-   lg: 16px
-   xl: 24px
-   pill: 100px
-   full: 9999px
-
+  sm: 0.25rem
+  DEFAULT: 0.5rem
+  md: 0.75rem
+  lg: 1rem
+  xl: 1.5rem
+  full: 9999px
 spacing:
-   xxs: 4px
-   xs: 8px
-   sm: 12px
-   base: 16px
-   md: 20px
-   lg: 24px
-   xl: 32px
-   xxl: 48px
-   section: 96px
-
-components:
-   top-nav-light:
-      backgroundColor: "{colors.canvas}"
-      textColor: "{colors.ink}"
-      typography: "{typography.nav-link}"
-      height: 64px
-   top-nav-on-dark:
-      backgroundColor: "{colors.surface-dark}"
-      textColor: "{colors.on-dark}"
-      typography: "{typography.nav-link}"
-      height: 64px
-   button-primary:
-      backgroundColor: "{colors.primary}"
-      textColor: "{colors.on-primary}"
-      typography: "{typography.button}"
-      rounded: "{rounded.pill}"
-      padding: 12px 20px
-      height: 44px
-   button-primary-active:
-      backgroundColor: "{colors.primary-active}"
-      textColor: "{colors.on-primary}"
-      rounded: "{rounded.pill}"
-   button-primary-disabled:
-      backgroundColor: "{colors.primary-disabled}"
-      textColor: "{colors.on-primary}"
-      rounded: "{rounded.pill}"
-   button-secondary-light:
-      backgroundColor: "{colors.surface-strong}"
-      textColor: "{colors.ink}"
-      typography: "{typography.button}"
-      rounded: "{rounded.pill}"
-      padding: 12px 20px
-      height: 44px
-   button-secondary-dark:
-      backgroundColor: "{colors.surface-dark-elevated}"
-      textColor: "{colors.on-dark}"
-      typography: "{typography.button}"
-      rounded: "{rounded.pill}"
-      padding: 12px 20px
-      height: 44px
-   button-outline-on-dark:
-      backgroundColor: transparent
-      textColor: "{colors.on-dark}"
-      typography: "{typography.button}"
-      rounded: "{rounded.pill}"
-      padding: 11px 19px
-      height: 44px
-   button-tertiary-text:
-      backgroundColor: transparent
-      textColor: "{colors.primary}"
-      typography: "{typography.button}"
-   button-pill-cta:
-      backgroundColor: "{colors.primary}"
-      textColor: "{colors.on-primary}"
-      typography: "{typography.button}"
-      rounded: "{rounded.pill}"
-      padding: 16px 32px
-      height: 56px
-   hero-band-dark:
-      backgroundColor: "{colors.surface-dark}"
-      textColor: "{colors.on-dark}"
-      typography: "{typography.display-mega}"
-      padding: 96px
-   hero-band-light:
-      backgroundColor: "{colors.canvas}"
-      textColor: "{colors.ink}"
-      typography: "{typography.display-mega}"
-      padding: 96px
-   product-ui-card-dark:
-      backgroundColor: "{colors.surface-dark-elevated}"
-      textColor: "{colors.on-dark}"
-      rounded: "{rounded.xl}"
-      padding: 32px
-   product-ui-card-light:
-      backgroundColor: "{colors.canvas}"
-      textColor: "{colors.ink}"
-      rounded: "{rounded.xl}"
-      padding: 32px
-   feature-card:
-      backgroundColor: "{colors.canvas}"
-      textColor: "{colors.ink}"
-      typography: "{typography.title-md}"
-      rounded: "{rounded.xl}"
-      padding: 32px
-   metric-row:
-      backgroundColor: transparent
-      textColor: "{colors.ink}"
-      typography: "{typography.body-md}"
-      padding: 16px 0
-   progress-up-cell:
-      backgroundColor: transparent
-      textColor: "{colors.semantic-up}"
-      typography: "{typography.number-display}"
-   progress-down-cell:
-      backgroundColor: transparent
-      textColor: "{colors.semantic-down}"
-      typography: "{typography.number-display}"
-   pricing-tier-card:
-      backgroundColor: "{colors.canvas}"
-      textColor: "{colors.ink}"
-      typography: "{typography.body-md}"
-      rounded: "{rounded.xl}"
-      padding: 32px
-   pricing-tier-featured:
-      backgroundColor: "{colors.surface-dark}"
-      textColor: "{colors.on-dark}"
-      typography: "{typography.body-md}"
-      rounded: "{rounded.xl}"
-      padding: 32px
-   cta-band-dark:
-      backgroundColor: "{colors.surface-dark}"
-      textColor: "{colors.on-dark}"
-      typography: "{typography.display-lg}"
-      padding: 96px
-   text-input:
-      backgroundColor: "{colors.canvas}"
-      textColor: "{colors.ink}"
-      typography: "{typography.body-md}"
-      rounded: "{rounded.md}"
-      padding: 14px 16px
-      height: 48px
-   search-input-pill:
-      backgroundColor: "{colors.surface-strong}"
-      textColor: "{colors.ink}"
-      typography: "{typography.body-md}"
-      rounded: "{rounded.pill}"
-      padding: 12px 20px
-      height: 44px
-   badge-pill:
-      backgroundColor: "{colors.surface-strong}"
-      textColor: "{colors.ink}"
-      typography: "{typography.caption-strong}"
-      rounded: "{rounded.pill}"
-      padding: 4px 12px
-   metric-icon-circular:
-      backgroundColor: "{colors.surface-strong}"
-      rounded: "{rounded.full}"
-      size: 32px
-   footer-light:
-      backgroundColor: "{colors.canvas}"
-      textColor: "{colors.body}"
-      typography: "{typography.body-sm}"
-      padding: 64px 48px
-   footer-link:
-      backgroundColor: transparent
-      textColor: "{colors.body}"
-      typography: "{typography.body-sm}"
-   legal-band:
-      backgroundColor: "{colors.canvas}"
-      textColor: "{colors.muted}"
-      typography: "{typography.caption}"
+  margin-lateral: 24px
+  gutter: 16px
+  stack-sm: 8px
+  stack-md: 16px
+  stack-lg: 32px
+  padding-card: 20px
 ---
 
-## Overview
+## Brand & Style
 
-Zenlift reads like a premium training companion: focused, white-canvas, editorially spaced, and almost monochromatic. The single brand voltage is **primary blue** (`{colors.primary}` — #0052ff), used scarcely: every primary CTA pill, the Zenlift wordmark, progress emphasis, and inline action links. Beyond that one blue, the system is white canvas + ink + soft gray elevation bands + a deep near-black editorial canvas (`{colors.surface-dark}` — #0a0b0d) for full-bleed workout and progress heroes.
+The design system is built on the principles of **technical minimalism** and **monochromatic depth**. It is designed for high-performance tools where focus, clarity, and speed are paramount. The aesthetic is "silent"—it removes all visual noise (colors, shadows, borders) to allow the user's data and actions to take center stage.
 
-Type pairs the configured display family for hero headlines with the configured sans family for body, captions, and navigation. Display sits at **weight 400** — not the 700+ typical of loud fitness products. The choice signals calm, consistency, and long-term discipline rather than hype.
-
-The page rhythm rotates three modes: bright white editorial sections, soft-gray elevation bands, and **full-bleed dark editorial heroes** carrying layered workout UI mockup cards. The dark hero with floating training-dashboard mockups is the single most distinctive component.
-
-**Key Characteristics:**
-
-- Single accent color: `{colors.primary}` (#0052ff primary blue) carries every primary CTA, wordmark, progress emphasis, and inline brand link. Used scarcely.
-- Modest display weights — display type stays at weight 400, never 700+.
-- Editorial pill geometry: every CTA is `{rounded.pill}` (100px), every metric glyph is `{rounded.full}`, every card is `{rounded.xl}` (24px). Sharp corners absent.
-- Full-bleed dark heroes with floating workout UI cards: `{component.hero-band-dark}` plus inline `{component.product-ui-card-dark}` mockups is the brand's strongest signature pattern.
-- Progress semantics: `{colors.semantic-up}` (#05b169) and `{colors.semantic-down}` (#cf202f) — text color only, never background fills.
-- 96px section rhythm — generous editorial pacing.
+The emotional response is one of **utilitarian luxury** and **clinical precision**. By relying exclusively on tonal shifts of warm blacks and greys, the UI feels like a seamless physical object rather than a digital interface. It draws inspiration from hardware-centric software design, prioritizing a "dark-first" architecture that reduces eye strain and emphasizes information density.
 
 ## Colors
 
-### Brand & Accent
+This design system uses a strictly monochromatic, high-contrast palette. Depth is achieved through a hierarchical stacking of surfaces:
 
-- **Primary Blue** (`{colors.primary}` — #0052ff): The single brand color. Every primary CTA pill, the Zenlift wordmark, and inline brand links.
-- **Primary Blue Active** (`{colors.primary-active}` — #003ecc): Press-state darken on the primary pill.
-- **Primary Blue Disabled** (`{colors.primary-disabled}` — #a8b8cc): Faded-blue tint for disabled CTAs.
-- **Accent Yellow** (`{colors.accent-yellow}` — #f4b000): A small supporting accent used very sparingly on milestone, streak, or achievement glyph fills inside feature cards. Illustrative-only, not an action color.
+*   **Background:** The foundational layer, a warm deep black.
+*   **Surface Primary:** Used for the main content containers and base cards.
+*   **Surface Secondary/Elevated:** Used for interactive elements, secondary containers, or elements that need to appear closer to the user.
 
-### Surface
-
-- **Canvas** (`{colors.canvas}` — #ffffff): The default page floor.
-- **Surface Soft** (`{colors.surface-soft}` — #f7f7f7): Subtle alternating band surface.
-- **Surface Strong** (`{colors.surface-strong}` — #eef0f3): The light-gray fill behind secondary buttons, search pills, and metric-icon plates.
-- **Surface Dark** (`{colors.surface-dark}` — #0a0b0d): Deep near-black canvas for full-bleed dark heroes, CTA bands. Same hex as `{colors.ink}` — page-floor and text-color share the value.
-- **Surface Dark Elevated** (`{colors.surface-dark-elevated}` — #16181c): One step lighter, used for floating workout UI mockup cards inside dark heroes.
-
-### Hairlines
-
-- **Hairline** (`{colors.hairline}` — #dee1e6): Default 1px divider on white surfaces.
-- **Hairline Soft** (`{colors.hairline-soft}` — #eef0f3): Lighter divider — same hex as `{colors.surface-strong}`.
-
-### Text
-
-- **Ink** (`{colors.ink}` — #0a0b0d): Display headings, primary nav, body emphasis.
-- **Body** (`{colors.body}` — #5b616e): Default running-text — slightly cool gray.
-- **Body Strong** (`{colors.body-strong}` — #0a0b0d): Same as ink, used for stronger emphasis.
-- **Muted** (`{colors.muted}` — #7c828a): Sub-titles, breadcrumbs, footer secondary.
-- **Muted Soft** (`{colors.muted-soft}` — #a8acb3): Disabled link text.
-- **On Primary** (`{colors.on-primary}` — #ffffff): White text on primary blue CTAs.
-- **On Dark** (`{colors.on-dark}` — #ffffff): White text on dark heroes.
-- **On Dark Soft** (`{colors.on-dark-soft}` — #a8acb3): Muted off-white for secondary text on dark.
-
-### Progress Semantics
-
-- **Semantic Up** (`{colors.semantic-up}` — #05b169): Positive progress green, text color only.
-- **Semantic Down** (`{colors.semantic-down}` — #cf202f): Missed-target or regression red, text color only.
+Hierarchy is managed through **text opacity** rather than distinct hues. Pure white (#FFFFFF) is the sole text color, with opacity adjustments defining the visual weight:
+*   **100%:** Primary headings and critical data.
+*   **85%:** Standard body text and labels.
+*   **50%:** Secondary metadata, captions, and icons.
+*   **30%:** Placeholder text and disabled states.
 
 ## Typography
 
-### Font Family
+The typography strategy pairs a clean, geometric sans-serif for UI elements with a monospaced font for data-heavy strings.
 
-The system runs the configured display family for hero headlines, the configured sans family for body, navigation, captions, and buttons, an icon family for glyphs, and the configured mono family for tabular numerical data. Fallback stack: `-apple-system, system-ui, "Segoe UI", Roboto, Helvetica, Arial, sans-serif`.
+*   **Geometric Sans (Inter):** Used for all headings and body copy. Titles must utilize tight letter-spacing (-0.02em) to maintain a dense, "engineered" look.
+*   **Monospace (JetBrains Mono):** Reserved for numerical values, timestamps, and technical identifiers. This ensures tabular alignment in data grids and reinforces the "precision tool" aesthetic.
+*   **Scale:** Headings are bold and significant, while body text remains legible and functional. Mobile sizes are adjusted to prevent overwhelming the smaller viewport while maintaining the "tight" feel.
 
-The display/body split is functional: the display family carries hero headlines only; the sans family carries everything else.
+## Layout & Spacing
 
-### Hierarchy
+The layout is governed by a **fixed-width container** on desktop and a **fluid safe-area model** on mobile.
 
-| Token                         | Size | Weight | Line Height | Letter Spacing | Use                                                                 |
-| ----------------------------- | ---- | ------ | ----------- | -------------- | ------------------------------------------------------------------- |
-| `{typography.display-mega}`   | 80px | 400    | 1.0         | -2px           | Homepage hero h1                                                    |
-| `{typography.display-xl}`     | 64px | 400    | 1.0         | -1.6px         | Subsidiary heroes                                                   |
-| `{typography.display-lg}`     | 52px | 400    | 1.0         | -1.3px         | Section heads                                                       |
-| `{typography.display-md}`     | 44px | 400    | 1.09        | -1px           | CTA-band headlines                                                  |
-| `{typography.display-sm}`     | 36px | 400    | 1.11        | -0.5px         | Sub-section heads — configured sans family                          |
-| `{typography.title-lg}`       | 32px | 400    | 1.13        | -0.4px         | Card group titles                                                   |
-| `{typography.title-md}`       | 18px | 600    | 1.33        | 0              | Component titles, metric row primary                                |
-| `{typography.title-sm}`       | 16px | 600    | 1.25        | 0              | List labels                                                         |
-| `{typography.body-md}`        | 16px | 400    | 1.5         | 0              | Default body                                                        |
-| `{typography.body-strong}`    | 16px | 700    | 1.5         | 0              | Emphasized body                                                     |
-| `{typography.body-sm}`        | 14px | 400    | 1.5         | 0              | Footer body                                                         |
-| `{typography.caption}`        | 13px | 400    | 1.5         | 0              | Photo captions                                                      |
-| `{typography.caption-strong}` | 12px | 600    | 1.5         | 0              | Badge pill labels                                                   |
-| `{typography.number-display}` | 18px | 500    | 1.4         | 0              | Workout metrics, deltas, and streak values — configured mono family |
-| `{typography.button}`         | 16px | 600    | 1.15        | 0              | Standard CTA pill                                                   |
-| `{typography.nav-link}`       | 14px | 500    | 1.4         | 0              | Top-nav menu items                                                  |
-
-### Principles
-
-- **Display weight stays at 400.** The single most distinctive typographic choice — signals calm training discipline rather than high-intensity fitness noise.
-- **Negative letter-spacing on display only.** Display uses -1px to -2px tracking; body stays at 0.
-- **Mono on every number.** Set counts, volume totals, percent changes, streaks — anything tabular renders in the configured mono family.
-
-### Note on Font Substitutes
-
-The configured display, sans, and mono families may require licensed font files.
-
-- **Display family → Inter** at weight 400, letter-spacing -1.5%.
-- **Sans family → Inter** at weight 400/600.
-- **Mono family → JetBrains Mono** or **Geist Mono** at weight 500.
-
-## Layout
-
-### Spacing System
-
-- **Base unit:** 4px.
-- **Tokens:** `{spacing.xxs}` 4px · `{spacing.xs}` 8px · `{spacing.sm}` 12px · `{spacing.base}` 16px · `{spacing.md}` 20px · `{spacing.lg}` 24px · `{spacing.xl}` 32px · `{spacing.xxl}` 48px · `{spacing.section}` 96px.
-- **Section padding:** `{spacing.section}` (96px) for every major editorial band.
-- **Card internal padding:** `{spacing.xl}` (32px) for feature cards and workout UI mockups.
-
-### Grid & Container
-
-- **Max content width:** ~1200px centered. Hero photography full-bleed.
-- **Editorial body:** Single 12-column grid.
-- **Feature card grids:** 2-up at desktop for hero splits, 3-up for benefit grids.
-- **Footer:** 6-column link list at desktop.
-
-### Whitespace Philosophy
-
-Generous editorial pacing — closer to a calm coaching product than to a dense fitness dashboard. 96px between bands; cards inside bands sit 24px apart. Density lives inside workout logging flows, not on public or onboarding surfaces.
+*   **Rhythm:** An 8px base grid is used for all internal padding and spacing.
+*   **Margins:** A strict 24px lateral margin is maintained across all device types to provide a breathable frame for the dark content.
+*   **Grid:** A 12-column grid for desktop, 8-column for tablet, and 4-column for mobile.
+*   **Grouping:** Elements are grouped using tonal containers rather than lines. Proximity is the primary indicator of relationship, supported by consistent 16px gutters between cards.
 
 ## Elevation & Depth
 
-| Level           | Treatment                        | Use                                |
-| --------------- | -------------------------------- | ---------------------------------- |
-| Flat            | No shadow, no border             | 80% of surfaces                    |
-| Hairline border | 1px `{colors.hairline}`          | Feature card outlines on white     |
-| Soft drop       | `0 4px 12px rgba(0, 0, 0, 0.04)` | Single shadow tier — hovered cards |
-| Photographic    | Full-bleed workout UI mockups    | Hero depth                         |
+Depth is created strictly through **Tonal Layering**. Shadows and outlines are forbidden to ensure the interface feels flat and integrated into the hardware.
 
-### Decorative Depth
-
-- **Layered workout UI cards inside dark heroes** is the most distinctive decorative pattern — a `{component.product-ui-card-dark}` floats above a darker base canvas, often with a second smaller card overlapping at an angle.
-- **Geometric brand illustrations** carry illustrative depth where shadows would otherwise.
+1.  **Level 0 (Background):** #0C0B10. The canvas.
+2.  **Level 1 (Primary Cards):** #18191D. For main information modules.
+3.  **Level 2 (Elevated Surfaces):** #242329. For hover states, active selections, or floating navigation elements.
+4.  **Interaction:** When an element is pressed, it should subtly shift in tone (either slightly lighter or darker depending on context) to provide tactile feedback without relying on traditional "glow" or "lift" effects.
 
 ## Shapes
 
-### Border Radius Scale
+The design system utilizes a **Rounded** shape language to soften the intensity of the monochrome palette.
 
-| Token            | Value  | Use                                              |
-| ---------------- | ------ | ------------------------------------------------ |
-| `{rounded.none}` | 0px    | Reserved (essentially unused)                    |
-| `{rounded.xs}`   | 4px    | Inline tags                                      |
-| `{rounded.sm}`   | 8px    | Compact rows                                     |
-| `{rounded.md}`   | 12px   | Form inputs                                      |
-| `{rounded.lg}`   | 16px   | Mid-size cards                                   |
-| `{rounded.xl}`   | 24px   | Feature cards, workout UI mockups, pricing tiers |
-| `{rounded.pill}` | 100px  | All CTA buttons, search pills, badges            |
-| `{rounded.full}` | 9999px | Metric icon circles, avatars                     |
-
-Pill for interactive, card-radius (24px) for containers, full circle for icons. Sharp corners absent.
+*   **Cards & Modules:** Use a standard 12px (`rounded-lg`) radius. This creates a "squircle-lite" appearance that feels modern and premium.
+*   **Buttons & Inputs:** Follow the card radius or use a slightly smaller 8px radius for compact components.
+*   **Small Elements:** Chips and badges should use a fully rounded (pill) shape to contrast against the structural cards.
 
 ## Components
 
-### Top Navigation
-
-**`top-nav-light`** — Default top nav on white pages. Background `{colors.canvas}`, text `{colors.ink}`, height 64px. Layout: Zenlift wordmark left, primary horizontal menu (Programs / Workouts / Progress / Coaching / Pricing / Company), search-icon + account icon + Sign In + Sign Up CTAs right.
-
-**`top-nav-on-dark`** — Top nav over a dark hero band. Background `{colors.surface-dark}`, text `{colors.on-dark}`. Same layout.
-
-### Buttons
-
-**`button-primary`** — The signature primary blue pill. Background `{colors.primary}`, text `{colors.on-primary}`, type `{typography.button}` (16px / 600), padding 12px × 20px, height 44px, rounded `{rounded.pill}` (100px).
-
-**`button-primary-active`** — Press state. Background `{colors.primary-active}`, deeper blue.
-
-**`button-primary-disabled`** — Faded blue tint. Background `{colors.primary-disabled}`. Cursor not-allowed.
-
-**`button-secondary-light`** — Soft-gray secondary on white surfaces. Background `{colors.surface-strong}`, text `{colors.ink}`, same pill geometry.
-
-**`button-secondary-dark`** — Used on dark heroes. Background `{colors.surface-dark-elevated}`, text `{colors.on-dark}`, same pill geometry.
-
-**`button-outline-on-dark`** — Transparent pill with white outline. Background transparent, text `{colors.on-dark}`, 1px white border.
-
-**`button-tertiary-text`** — Inline text link. Background transparent, text `{colors.primary}`, type `{typography.button}`.
-
-**`button-pill-cta`** — Larger pill CTA used on the homepage hero ("Get started"). Same primary blue palette but with 56px height and 16px × 32px padding for a prouder stance.
-
-### Hero Bands
-
-**`hero-band-dark`** — The signature full-bleed dark hero. Background `{colors.surface-dark}`, text `{colors.on-dark}`, full-bleed layered workout UI mockup cards. Display headline left in `{typography.display-mega}` (80px / 400), subhead in `{typography.body-md}`, two CTAs.
-
-**`hero-band-light`** — White-canvas variant used on Programs and Progress. Background `{colors.canvas}`, text `{colors.ink}`. Same skeleton, light palette.
-
-### Cards
-
-**`product-ui-card-dark`** — The floating workout UI mockup. Background `{colors.surface-dark-elevated}`, text `{colors.on-dark}`, rounded `{rounded.xl}` (24px), padding 32px. Often shown as 2-3 stacked cards at slight rotation, mimicking a layered training dashboard.
-
-**`product-ui-card-light`** — Light-canvas variant used on Programs, exercises, or progress cards. Background `{colors.canvas}`, text `{colors.ink}`, same geometry, 1px hairline border.
-
-**`feature-card`** — Used in 3-up and 2-up grids. Background `{colors.canvas}`, text `{colors.ink}`, type `{typography.title-md}`, rounded `{rounded.xl}`, padding 32px.
-
-### Workout Surfaces
-
-**`metric-row`** — Horizontal row in workout, exercise, or progress lists. Background transparent, 1px hairline divider. Layout: 32px circular icon left, movement or program name + label, metric column in `{typography.number-display}`, progress delta column with `{component.progress-up-cell}` or `{component.progress-down-cell}`.
-
-**`progress-up-cell`** + **`progress-down-cell`** — Inline metric-change cells. Color only — green or red text in `{typography.number-display}`, no background fill.
-
-**`metric-icon-circular`** — Circular plate behind workout, muscle-group, or milestone glyphs. Background `{colors.surface-strong}`, rounded `{rounded.full}`, 32px diameter.
-
-### Pricing
-
-**`pricing-tier-card`** — Standard membership or coaching tier. Background `{colors.canvas}`, rounded `{rounded.xl}`, padding 32px, 1px hairline border. Layout: tier name + price + feature checklist + CTA pill.
-
-**`pricing-tier-featured`** — The featured tier. Background `{colors.surface-dark}`, text `{colors.on-dark}`. Same skeleton, dark palette — visual inversion signals "highlighted choice" without colored ribbons.
-
-### Forms
-
-**`text-input`** — Standard text input. Background `{colors.canvas}`, text `{colors.ink}`, rounded `{rounded.md}` (12px), padding 14px × 16px, height 48px, 1px hairline border. On focus, border thickens to 2px primary blue.
-
-**`search-input-pill`** — Pill-shaped search bar. Background `{colors.surface-strong}`, rounded `{rounded.pill}`, padding 12px × 20px, height 44px.
-
-### Tags & Badges
-
-**`badge-pill`** — Small uppercase pill used as section labels ("PROGRAMS", "PROGRESS", "COACHING"). Background `{colors.surface-strong}`, text `{colors.ink}`, type `{typography.caption-strong}`, rounded `{rounded.pill}`.
-
-### CTA / Footer
-
-**`cta-band-dark`** — Pre-footer "Build your strongest routine" band. Background `{colors.surface-dark}`, text `{colors.on-dark}`, vertical padding 96px. Centered headline + two CTAs.
-
-**`footer-light`** — Closing white-canvas footer. Background `{colors.canvas}`, text `{colors.body}`. 6-column link list.
-
-**`footer-link`** — Individual footer link. Background transparent, text `{colors.body}`.
-
-**`legal-band`** — Bottom strip beneath footer columns. All text `{colors.muted}` at `{typography.caption}`.
-
-## Do's and Don'ts
-
-### Do
-
-- Reserve `{colors.primary}` (primary blue) for primary CTAs, wordmark, brand-glyph illustrations, progress emphasis, and inline accent links.
-- Set every CTA as `{rounded.pill}` (100px); every metric glyph as `{rounded.full}`.
-- Keep display headlines at weight 400.
-- Use the dark/light band rotation as page rhythm.
-- Render every numerical value in the configured mono family via `{typography.number-display}`.
-- Pair every dark hero with a layered workout UI mockup card stack.
-
-### Don't
-
-- Don't introduce a secondary brand color. Primary blue is the only action color; progress green/red are semantic-only.
-- Don't bold display copy — display sits at weight 400; bolding shifts the brand voice.
-- Don't add drop shadow tiers — system has one shadow tier.
-- Don't use sharp `{rounded.none}` (0px) on CTAs.
-- Don't mix display and sans families inside the same headline.
-- Don't use progress green/red as a button background.
-- Don't extract a CTA color from a third-party widget (cookie consent, OneTrust). The brand's CTA color is what appears on actual product CTAs, not on injected modals.
-
-## Responsive Behavior
-
-### Breakpoints
-
-| Name    | Width       | Key Changes                                                                                                                               |
-| ------- | ----------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
-| Mobile  | < 640px     | Hero h1 80→40px; feature card grid 1-up; metric row stacks; nav collapses to hamburger; layered workout UI cards collapse to single card. |
-| Tablet  | 640–1024px  | Hero h1 64px; feature card grid 2-up; metric rows stay horizontal but compress columns.                                                   |
-| Desktop | 1024–1280px | Full hero h1 80px; feature card grid 3-up; full metric row layout.                                                                        |
-| Wide    | > 1280px    | Content caps at 1200px; hero photography full-bleed.                                                                                      |
-
-### Touch Targets
-
-- Primary CTA pill at 44px height — at WCAG AAA.
-- Larger hero pill (`{component.button-pill-cta}`) at 56px — well above AAA.
-- Metric icon circles at 32px — borderline; padded 8px row creates effective 48px tap zone.
-- Search pill at 44px height — at AAA.
-
-### Collapsing Strategy
-
-- Top nav switches to hamburger sheet below 768px. Sign Up CTA stays visible.
-- Hero h1 steps down: 80 → 64 → 52 → 44 → 36px on smallest screens.
-- Layered workout UI mockup cards collapse from 2-3 stacked into a single card on mobile.
-- Pricing tier rows: 3-up → 2-up → 1-up.
-- Metric rows on mobile stack vertically: label line on top, value + change line beneath.
-
-## Iteration Guide
-
-1. Focus on a single component at a time. Reference YAML keys directly.
-2. New CTAs default to `{rounded.pill}` (100px); new icon plates default to `{rounded.full}`. Cards use `{rounded.xl}`.
-3. Variants live as separate entries inside the `components:` block.
-4. Use `{token.refs}` everywhere — never inline hex.
-5. Hover state never documented. Only Default and Active/Pressed.
-6. Display family 400 for display, sans family 400/600/700 for body. Mono family on every number.
-7. Primary blue stays scarce — one or two blue moments per band.
-
-## Known Gaps
-
-- Configured display, sans, and mono font files may be licensed; Inter and JetBrains Mono are documented substitutes.
-- In-product training surfaces (workout logging, program setup, analytics) are behind login walls — this document covers marketing, onboarding, and high-level product surfaces only.
-- Animation timings out of scope.
-- Form validation states beyond focus not visible on captured surfaces.
-- Accent yellow appears only inside milestone, streak, or achievement glyph illustrations; documented as illustrative-only.
+*   **Cards:** The fundamental building block. Must use #18191D with 12px corner radius. No borders. Content inside should have 20px padding.
+*   **Buttons:**
+    *   *Primary:* Solid white background with black text (high contrast action).
+    *   *Secondary:* #28272F surface with 85% white text.
+    *   *Ghost:* No background, 50% white text, 100% white on hover.
+*   **Data Visualizations:** Use pure white lines and dots. For charts, use varying opacities of white or subtle greyscales to differentiate data sets.
+*   **Input Fields:** #28272F background, 12px radius, 85% white text. Placeholders at 30% opacity. Focus state is indicated by a subtle shift to #242329 or a 1px solid white stroke if high accessibility is required (though tonal shift is preferred).
+*   **Chips:** Small #28272F containers with 50% white JetBrains Mono text.
+*   **Lists:** Items are separated by space, not lines. Active items should use the #242329 background shift.
