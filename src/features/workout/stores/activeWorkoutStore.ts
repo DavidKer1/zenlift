@@ -10,7 +10,7 @@ import type {
 } from '@/domain/entities';
 import { WorkoutRepo } from '@/storage/repositories/workoutRepo';
 import { getDatabase } from '@/storage/database/connection';
-import { detectPRs, type DetectedPR } from '@/domain/services/prDetection';
+import { detectPRs } from '@/domain/services/prDetection';
 import { calculateSessionVolume } from '@/domain/calculations/volume';
 import { getSettingsValue } from '@/features/settings/useSettings';
 import {

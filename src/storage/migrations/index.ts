@@ -86,7 +86,7 @@ export async function runMigrations(db: SQLiteDatabase): Promise<void> {
     try {
       await db.execAsync(migration.sql);
       await db.runAsync(
-        'INSERT INTO _migrations (version, description, appliedAt) VALUES (?, ?, ?)',
+        'INSERT INTO _migrations (version, description, applied_at) VALUES (?, ?, ?)',
         migration.version,
         migration.description,
         new Date().toISOString(),
