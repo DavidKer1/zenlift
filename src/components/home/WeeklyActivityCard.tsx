@@ -1,5 +1,6 @@
 import { StyleSheet, Text, View } from 'react-native';
 
+import { GradientCard } from '@/components/ui/GradientCard';
 import { useZenliftTheme } from '@/providers/ThemeProvider';
 
 const WEEKDAYS = ['L', 'M', 'X', 'J', 'V', 'S', 'D'];
@@ -13,17 +14,10 @@ export function WeeklyActivityCard({ activeDays }: WeeklyActivityCardProps) {
   const hasActivity = activeDays.some(Boolean);
 
   return (
-    <View
-      accessible
+    <GradientCard
       accessibilityLabel="Weekly activity card"
-      style={[
-        styles.card,
-        {
-          backgroundColor: colors.surfaceElevated,
-          borderRadius: radius.xl,
-          padding: spacing.paddingCard,
-        },
-      ]}>
+      borderRadius={radius.xl}
+      padding={spacing.paddingCard}>
       <View style={{ gap: spacing.one }}>
         <Text
           style={[
@@ -98,7 +92,7 @@ export function WeeklyActivityCard({ activeDays }: WeeklyActivityCardProps) {
           Start a workout to see your progress
         </Text>
       ) : null}
-    </View>
+    </GradientCard>
   );
 }
 

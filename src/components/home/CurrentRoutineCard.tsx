@@ -2,6 +2,7 @@ import { router } from 'expo-router';
 import { SymbolView, type SymbolViewProps } from 'expo-symbols';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
+import { GradientCard } from '@/components/ui/GradientCard';
 import { useZenliftTheme } from '@/providers/ThemeProvider';
 
 export type CurrentRoutineCardData = {
@@ -18,16 +19,10 @@ export function CurrentRoutineCard({ routine }: CurrentRoutineCardProps) {
   const { colors, radius, spacing, typography } = useZenliftTheme();
 
   return (
-    <View
+    <GradientCard
       accessibilityLabel="Current routine card"
-      style={[
-        styles.card,
-        {
-          backgroundColor: colors.surfaceElevated,
-          borderRadius: radius.xl,
-          padding: spacing.paddingCard,
-        },
-      ]}>
+      borderRadius={radius.xl}
+      padding={spacing.paddingCard}>
       <Text
         style={[
           styles.sectionTitle,
@@ -159,7 +154,7 @@ export function CurrentRoutineCard({ routine }: CurrentRoutineCardProps) {
           </Pressable>
         </View>
       )}
-    </View>
+    </GradientCard>
   );
 }
 

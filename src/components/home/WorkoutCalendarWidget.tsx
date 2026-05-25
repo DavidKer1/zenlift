@@ -1,6 +1,7 @@
 import { SymbolView, type SymbolViewProps } from 'expo-symbols';
 import { ActivityIndicator, Pressable, StyleSheet, Text, View } from 'react-native';
 
+import { GradientCard } from '@/components/ui/GradientCard';
 import { useZenliftTheme } from '@/providers/ThemeProvider';
 import type {
   HomeCalendarFrequencyKind,
@@ -42,17 +43,10 @@ export function WorkoutCalendarWidget({
     : 'Workout calendar. No workouts completed yet.';
 
   return (
-    <View
-      accessible
+    <GradientCard
       accessibilityLabel={accessibilityLabel}
-      style={[
-        styles.card,
-        {
-          backgroundColor: colors.surfaceElevated,
-          borderRadius: radius.xl,
-          padding: spacing.paddingCard,
-        },
-      ]}>
+      borderRadius={radius.xl}
+      padding={spacing.paddingCard}>
       <View style={[styles.monthHeader, { marginBottom: spacing.three }]}>
         {months.map((month) => (
           <Text
@@ -192,7 +186,7 @@ export function WorkoutCalendarWidget({
           </>
         )}
       </View>
-    </View>
+    </GradientCard>
   );
 }
 

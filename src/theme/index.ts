@@ -16,6 +16,7 @@ export const zenliftColors = {
     background: '#F5F5F5',
     surface: '#FFFFFF',
     surfaceElevated: '#F0F0F0',
+    surfaceElevatedDark: '#EBEBEB',
     surfaceSecondary: '#E8E8E8',
     // Text hierarchy
     textPrimary: '#0C0B10',
@@ -47,6 +48,7 @@ export const zenliftColors = {
     background: '#0C0B10',
     surface: '#18191D',
     surfaceElevated: '#242329',
+    surfaceElevatedDark: '#1F1E24',
     surfaceSecondary: '#28272F',
     // Text hierarchy
     textPrimary: '#FFFFFF',

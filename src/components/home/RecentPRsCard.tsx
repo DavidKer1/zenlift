@@ -1,6 +1,7 @@
 import { SymbolView, type SymbolViewProps } from 'expo-symbols';
 import { StyleSheet, Text, View } from 'react-native';
 
+import { GradientCard } from '@/components/ui/GradientCard';
 import type { PersonalRecord, PersonalRecordType } from '@/domain/entities';
 import { useZenliftTheme } from '@/providers/ThemeProvider';
 
@@ -25,17 +26,10 @@ export function RecentPRsCard({ prs }: RecentPRsCardProps) {
   const latestPrs = prs.slice(0, 3);
 
   return (
-    <View
-      accessible
+    <GradientCard
       accessibilityLabel="Recent personal records card"
-      style={[
-        styles.card,
-        {
-          backgroundColor: colors.surfaceElevated,
-          borderRadius: radius.xl,
-          padding: spacing.paddingCard,
-        },
-      ]}>
+      borderRadius={radius.xl}
+      padding={spacing.paddingCard}>
       <Text
         style={[
           styles.sectionTitle,
@@ -130,7 +124,7 @@ export function RecentPRsCard({ prs }: RecentPRsCardProps) {
           </View>
         </View>
       )}
-    </View>
+    </GradientCard>
   );
 }
 

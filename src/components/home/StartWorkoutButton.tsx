@@ -1,6 +1,7 @@
 import { router } from 'expo-router';
 import { Pressable, StyleSheet, Text } from 'react-native';
 
+import { GradientCard } from '@/components/ui/GradientCard';
 import { useZenliftTheme } from '@/providers/ThemeProvider';
 
 type StartWorkoutButtonProps = {
@@ -17,22 +18,24 @@ export function StartWorkoutButton({
   const { colors, radius, spacing, typography } = useZenliftTheme();
   const isPrimary = variant === 'primary';
 
-  return (
+  const pressableStyle = ({ pressed }: { pressed: boolean }) => [
+    styles.button,
+    {
+      backgroundColor: isPrimary ? colors.buttonPrimary : 'transparent',
+      borderRadius: radius.xl,
+      minHeight: 56,
+      opacity: pressed ? 0.9 : 1,
+      transform: pressed ? [{ scale: 0.98 }] : [{ scale: 1 }],
+      paddingHorizontal: spacing.three,
+    },
+  ];
+
+  const content = (
     <Pressable
       accessibilityLabel={label}
       accessibilityRole="button"
       onPress={onPress ?? (() => router.push('/routines'))}
-      style={({ pressed }) => [
-        styles.button,
-        {
-          backgroundColor: isPrimary ? colors.buttonPrimary : colors.surfaceSecondary,
-          borderRadius: radius.xl,
-          minHeight: 56,
-          opacity: pressed ? 0.9 : 1,
-          transform: pressed ? [{ scale: 0.98 }] : [{ scale: 1 }],
-          paddingHorizontal: spacing.three,
-        },
-      ]}>
+      style={pressableStyle}>
       <Text
         style={[
           styles.label,
@@ -46,6 +49,16 @@ export function StartWorkoutButton({
         {label}
       </Text>
     </Pressable>
+  );
+
+  if (isPrimary) {
+    return content;
+  }
+
+  return (
+    <GradientCard borderRadius={radius.xl}>
+      {content}
+    </GradientCard>
   );
 }
 
