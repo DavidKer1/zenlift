@@ -32,7 +32,7 @@ export function RecentPRsCard({ prs }: RecentPRsCardProps) {
         styles.card,
         {
           backgroundColor: colors.surfaceElevated,
-          borderRadius: radius.md,
+          borderRadius: radius.xl,
           padding: spacing.paddingCard,
         },
       ]}>

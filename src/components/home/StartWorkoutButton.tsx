@@ -26,7 +26,7 @@ export function StartWorkoutButton({
         styles.button,
         {
           backgroundColor: isPrimary ? colors.buttonPrimary : colors.surfaceSecondary,
-          borderRadius: radius.md,
+          borderRadius: radius.xl,
           minHeight: 56,
           opacity: pressed ? 0.9 : 1,
           transform: pressed ? [{ scale: 0.98 }] : [{ scale: 1 }],

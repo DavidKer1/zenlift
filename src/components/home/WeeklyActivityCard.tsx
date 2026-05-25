@@ -20,7 +20,7 @@ export function WeeklyActivityCard({ activeDays }: WeeklyActivityCardProps) {
         styles.card,
         {
           backgroundColor: colors.surfaceElevated,
-          borderRadius: radius.md,
+          borderRadius: radius.xl,
           padding: spacing.paddingCard,
         },
       ]}>
