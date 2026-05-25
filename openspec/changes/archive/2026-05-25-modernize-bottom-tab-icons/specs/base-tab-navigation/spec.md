@@ -1,9 +1,5 @@
-# Base Tab Navigation
+## ADDED Requirements
 
-## Purpose
-
-Provide the primary tab-based navigation shell for the Zenlift app with four main tabs and theme-aware styling.
-## Requirements
 ### Requirement: Icon-only tabs remain accessible
 The tab bar SHALL hide visual tab labels while preserving accessible names for every tab target.
 
@@ -15,6 +11,8 @@ The tab bar SHALL hide visual tab labels while preserving accessible names for e
 - **WHEN** the bottom tab bar renders
 - **THEN** no visible text label SHALL render inside the tab bar for Home, Routines, History, or Settings
 
+## MODIFIED Requirements
+
 ### Requirement: Four primary tabs
 The app shell SHALL expose four primary tabs: Home, Routines, History, and Settings.
 
@@ -22,25 +20,6 @@ The app shell SHALL expose four primary tabs: Home, Routines, History, and Setti
 - **WHEN** the app root layout renders
 - **THEN** the tab bar shows four icon-only tab targets for Home, Routines, History, and Settings
 - **AND** each target SHALL preserve an accessible name for its destination
-
-### Requirement: Tab routes render placeholders
-Each primary tab route SHALL render a stable placeholder screen for its product area.
-
-#### Scenario: Home route renders
-- **WHEN** the user opens the Home tab
-- **THEN** a Home placeholder screen renders without starter instructional copy
-
-#### Scenario: Routines route renders
-- **WHEN** the user opens the Routines tab
-- **THEN** a Routines placeholder screen renders without crashing
-
-#### Scenario: History route renders
-- **WHEN** the user opens the History tab
-- **THEN** a History placeholder screen renders without crashing
-
-#### Scenario: Settings route renders
-- **WHEN** the user opens the Settings tab
-- **THEN** a Settings placeholder screen renders without crashing
 
 ### Requirement: Theme-aware tab styling
 The tab navigator SHALL use opacity-based styling for active and inactive icon states instead of color tinting.
@@ -80,27 +59,3 @@ The tab bar SHALL use minimalist icon presentation for all primary tabs. Active 
 - **WHEN** a tab is inactive
 - **THEN** its icon SHALL render with reduced opacity
 - **AND** the icon SHALL remain recognizable without decorative treatment
-
-### Requirement: Tab interactions use Reanimated motion
-The tab bar SHALL use `react-native-reanimated` for modern, minimal focus and press transitions. Motion SHALL be subtle, finite, and responsive.
-
-#### Scenario: Focus transition animates subtly
-- **WHEN** the active tab changes
-- **THEN** the newly active tab SHALL animate its visual state using Reanimated
-- **AND** the animation SHALL be limited to subtle opacity, scale, or translation changes
-
-#### Scenario: Press feedback animates without layout shift
-- **WHEN** the user presses a tab
-- **THEN** the pressed tab SHALL provide Reanimated feedback without changing tab bar height or reflowing neighboring tabs
-
-#### Scenario: Animation remains minimal during workout use
-- **WHEN** tab animations run
-- **THEN** they SHALL NOT loop, pulse indefinitely, bounce heavily, glow, or block navigation input
-
-### Requirement: Starter navigation is retired
-The active navigation surface SHALL not expose the default Expo starter Explore tab.
-
-#### Scenario: Starter tab is absent
-- **WHEN** the tab bar renders
-- **THEN** it does not include an Explore tab
-

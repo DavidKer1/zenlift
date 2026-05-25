@@ -6,7 +6,7 @@ import {
   type TabListProps,
   type TabTriggerSlotProps,
 } from 'expo-router/ui';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { Ionicons } from '@expo/vector-icons';
 import React, { useEffect } from 'react';
 import { Pressable, StyleSheet, View, type GestureResponderEvent } from 'react-native';
 import Animated, {
@@ -17,13 +17,12 @@ import Animated, {
 } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import { ThemedText } from '@/components/themed-text';
 import { useZenliftTheme } from '@/providers/ThemeProvider';
 
 type TabItem = {
   href: '/' | '/routines' | '/history' | '/settings';
-  iconInactive: keyof typeof MaterialCommunityIcons.glyphMap;
-  iconActive: keyof typeof MaterialCommunityIcons.glyphMap;
+  iconInactive: keyof typeof Ionicons.glyphMap;
+  iconActive: keyof typeof Ionicons.glyphMap;
   label: string;
   name: string;
 };
@@ -33,29 +32,29 @@ const tabs: TabItem[] = [
     name: 'home',
     href: '/',
     label: 'Home',
-    iconInactive: 'home-outline',
-    iconActive: 'home',
+    iconInactive: 'grid-outline',
+    iconActive: 'grid',
   },
   {
     name: 'routines',
     href: '/routines',
-    label: 'Rutinas',
-    iconInactive: 'dumbbell',
-    iconActive: 'dumbbell',
+    label: 'Routines',
+    iconInactive: 'barbell-outline',
+    iconActive: 'barbell',
   },
   {
     name: 'history',
     href: '/history',
-    label: 'Historial',
-    iconInactive: 'chart-bar',
-    iconActive: 'chart-bar',
+    label: 'History',
+    iconInactive: 'time-outline',
+    iconActive: 'time',
   },
   {
     name: 'settings',
     href: '/settings',
     label: 'Settings',
-    iconInactive: 'cog-outline',
-    iconActive: 'cog',
+    iconInactive: 'settings-outline',
+    iconActive: 'settings',
   },
 ];
 
@@ -67,9 +66,11 @@ export default function AppTabs() {
         <CustomTabList>
           {tabs.map((tab) => (
             <TabTrigger key={tab.name} name={tab.name} href={tab.href} asChild>
-              <TabButton iconInactive={tab.iconInactive} iconActive={tab.iconActive}>
-                {tab.label}
-              </TabButton>
+              <TabButton
+                iconInactive={tab.iconInactive}
+                iconActive={tab.iconActive}
+                label={tab.label}
+              />
             </TabTrigger>
           ))}
         </CustomTabList>
@@ -79,14 +80,14 @@ export default function AppTabs() {
 }
 
 function TabButton({
-  children,
   iconInactive,
   iconActive,
+  label,
   isFocused,
   onPressIn,
   onPressOut,
   ...props
-}: TabTriggerSlotProps & Pick<TabItem, 'iconInactive' | 'iconActive'>) {
+}: TabTriggerSlotProps & Pick<TabItem, 'iconInactive' | 'iconActive' | 'label'>) {
   const { colors } = useZenliftTheme();
   const focusProgress = useSharedValue(isFocused ? 1 : 0);
   const pressProgress = useSharedValue(0);
@@ -100,11 +101,7 @@ function TabButton({
   }, [focusProgress, isFocused]);
 
   const animatedContentStyle = useAnimatedStyle(() => ({
-    opacity: 0.5 + focusProgress.value * 0.5 - pressProgress.value * 0.08,
-    transform: [
-      { translateY: -2 * focusProgress.value + pressProgress.value },
-      { scale: 1 + focusProgress.value * 0.08 - pressProgress.value * 0.03 },
-    ],
+    opacity: 0.4 + focusProgress.value * 0.6 - pressProgress.value * 0.08,
   }));
 
   const handlePressIn = (event: GestureResponderEvent) => {
@@ -126,14 +123,12 @@ function TabButton({
   return (
     <Pressable
       {...props}
+      accessibilityLabel={label}
       onPressIn={handlePressIn}
       onPressOut={handlePressOut}
       style={styles.tabButton}>
       <Animated.View style={[styles.tabContent, animatedContentStyle]}>
-        <MaterialCommunityIcons name={iconName} size={21} color={colors.textPrimary} />
-        <ThemedText type="labelCaps" themeColor="textPrimary" style={styles.tabLabel}>
-          {children}
-        </ThemedText>
+        <Ionicons name={iconName} size={20} color={colors.textPrimary} />
       </Animated.View>
     </Pressable>
   );
@@ -183,16 +178,12 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     flex: 1,
     justifyContent: 'center',
-    minHeight: 56,
-    paddingVertical: 6,
+    minHeight: 52,
+    paddingVertical: 4,
   },
   tabContent: {
     alignItems: 'center',
-    gap: 3,
     justifyContent: 'center',
     minHeight: 44,
-  },
-  tabLabel: {
-    lineHeight: 12,
   },
 });
