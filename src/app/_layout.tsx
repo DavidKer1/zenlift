@@ -1,8 +1,11 @@
 import { ThemeProvider as NavigationThemeProvider } from '@react-navigation/native';
 import React, { useState } from 'react';
+import { StyleSheet } from 'react-native';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { createMMKV } from 'react-native-mmkv';
 
 import { AnimatedSplashOverlay } from '@/components/animated-icon';
+import ActiveWorkoutModal from '@/components/workout/ActiveWorkoutModal';
 import AppTabs from '@/components/app-tabs';
 import OnboardingScreen from '@/features/onboarding/OnboardingScreen';
 import { SETTINGS_KEYS, SETTINGS_MMKV_ID } from '@/features/settings/constants';
@@ -21,12 +24,17 @@ function RootNavigation() {
 
   return (
     <NavigationThemeProvider value={navigationTheme}>
-      <AnimatedSplashOverlay />
-      {needsOnboarding ? (
-        <OnboardingScreen onComplete={() => setNeedsOnboarding(false)} />
-      ) : (
-        <AppTabs />
-      )}
+      <GestureHandlerRootView style={styles.root}>
+        <AnimatedSplashOverlay />
+        {needsOnboarding ? (
+          <OnboardingScreen onComplete={() => setNeedsOnboarding(false)} />
+        ) : (
+          <>
+            <AppTabs />
+            <ActiveWorkoutModal />
+          </>
+        )}
+      </GestureHandlerRootView>
     </NavigationThemeProvider>
   );
 }
@@ -38,3 +46,9 @@ export default function TabLayout() {
     </ZenliftThemeProvider>
   );
 }
+
+const styles = StyleSheet.create({
+  root: {
+    flex: 1,
+  },
+});

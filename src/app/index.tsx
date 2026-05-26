@@ -13,8 +13,6 @@ import { WeeklyActivityCard } from '@/components/home/WeeklyActivityCard';
 import { WorkoutCalendarWidget } from '@/components/home/WorkoutCalendarWidget';
 import type { WorkoutSession } from '@/domain/entities';
 import { startWorkoutFlow } from '@/features/workout/StartWorkoutFlow';
-import { useActiveWorkoutStore } from '@/features/workout/stores/activeWorkoutStore';
-import ActiveWorkoutScreen from '@/app/workout/active';
 import { useZenliftTheme } from '@/providers/ThemeProvider';
 import { getDatabase } from '@/storage/database/connection';
 import { RoutineRepo } from '@/storage/repositories/RoutineRepo';
@@ -28,7 +26,6 @@ const EMPTY_WEEK = [false, false, false, false, false, false, false];
 
 export default function HomeScreen() {
   const { colors, spacing } = useZenliftTheme();
-  const activeSession = useActiveWorkoutStore((s) => s.session);
   const [calendarSummary, setCalendarSummary] = useState<HomeCalendarSummary | null>(null);
   const [isCalendarLoading, setIsCalendarLoading] = useState(true);
   const [weeklyActivity, setWeeklyActivity] = useState<boolean[]>(EMPTY_WEEK);
@@ -120,12 +117,6 @@ export default function HomeScreen() {
     // The OpenSpec task calls for mount-only fetching; each callback is stable.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
-  // When an active session exists in the store, render the ActiveWorkoutScreen
-  // directly inside Home. This bypasses Expo Router navigation issues with non-tab routes.
-  if (activeSession) {
-    return <ActiveWorkoutScreen />;
-  }
 
   return (
     <SafeAreaView style={[styles.safeArea, { backgroundColor: colors.background }]}>
