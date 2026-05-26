@@ -1,11 +1,5 @@
 import { generateId } from './id';
 
-function assert(condition: unknown, message: string): asserts condition {
-  if (!condition) {
-    throw new Error(message);
-  }
-}
-
 function setCryptoForTest(value: Crypto | undefined): void {
   Object.defineProperty(globalThis, 'crypto', {
     configurable: true,
@@ -22,35 +16,38 @@ function restoreCryptoForTest(descriptor: PropertyDescriptor | undefined): void 
   Reflect.deleteProperty(globalThis, 'crypto');
 }
 
-const originalCryptoDescriptor = Object.getOwnPropertyDescriptor(globalThis, 'crypto');
+describe('generateId', () => {
+  const originalCryptoDescriptor = Object.getOwnPropertyDescriptor(globalThis, 'crypto');
 
-try {
-  const id = generateId();
+  afterEach(() => {
+    restoreCryptoForTest(originalCryptoDescriptor);
+  });
 
-  assert(typeof id === 'string', 'generateId() should return a string');
-  assert(id.length > 0, 'generateId() should return a non-empty string');
+  it('returns non-empty string IDs without collisions in a small sample', () => {
+    const id = generateId();
+    const sample = new Set(Array.from({ length: 1000 }, () => generateId()));
 
-  const sample = new Set(Array.from({ length: 1000 }, () => generateId()));
+    expect(typeof id).toBe('string');
+    expect(id.length).toBeGreaterThan(0);
+    expect(sample.size).toBe(1000);
+  });
 
-  assert(sample.size === 1000, 'generateId() should not collide across 1000 IDs');
+  it('prefers crypto.randomUUID when available', () => {
+    setCryptoForTest({
+      randomUUID: () => '00000000-0000-4000-8000-000000000000',
+    } as unknown as Crypto);
 
-  setCryptoForTest({
-    randomUUID: () => '00000000-0000-4000-8000-000000000000',
-  } as unknown as Crypto);
+    expect(generateId()).toBe('00000000-0000-4000-8000-000000000000');
+  });
 
-  assert(
-    generateId() === '00000000-0000-4000-8000-000000000000',
-    'generateId() should prefer crypto.randomUUID()',
-  );
+  it('falls back when crypto is unavailable', () => {
+    setCryptoForTest(undefined);
 
-  setCryptoForTest(undefined);
+    const fallbackId = generateId();
+    const fallbackSample = new Set(Array.from({ length: 1000 }, () => generateId()));
 
-  const fallbackId = generateId();
-  const fallbackSample = new Set(Array.from({ length: 1000 }, () => generateId()));
-
-  assert(typeof fallbackId === 'string', 'fallback should return a string');
-  assert(fallbackId.length > 0, 'fallback should return a non-empty string');
-  assert(fallbackSample.size === 1000, 'fallback should not collide across 1000 IDs');
-} finally {
-  restoreCryptoForTest(originalCryptoDescriptor);
-}
+    expect(typeof fallbackId).toBe('string');
+    expect(fallbackId.length).toBeGreaterThan(0);
+    expect(fallbackSample.size).toBe(1000);
+  });
+});

@@ -34,7 +34,6 @@ const TABLE_COLUMNS = {
     'target_sets',
     'target_reps_min',
     'target_reps_max',
-    'rest_seconds',
     'notes',
     'sort_order',
   ],

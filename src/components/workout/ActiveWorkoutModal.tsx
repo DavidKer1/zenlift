@@ -30,7 +30,6 @@ export default function ActiveWorkoutModal() {
 
   const session = useActiveWorkoutStore((s) => s.session);
   const exercises = useActiveWorkoutStore((s) => s.exercises);
-  const timerTargetEnd = useActiveWorkoutStore((s) => s.timerTargetEnd);
 
   const recoverSession = useActiveWorkoutStore((s) => s.recoverSession);
   const addSet = useActiveWorkoutStore((s) => s.addSet);
@@ -38,8 +37,6 @@ export default function ActiveWorkoutModal() {
   const updateSet = useActiveWorkoutStore((s) => s.updateSet);
   const addExercise = useActiveWorkoutStore((s) => s.addExercise);
   const cancelWorkout = useActiveWorkoutStore((s) => s.cancelWorkout);
-  const startTimer = useActiveWorkoutStore((s) => s.startTimer);
-  const skipTimer = useActiveWorkoutStore((s) => s.skipTimer);
 
   // ---- Expand / minimize state ----
   const [isMinimized, setIsMinimized] = useState(false);
@@ -95,20 +92,6 @@ export default function ActiveWorkoutModal() {
     const interval = setInterval(tick, 1000);
     return () => clearInterval(interval);
   }, [session?.started_at]);
-
-  // ---- Rest timer completion while minimized ----
-  useEffect(() => {
-    if (timerTargetEnd === null) return;
-
-    const delay = Math.max(0, timerTargetEnd - Date.now());
-    const timeout = setTimeout(() => {
-      if (useActiveWorkoutStore.getState().timerTargetEnd === timerTargetEnd) {
-        skipTimer();
-      }
-    }, delay);
-
-    return () => clearTimeout(timeout);
-  }, [skipTimer, timerTargetEnd]);
 
   // ---- Auto-expand first exercise ----
   useEffect(() => {
@@ -230,16 +213,6 @@ export default function ActiveWorkoutModal() {
     [addExercise],
   );
 
-  const handleAddRestTime = useCallback(
-    (seconds: number) => {
-      const store = useActiveWorkoutStore.getState();
-      if (!store.timerTargetEnd) return;
-      const remaining = Math.max(0, Math.ceil((store.timerTargetEnd - Date.now()) / 1000));
-      startTimer(remaining + seconds);
-    },
-    [startTimer],
-  );
-
   const renderItem = useCallback(
     ({ item }: { item: WorkoutExerciseWithSets }) => (
       <WorkoutExerciseCard
@@ -309,17 +282,14 @@ export default function ActiveWorkoutModal() {
           flashListRef={flashListRef}
           keyExtractor={keyExtractor}
           onAddExercise={handleAddExercise}
-          onAddRestTime={handleAddRestTime}
           onClosePicker={handleClosePicker}
           onExerciseSelected={handleExerciseSelected}
           onFinish={handleFinish}
           onMinimize={minimize}
           onRequestCancel={handleRequestCancel}
-          onSkipTimer={skipTimer}
           pickerVisible={pickerVisible}
           renderExercise={renderItem}
           sessionName={sessionName}
-          timerTargetEnd={timerTargetEnd}
         />
       )}
     </View>

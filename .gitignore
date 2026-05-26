@@ -46,10 +46,17 @@ app-example
 tmp/
 coverage/
 
+# Agent smoke test artifacts
+test-results/
+playwright-report/
+e2e/artifacts/
+
 # Graphify (knowledge graph)
 .graphify/branch.json
 .graphify/worktree.json
+.graphify/scope.json
 .graphify/needs_update
+.graphify/cache/
 */.graphify/cache/
 .graphify/cost.json
 .graphify/.graphify_*

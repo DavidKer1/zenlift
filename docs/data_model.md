@@ -122,7 +122,6 @@ No guardar `primaryMuscle` ni `secondaryMuscles` como columnas; usar `exercise_m
 | targetSets | integer |
 | targetRepsMin | integer |
 | targetRepsMax | integer |
-| restSeconds | integer |
 | notes | text |
 | sortOrder | integer DEFAULT 0 |
 
@@ -231,4 +230,3 @@ Consistencia semanal:
 ```text
 weeklyConsistency = workoutsCompletedThisWeek / targetWorkoutsPerWeek
 ```
-

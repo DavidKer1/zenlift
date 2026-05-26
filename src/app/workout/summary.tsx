@@ -253,7 +253,7 @@ export default function WorkoutSummaryScreen() {
         keyboardShouldPersistTaps="handled"
       >
         {/* Celebration Header */}
-        <View style={styles.celebrationHeader}>
+        <View style={styles.celebrationHeader} testID="workout-summary-complete">
           <SymbolView
             name={'checkmark.circle.fill' as SymbolViewProps['name']}
             size={64}

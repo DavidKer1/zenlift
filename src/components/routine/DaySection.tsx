@@ -134,6 +134,7 @@ export function DaySection({
           </ThemedText>
           <Pressable
             accessibilityLabel={`Agregar ejercicio a ${day.name}`}
+            testID={`routine-day-${day.id}-add-exercise`}
             onPress={() => setShowPicker(true)}
             style={({ pressed }) => [
               styles.addButton,
@@ -169,6 +170,7 @@ export function DaySection({
         {exerciseCount > 0 ? (
           <Pressable
             accessibilityLabel={`Agregar ejercicio a ${day.name}`}
+            testID={`routine-day-${day.id}-add-exercise`}
             onPress={() => setShowPicker(true)}
             style={({ pressed }) => [
               styles.addButton,

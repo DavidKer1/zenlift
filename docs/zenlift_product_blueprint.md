@@ -213,7 +213,6 @@ La prioridad debe ser:
 - Inputs claros.
 - Valores previos precargados.
 - Edición rápida.
-- Descanso visible.
 - Flujo continuo.
 
 ### 7.3 Progreso visible
@@ -279,7 +278,6 @@ La paleta es monocromática con jerarquía por capas tonales (surface hierarchy)
 | SetLog | Registro individual de una serie. |
 | PersonalRecord | Mejor marca detectada por ejercicio. |
 | ProgressMetric | Métrica calculada de progreso. |
-| RestTimer | Temporizador de descanso (lógica, no entidad persistida). |
 | Note | Nota asociada a ejercicio, set o sesión. |
 | AppSettings | Preferencias locales del usuario (key-value en SQLite o MMKV). |
 | Migration | Registro de migraciones de base de datos aplicadas. |
@@ -371,7 +369,6 @@ Permitir que el usuario cree y organice sus programas de entrenamiento.
 - Agregar ejercicios a cada día.
 - Configurar series objetivo.
 - Configurar reps objetivo.
-- Configurar descanso.
 - Reordenar ejercicios.
 - Agregar notas.
 
@@ -519,7 +516,6 @@ Debe mostrar:
 - Reps anteriores.
 - Inputs actuales.
 - Check de set completado.
-- Timer de descanso.
 - Botón para agregar set.
 - Botón para agregar ejercicio.
 - Finalizar entrenamiento.
@@ -545,7 +541,6 @@ Tipos de set sugeridos:
 ### Reglas importantes
 
 - El peso y reps anteriores deben mostrarse automáticamente.
-- Completar un set puede iniciar el timer de descanso.
 - El usuario debe poder modificar sets anteriores sin fricción.
 - La sesión debe guardarse automáticamente.
 - Si la app se cierra, el workout en curso debe recuperarse.
@@ -683,29 +678,6 @@ Estimated 1RM: 96 kg
 
 ---
 
-## 9.8 Timer de descanso
-
-### Objetivo
-
-Ayudar al usuario a mantener ritmo entre series.
-
-### Funciones
-
-- Timer por defecto global.
-- Timer específico por ejercicio.
-- Inicio automático al completar set.
-- Pausar/reanudar.
-- Saltar timer.
-- Notificación/vibración al terminar.
-
-### Reglas
-
-- El timer no debe bloquear el registro de otros datos.
-- Debe seguir corriendo si el usuario cambia de pantalla.
-- Debe ser visible durante el workout activo.
-
----
-
 ## 9.9 Notas
 
 ### Objetivo
@@ -738,7 +710,6 @@ Permitir personalización sin complicar el producto.
 
 - Unidad de peso: kg/lb.
 - Tema: oscuro por defecto; claro/sistema como opción configurable.
-- Descanso por defecto.
 - Objetivo semanal de entrenamientos.
 - Idioma.
 - Formato de fecha.
@@ -900,9 +871,6 @@ interface ActiveWorkoutStore {
   addSet: (exerciseId: string, set: Omit<SetLog, 'id'>) => void;
   completeSet: (exerciseId: string, setId: string) => void;
   updateSet: (setId: string, updates: Partial<SetLog>) => void;
-  startTimer: (seconds: number) => void;
-  pauseTimer: () => void;
-  skipTimer: () => void;
   finishWorkout: () => Promise<WorkoutSummary>;
   recoverSession: () => Promise<void>; // al reabrir la app
 }
@@ -911,7 +879,6 @@ interface ActiveWorkoutStore {
 interface SettingsStore {
   weightUnit: 'kg' | 'lb';
   theme: 'light' | 'dark' | 'system';
-  defaultRestSeconds: number;
   weeklyGoal: number;
   onboardingComplete: boolean;
   // Persistido en MMKV
@@ -1018,44 +985,7 @@ El teclado es un problema crítico en la Active Workout Screen. El usuario alter
 - En su lugar: **scroll automático al input enfocado** (FlashList tiene `scrollToIndex`).
 - **Botones +/-** junto a cada input — permiten ajustar peso/reps sin teclear (útil con una mano, sudor, prisa).
 - **Cerrar teclado al hacer tap en "completar set"** — `Keyboard.dismiss()`.
-- **El teclado NO debe empujar el timer** — el timer debe permanecer visible en un header fijo.
-
----
-
-## 10.8 Timer de descanso: implementación técnica
-
-**Problema:** En React Native, un `setInterval` dentro de un componente se destruye al cambiar de pantalla. El timer debe sobrevivir.
-
-### Solución: timestamps absolutos + servicio independiente
-
-NO usar countdown con `setInterval`. Usar **timestamps absolutos**:
-
-```typescript
-// domain/services/restTimer.ts
-class RestTimerService {
-  private targetEnd: number | null = null; // Date.now() + seconds*1000
-
-  start(seconds: number): void {
-    this.targetEnd = Date.now() + seconds * 1000;
-    // Persistir targetEnd en MMKV para recuperación
-  }
-
-  getRemainingSeconds(): number {
-    if (!this.targetEnd) return 0;
-    return Math.max(0, Math.ceil((this.targetEnd - Date.now()) / 1000));
-  }
-
-  isRunning(): boolean {
-    return this.targetEnd !== null && this.getRemainingSeconds() > 0;
-  }
-
-  // La UI hace polling cada 1s con requestAnimationFrame
-  // o usa un solo setInterval global en el store
-}
-```
-
-- El `targetEnd` se guarda en MMKV. Si la app se cierra y reabre, el timer se reconstruye con los segundos restantes reales.
-- **Notificación:** `expo-haptics` vibra al llegar a 0. Si se implementa notificación local futura, usar `expo-notifications` con un scheduled notification al `targetEnd`.
+- **El teclado NO debe empujar el header** — la duración del workout debe permanecer visible.
 
 ---
 
@@ -1181,7 +1111,6 @@ Tabla de relación many-to-many entre exercises y muscle_groups.
 | targetSets | integer | Series objetivo. |
 | targetRepsMin | integer | Reps mínimas. |
 | targetRepsMax | integer | Reps máximas. |
-| restSeconds | integer | Descanso sugerido entre sets. |
 | notes | text | Notas específicas para este ejercicio en esta rutina. |
 | sortOrder | integer DEFAULT 0 | Orden dentro del día. |
 
@@ -1370,8 +1299,6 @@ Usuario ajusta reps
 Marca set como completado
   ↓
 Zenlift guarda set
-  ↓
-Zenlift inicia rest timer
   ↓
 Usuario continúa siguiente set
 ```
@@ -1694,7 +1621,6 @@ Validar que el usuario puede:
 
 ### 17.3 Funciones P1
 
-- Timer de descanso.
 - Personal records.
 - Gráficas por ejercicio.
 - Volumen por sesión.
@@ -1768,7 +1694,6 @@ Objetivo: publicar una versión suficientemente pulida.
 Incluye:
 
 - UI final consistente.
-- Timer de descanso.
 - PRs.
 - Historial completo.
 - Progreso básico.
@@ -2044,7 +1969,6 @@ Mitigación:
 ### P1 — Usabilidad real
 
 - Previous performance.
-- Timer de descanso.
 - Editar sets.
 - Reordenar ejercicios.
 - Duplicar rutina.

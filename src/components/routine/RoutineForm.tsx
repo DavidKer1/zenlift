@@ -198,6 +198,7 @@ export function RoutineForm({
               render={({ field: { onBlur, onChange, value } }) => (
                 <TextInput
                   accessibilityLabel="Nombre de la rutina"
+                  testID="routine-name-input"
                   onBlur={onBlur}
                   onChangeText={onChange}
                   placeholder="Push Day"
@@ -231,6 +232,7 @@ export function RoutineForm({
               render={({ field: { onBlur, onChange, value } }) => (
                 <TextInput
                   accessibilityLabel="Descripcion de la rutina"
+                  testID="routine-description-input"
                   multiline
                   onBlur={onBlur}
                   onChangeText={onChange}
@@ -301,6 +303,7 @@ export function RoutineForm({
 
         <Pressable
           accessibilityLabel="Agregar dia a la rutina"
+          testID="routine-add-day"
           onPress={() => appendDay(createDefaultDay(dayFields.length + 1))}
           style={({ pressed }) => [
             styles.addDayButton,
@@ -319,6 +322,7 @@ export function RoutineForm({
       <ThemedView type="background" style={[styles.footer, { padding: spacing.four }]}>
         <Pressable
           accessibilityLabel={submitLabel ?? (initialData ? 'Guardar cambios' : 'Crear rutina')}
+          testID="routine-submit"
           disabled={isSubmitting}
           onPress={handleSubmit(submit)}
           style={({ pressed }) => [

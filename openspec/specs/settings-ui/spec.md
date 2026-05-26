@@ -2,7 +2,7 @@
 
 ## Purpose
 
-Defines the Settings screen UI at `/settings`, including sections (General, Data, Information), controls (weight toggle, theme selector, goal stepper, rest slider), theming, and scroll behavior.
+Defines the Settings screen UI at `/settings`, including sections (General, Data, Information), controls (weight toggle, theme selector, goal stepper), theming, and scroll behavior.
 
 ## Requirements
 
@@ -13,7 +13,7 @@ The system SHALL render a Settings screen at the `/settings` route with three se
 #### Scenario: General section is visible
 
 - **WHEN** the Settings screen is displayed
-- **THEN** the General section shows weight unit toggle, theme selector, weekly goal stepper, and rest timer slider
+- **THEN** the General section shows weight unit toggle, theme selector, and weekly goal stepper
 
 #### Scenario: Data section is visible
 
@@ -76,25 +76,6 @@ The Settings screen SHALL provide a stepper control for the weekly workout goal 
 
 - **WHEN** the user taps the decrement button
 - **THEN** the value decreases by 1 (down to minimum 1)
-
-### Requirement: Default rest timer slider
-
-The Settings screen SHALL provide a slider control for the default rest timer (30-300 seconds), reading from and writing to the `default_rest` MMKV setting.
-
-#### Scenario: Slider displays current value
-
-- **WHEN** `default_rest` is `120`
-- **THEN** the slider position reflects `120` seconds
-
-#### Scenario: Slider changes value
-
-- **WHEN** the user drags the slider to `180`
-- **THEN** `default_rest` is set to `180`
-
-#### Scenario: Slider value label shows formatted time
-
-- **WHEN** the slider is at `90`
-- **THEN** the label displays `1:30` (minutes:seconds format)
 
 ### Requirement: Settings screen uses light theme by default
 

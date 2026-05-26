@@ -81,8 +81,9 @@ The system SHALL allow users to add, remove, and reorder exercises within each d
 
 #### Scenario: Configure exercise targets
 - **WHEN** the exercise configurator modal opens for a selected exercise
-- **THEN** the user can set target sets (numeric, ≥1), target reps min (numeric, ≥1), target reps max (numeric, ≥1), and rest seconds (numeric, ≥0)
+- **THEN** the user can set target sets (numeric, ≥1), target reps min (numeric, ≥1), and target reps max (numeric, ≥1)
 - **AND** the exercise name is displayed at the top of the modal
+- **AND** the modal SHALL NOT include rest, break, or descanso inputs
 
 #### Scenario: Remove an exercise
 - **WHEN** user taps the remove button on an exercise within a day
@@ -125,7 +126,7 @@ The system SHALL save a new routine with all its days and exercises atomically w
 
 #### Scenario: Create routine with only required fields
 - **WHEN** user submits a valid form with only name and 1 day with 1 exercise (no optional fields)
-- **THEN** the routine is created with `description=null`, `goal=null`, and exercises with `targetRepsMin=null`, `targetRepsMax=null`, `restSeconds=null`
+- **THEN** the routine is created with `description=null`, `goal=null`, and exercises with `targetRepsMin=null` and `targetRepsMax=null`
 
 ### Requirement: Transactional update for existing routines
 The system SHALL update an existing routine preserving UUIDs for existing items and generating new UUIDs only for newly added days/exercises.

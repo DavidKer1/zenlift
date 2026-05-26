@@ -17,7 +17,6 @@ import {
   getActiveWorkoutSharedProps,
 } from '@/components/workout/activeWorkoutMotion';
 import { BottomBar } from '@/components/workout/BottomBar';
-import { RestTimer } from '@/components/workout/RestTimer';
 import type { WorkoutExerciseWithSets } from '@/domain/entities';
 import { useZenliftTheme } from '@/providers/ThemeProvider';
 
@@ -28,17 +27,14 @@ type ActiveWorkoutExpandedSurfaceProps = {
   flashListRef: React.RefObject<FlashListRef<WorkoutExerciseWithSets> | null>;
   keyExtractor: (item: WorkoutExerciseWithSets) => string;
   onAddExercise: () => void;
-  onAddRestTime: (seconds: number) => void;
   onClosePicker: () => void;
   onExerciseSelected: (selected: { id: string; name: string }) => void;
   onFinish: () => void;
   onMinimize: () => void;
   onRequestCancel: () => void;
-  onSkipTimer: () => void;
   pickerVisible: boolean;
   renderExercise: NonNullable<FlashListProps<WorkoutExerciseWithSets>['renderItem']>;
   sessionName: string;
-  timerTargetEnd: number | null;
 };
 
 export function ActiveWorkoutExpandedSurface({
@@ -48,17 +44,14 @@ export function ActiveWorkoutExpandedSurface({
   flashListRef,
   keyExtractor,
   onAddExercise,
-  onAddRestTime,
   onClosePicker,
   onExerciseSelected,
   onFinish,
   onMinimize,
   onRequestCancel,
-  onSkipTimer,
   pickerVisible,
   renderExercise,
   sessionName,
-  timerTargetEnd,
 }: ActiveWorkoutExpandedSurfaceProps) {
   const { colors } = useZenliftTheme();
   const appearProgress = useSharedValue(0);
@@ -110,6 +103,7 @@ export function ActiveWorkoutExpandedSurface({
           ]}
           {...panResponder.panHandlers}
           {...getActiveWorkoutSharedProps(ACTIVE_WORKOUT_SHARED_TAGS.headerContainer)}
+          testID="active-workout-expanded-header"
         >
           <ActiveWorkoutHeaderContent
             elapsed={elapsed}
@@ -117,6 +111,7 @@ export function ActiveWorkoutExpandedSurface({
             mutedTextColor={colors.mutedText}
             onChevronPress={onMinimize}
             sessionName={sessionName}
+            sessionNameColor="accent"
             textColor={colors.textPrimary}
           />
         </Animated.View>
@@ -133,14 +128,6 @@ export function ActiveWorkoutExpandedSurface({
             </ThemedText>
           </Pressable>
         </View>
-
-        <RestTimer
-          targetEnd={timerTargetEnd}
-          onComplete={onSkipTimer}
-          onSkip={onSkipTimer}
-          onAddTime={onAddRestTime}
-          exerciseName={exercises.length > 0 ? exercises[0].exercise?.name : undefined}
-        />
 
         <FlashList<WorkoutExerciseWithSets>
           ref={flashListRef}

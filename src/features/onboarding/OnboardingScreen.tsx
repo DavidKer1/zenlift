@@ -434,7 +434,8 @@ export default function OnboardingScreen({ onComplete }: OnboardingScreenProps) 
           { opacity: pressed ? 0.6 : 1 },
         ]}
         accessibilityLabel="Saltar onboarding"
-        accessibilityRole="button">
+        accessibilityRole="button"
+        testID="onboarding-skip">
         <Text
           style={[
             styles.skipText,

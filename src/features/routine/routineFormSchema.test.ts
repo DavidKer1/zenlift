@@ -30,7 +30,6 @@ describe('routineFormSchema', () => {
               targetSets: '3',
               targetRepsMin: '8',
               targetRepsMax: '',
-              restSeconds: '90',
             },
           ],
         },
@@ -41,7 +40,14 @@ describe('routineFormSchema', () => {
     if (result.success) {
       expect(result.data.days[0].exercises[0].targetSets).toBe(3);
       expect(result.data.days[0].exercises[0].targetRepsMax).toBeUndefined();
-      expect(result.data.days[0].exercises[0].restSeconds).toBe(90);
+      expect(Object.keys(result.data.days[0].exercises[0])).toEqual([
+        'key',
+        'exerciseId',
+        'exerciseName',
+        'targetSets',
+        'targetRepsMin',
+        'targetRepsMax',
+      ]);
     }
   });
 });

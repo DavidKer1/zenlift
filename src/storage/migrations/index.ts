@@ -38,6 +38,47 @@ export const MIGRATIONS: Migration[] = [
     description: 'Create initial schema (12 tables + indices)',
     sql: `${CREATE_TABLES_SQL}\n${CREATE_INDICES_SQL}`,
   },
+  {
+    version: 2,
+    description: 'Remove routine exercise rest seconds',
+    sql: `
+      ALTER TABLE routine_exercises RENAME TO routine_exercises_legacy;
+
+      CREATE TABLE routine_exercises (
+        id              TEXT PRIMARY KEY,
+        routine_day_id  TEXT NOT NULL REFERENCES routine_days(id) ON DELETE CASCADE,
+        exercise_id     TEXT NOT NULL REFERENCES exercises(id) ON DELETE CASCADE,
+        target_sets     INTEGER,
+        target_reps_min INTEGER,
+        target_reps_max INTEGER,
+        notes           TEXT,
+        sort_order      INTEGER NOT NULL DEFAULT 0
+      );
+
+      INSERT INTO routine_exercises (
+        id,
+        routine_day_id,
+        exercise_id,
+        target_sets,
+        target_reps_min,
+        target_reps_max,
+        notes,
+        sort_order
+      )
+      SELECT
+        id,
+        routine_day_id,
+        exercise_id,
+        target_sets,
+        target_reps_min,
+        target_reps_max,
+        notes,
+        sort_order
+      FROM routine_exercises_legacy;
+
+      DROP TABLE routine_exercises_legacy;
+    `,
+  },
 ];
 
 // ---------------------------------------------------------------------------

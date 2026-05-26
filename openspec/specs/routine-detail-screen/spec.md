@@ -10,7 +10,7 @@ The system SHALL load a complete routine tree (routine, days, exercises with exe
 
 #### Scenario: Routine exists with days and exercises
 - **WHEN** the user navigates to `/routine/[id]` with a valid routine ID that has days and exercises
-- **THEN** the screen displays the routine name, description, all days in `sort_order` order, and all exercises per day in `sort_order` order with exercise name, target sets, target reps range, and rest time
+- **THEN** the screen displays the routine name, description, all days in `sort_order` order, and all exercises per day in `sort_order` order with exercise name, target sets, and target reps range
 
 #### Scenario: Routine does not exist
 - **WHEN** the user navigates to `/routine/[id]` with a non-existent ID
@@ -53,7 +53,7 @@ The system SHALL duplicate a routine including all its days and exercises with n
 - **THEN** `RoutineRepo.duplicate(id, "Copy of <original_name>")` is called, the screen shows a success confirmation, and the user stays on the original routine's detail view
 
 #### Scenario: Duplicate preserves exercise configuration
-- **WHEN** a routine is duplicated and the original has exercises with `target_sets`, `target_reps_min`, `target_reps_max`, `rest_seconds`, and `sort_order`
+- **WHEN** a routine is duplicated and the original has exercises with `target_sets`, `target_reps_min`, `target_reps_max`, and `sort_order`
 - **THEN** the duplicated routine has identical configuration values with all new UUIDs
 
 ### Requirement: Archive routine returns to list
@@ -78,7 +78,7 @@ The system SHALL prompt for confirmation before deleting a routine and cascade-d
 
 ### Requirement: Day sections display exercises with targets
 
-The system SHALL render each routine day as a section containing its name and a list of exercise rows showing name, target sets/reps, and rest time.
+The system SHALL render each routine day as a section containing its name and a list of exercise rows showing name, target sets, and target reps.
 
 #### Scenario: Day with exercises
 - **WHEN** a routine has a day named "Day 1" with two exercises
@@ -90,15 +90,15 @@ The system SHALL render each routine day as a section containing its name and a 
 
 ### Requirement: Exercise row displays exercise details and primary muscle
 
-The system SHALL render each exercise as a row showing the exercise name, a colored dot for the primary muscle group, target sets x reps range, and rest time in seconds.
+The system SHALL render each exercise as a row showing the exercise name, a colored dot for the primary muscle group, and target sets x reps range.
 
 #### Scenario: Exercise with all targets set
-- **WHEN** a routine exercise has `target_sets = 4`, `target_reps_min = 8`, `target_reps_max = 12`, `rest_seconds = 90`
-- **THEN** the exercise row displays "4 sets", "8-12 reps", "90s rest", and a colored dot matching the exercise's primary muscle group color from `muscleColors`
+- **WHEN** a routine exercise has `target_sets = 4`, `target_reps_min = 8`, and `target_reps_max = 12`
+- **THEN** the exercise row displays "4 sets", "8-12 reps", and a colored dot matching the exercise's primary muscle group color from `muscleColors`
 
 #### Scenario: Exercise with partial targets
-- **WHEN** a routine exercise only has `target_sets = 3` and no rep range or rest configured
-- **THEN** the exercise row displays "3 sets" with no rep range or rest shown
+- **WHEN** a routine exercise only has `target_sets = 3` and no rep range configured
+- **THEN** the exercise row displays "3 sets" with no rep range shown
 
 ### Requirement: Remove exercise from a day
 

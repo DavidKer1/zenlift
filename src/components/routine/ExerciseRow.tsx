@@ -43,14 +43,11 @@ export const ExerciseRow = React.memo(function ExerciseRow({
 
   const hasRepsRange =
     exercise.target_reps_min !== null || exercise.target_reps_max !== null;
-  const hasRest = exercise.rest_seconds !== null;
 
   const repsLabel =
     hasRepsRange
       ? `${exercise.target_reps_min ?? '-'}-${exercise.target_reps_max ?? '-'} reps`
       : null;
-
-  const restLabel = hasRest ? `${exercise.rest_seconds}s rest` : null;
 
   return (
     <ThemedView
@@ -78,11 +75,6 @@ export const ExerciseRow = React.memo(function ExerciseRow({
             {repsLabel ? (
               <ThemedText themeColor="mutedText" style={styles.target}>
                 {repsLabel}
-              </ThemedText>
-            ) : null}
-            {restLabel ? (
-              <ThemedText themeColor="mutedText" style={styles.target}>
-                {restLabel}
               </ThemedText>
             ) : null}
           </View>

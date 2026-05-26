@@ -53,10 +53,6 @@ jest.mock('@/domain/calculations/volume', () => ({
   calculateSessionVolume: jest.fn().mockReturnValue(5000),
 }));
 
-jest.mock('@/features/settings/useSettings', () => ({
-  getSettingsValue: jest.fn().mockReturnValue(0),
-}));
-
 function makeExercise(overrides: Partial<Exercise> = {}): Exercise {
   return {
     id: 'ex-1',
@@ -127,8 +123,6 @@ function clearStore() {
   useActiveWorkoutStore.setState({
     session: null,
     exercises: [],
-    isResting: false,
-    timerTargetEnd: null,
   });
   Object.keys(mockMMKVStore).forEach((k) => delete mockMMKVStore[k]);
   jest.clearAllMocks();
@@ -261,7 +255,7 @@ describe('activeWorkoutStore', () => {
   });
 
   describe('completeSet', () => {
-    it('completes a set, triggers haptics, and may start timer', async () => {
+    it('completes a set and triggers haptics without starting a timer', async () => {
       const session = makeSession();
       const set = makeSetLog({ is_completed: 0 });
       const exercise = makeWorkoutExerciseWithSets({ id: 'we-1' }, [set]);
@@ -278,25 +272,6 @@ describe('activeWorkoutStore', () => {
 
       const Haptics = require('expo-haptics');
       expect(Haptics.notificationAsync).toHaveBeenCalledWith('success');
-    });
-
-    it('starts rest timer when defaultRest is configured', async () => {
-      const { getSettingsValue } = require('@/features/settings/useSettings');
-      getSettingsValue.mockReturnValue(90);
-
-      const session = makeSession();
-      const set = makeSetLog({ is_completed: 0 });
-      const exercise = makeWorkoutExerciseWithSets({ id: 'we-1' }, [set]);
-
-      const { useActiveWorkoutStore } = require('@/features/workout/stores/activeWorkoutStore');
-      useActiveWorkoutStore.setState({ session, exercises: [exercise] });
-
-      jest.spyOn(WorkoutRepo.prototype, 'completeSet').mockResolvedValue(undefined);
-
-      await useActiveWorkoutStore.getState().completeSet('ex-1', 'sl-1');
-
-      expect(useActiveWorkoutStore.getState().isResting).toBe(true);
-      expect(useActiveWorkoutStore.getState().timerTargetEnd).not.toBeNull();
     });
   });
 
@@ -406,58 +381,6 @@ describe('activeWorkoutStore', () => {
       expect(reordered[0].sort_order).toBe(1);
       expect(reordered[1].sort_order).toBe(2);
       expect(reordered[2].sort_order).toBe(3);
-    });
-  });
-
-  describe('timer operations', () => {
-    it('startTimer sets state and MMKV', () => {
-      const { useActiveWorkoutStore } = require('@/features/workout/stores/activeWorkoutStore');
-
-      const before = Date.now();
-      useActiveWorkoutStore.getState().startTimer(90);
-
-      const state = useActiveWorkoutStore.getState();
-      expect(state.isResting).toBe(true);
-      expect(state.timerTargetEnd).toBeGreaterThanOrEqual(before + 90000);
-    });
-
-    it('getTimerRemaining returns remaining seconds', () => {
-      const { useActiveWorkoutStore } = require('@/features/workout/stores/activeWorkoutStore');
-
-      const future = Date.now() + 45000;
-      useActiveWorkoutStore.setState({ timerTargetEnd: future, isResting: true });
-
-      const remaining = useActiveWorkoutStore.getState().getTimerRemaining();
-      expect(remaining).toBeGreaterThan(0);
-      expect(remaining).toBeLessThanOrEqual(45);
-    });
-
-    it('getTimerRemaining returns 0 and clears state when expired', () => {
-      const { useActiveWorkoutStore } = require('@/features/workout/stores/activeWorkoutStore');
-
-      const past = Date.now() - 1000;
-      useActiveWorkoutStore.setState({ timerTargetEnd: past, isResting: true });
-
-      const remaining = useActiveWorkoutStore.getState().getTimerRemaining();
-
-      expect(remaining).toBe(0);
-      expect(useActiveWorkoutStore.getState().isResting).toBe(false);
-      expect(useActiveWorkoutStore.getState().timerTargetEnd).toBeNull();
-    });
-
-    it('skipTimer clears timer state', () => {
-      const { useActiveWorkoutStore } = require('@/features/workout/stores/activeWorkoutStore');
-
-      useActiveWorkoutStore.setState({
-        timerTargetEnd: Date.now() + 90000,
-        isResting: true,
-      });
-
-      useActiveWorkoutStore.getState().skipTimer();
-
-      const state = useActiveWorkoutStore.getState();
-      expect(state.timerTargetEnd).toBeNull();
-      expect(state.isResting).toBe(false);
     });
   });
 

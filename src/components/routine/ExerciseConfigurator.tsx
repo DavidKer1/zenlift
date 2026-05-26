@@ -16,7 +16,6 @@ export type ExerciseConfiguration = {
   targetSets: number;
   targetRepsMin?: number;
   targetRepsMax?: number;
-  restSeconds?: number;
 };
 
 type ExerciseConfiguratorProps = {
@@ -40,7 +39,6 @@ export function ExerciseConfigurator({
   const [targetSets, setTargetSets] = useState('3');
   const [targetRepsMin, setTargetRepsMin] = useState('8');
   const [targetRepsMax, setTargetRepsMax] = useState('12');
-  const [restSeconds, setRestSeconds] = useState('90');
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -49,7 +47,6 @@ export function ExerciseConfigurator({
     setTargetSets(String(initialValues?.targetSets ?? 3));
     setTargetRepsMin(formatOptional(initialValues?.targetRepsMin ?? 8));
     setTargetRepsMax(formatOptional(initialValues?.targetRepsMax ?? 12));
-    setRestSeconds(formatOptional(initialValues?.restSeconds ?? 90));
     setError(null);
   }, [initialValues, visible]);
 
@@ -96,7 +93,6 @@ export function ExerciseConfigurator({
     const parsedSets = parseInteger(targetSets);
     const parsedMin = parseOptionalInteger(targetRepsMin);
     const parsedMax = parseOptionalInteger(targetRepsMax);
-    const parsedRest = parseOptionalInteger(restSeconds);
 
     if (!parsedSets || parsedSets < 1) {
       setError('Minimo 1 serie');
@@ -108,17 +104,11 @@ export function ExerciseConfigurator({
       return;
     }
 
-    if (parsedRest !== undefined && parsedRest < 0) {
-      setError('El descanso no puede ser negativo');
-      return;
-    }
-
     setError(null);
     onConfirm({
       targetSets: parsedSets,
       targetRepsMin: parsedMin,
       targetRepsMax: parsedMax,
-      restSeconds: parsedRest,
     });
   }
 
@@ -165,13 +155,6 @@ export function ExerciseConfigurator({
               accessibilityLabel="Repeticiones maximas"
               style={stylesWithTheme.input}
             />
-            <ConfigInput
-              label="Descanso"
-              value={restSeconds}
-              onChangeText={setRestSeconds}
-              accessibilityLabel="Descanso en segundos"
-              style={stylesWithTheme.input}
-            />
           </View>
 
           <View style={styles.actions}>
@@ -184,6 +167,7 @@ export function ExerciseConfigurator({
             </Pressable>
             <Pressable
               accessibilityLabel="Confirmar configuracion de ejercicio"
+              testID="exercise-configurator-confirm"
               disabled={isSaving}
               onPress={handleConfirm}
               style={({ pressed }) => [
@@ -226,6 +210,7 @@ function ConfigInput({
       </ThemedText>
       <TextInput
         accessibilityLabel={accessibilityLabel}
+        testID={`exercise-configurator-${label.toLowerCase().replace(/\s+/g, '-')}`}
         keyboardType="numeric"
         onChangeText={onChangeText}
         returnKeyType="done"

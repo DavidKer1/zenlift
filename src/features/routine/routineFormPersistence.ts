@@ -101,13 +101,12 @@ export async function updateRoutineFromForm(
           await db.runAsync(
             `UPDATE routine_exercises
              SET exercise_id = ?, target_sets = ?, target_reps_min = ?, target_reps_max = ?,
-                 rest_seconds = ?, sort_order = ?
+                 sort_order = ?
              WHERE id = ? AND routine_day_id = ?`,
             exercise.exerciseId,
             exercise.targetSets,
             exercise.targetRepsMin ?? null,
             exercise.targetRepsMax ?? null,
-            exercise.restSeconds ?? null,
             exerciseIndex,
             exercise.id,
             dayId,
@@ -152,15 +151,14 @@ async function insertRoutineExercise(
 ): Promise<void> {
   await db.runAsync(
     `INSERT INTO routine_exercises
-      (id, routine_day_id, exercise_id, target_sets, target_reps_min, target_reps_max, rest_seconds, notes, sort_order)
-     VALUES (?, ?, ?, ?, ?, ?, ?, NULL, ?)`,
+      (id, routine_day_id, exercise_id, target_sets, target_reps_min, target_reps_max, notes, sort_order)
+     VALUES (?, ?, ?, ?, ?, ?, NULL, ?)`,
     exercise.id ?? generateId(),
     dayId,
     exercise.exerciseId,
     exercise.targetSets,
     exercise.targetRepsMin ?? null,
     exercise.targetRepsMax ?? null,
-    exercise.restSeconds ?? null,
     sortOrder,
   );
 }

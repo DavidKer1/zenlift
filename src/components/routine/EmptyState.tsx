@@ -42,6 +42,7 @@ export function EmptyState({ onCreatePress }: EmptyStateProps) {
       <Pressable
         accessibilityLabel="Crear primera rutina"
         accessibilityRole="button"
+        testID="routine-empty-create"
         onPress={onCreatePress}
         style={({ pressed }) => [
           styles.button,

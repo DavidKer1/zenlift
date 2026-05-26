@@ -70,7 +70,6 @@ CREATE TABLE IF NOT EXISTS routine_exercises (
   target_sets    INTEGER,
   target_reps_min INTEGER,
   target_reps_max INTEGER,
-  rest_seconds   INTEGER,
   notes          TEXT,
   sort_order     INTEGER NOT NULL DEFAULT 0
 );

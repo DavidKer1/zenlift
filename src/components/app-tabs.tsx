@@ -129,6 +129,7 @@ function TabButton({
     <Pressable
       {...props}
       accessibilityLabel={label}
+      testID={`tab-${label.toLowerCase()}`}
       onPressIn={handlePressIn}
       onPressOut={handlePressOut}
       style={styles.tabButton}>

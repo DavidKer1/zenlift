@@ -22,7 +22,6 @@ interface RoutineJoinRow {
   target_sets: number | null;
   target_reps_min: number | null;
   target_reps_max: number | null;
-  rest_seconds: number | null;
   notes: string | null;
   sort_order: number;
   ex_id: string;
@@ -44,7 +43,6 @@ function mapJoinRow(row: RoutineJoinRow): RoutineExerciseWithExercise {
     target_sets: row.target_sets,
     target_reps_min: row.target_reps_min,
     target_reps_max: row.target_reps_max,
-    rest_seconds: row.rest_seconds,
     notes: row.notes,
     sort_order: row.sort_order,
     exercise: {
@@ -90,7 +88,6 @@ type ExerciseData = {
   targetSets?: number | null;
   targetRepsMin?: number | null;
   targetRepsMax?: number | null;
-  restSeconds?: number | null;
   notes?: string | null;
 };
 
@@ -99,7 +96,6 @@ type ExerciseUpdates = {
   targetSets?: number | null;
   targetRepsMin?: number | null;
   targetRepsMax?: number | null;
-  restSeconds?: number | null;
   notes?: string | null;
   sortOrder?: number;
 };
@@ -108,7 +104,7 @@ const EXERCISES_JOIN_SQL = `
   SELECT
     re.id, re.routine_day_id, re.exercise_id,
     re.target_sets, re.target_reps_min, re.target_reps_max,
-    re.rest_seconds, re.notes, re.sort_order,
+    re.notes, re.sort_order,
     e.id AS ex_id, e.name AS ex_name,
     e.equipment AS ex_equipment, e.category AS ex_category,
     e.is_custom AS ex_is_custom, e.is_favorite AS ex_is_favorite,
@@ -313,15 +309,14 @@ export class RoutineRepo {
           const newExId = generateId();
 
           await this.db.runAsync(
-            `INSERT INTO routine_exercises (id, routine_day_id, exercise_id, target_sets, target_reps_min, target_reps_max, rest_seconds, notes, sort_order)
-             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+            `INSERT INTO routine_exercises (id, routine_day_id, exercise_id, target_sets, target_reps_min, target_reps_max, notes, sort_order)
+             VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
             newExId,
             newDayId,
             ex.exercise_id,
             ex.target_sets ?? null,
             ex.target_reps_min ?? null,
             ex.target_reps_max ?? null,
-            ex.rest_seconds ?? null,
             ex.notes ?? null,
             ex.sort_order,
           );
@@ -418,15 +413,14 @@ export class RoutineRepo {
     const id = generateId();
 
     await this.db.runAsync(
-      `INSERT INTO routine_exercises (id, routine_day_id, exercise_id, target_sets, target_reps_min, target_reps_max, rest_seconds, notes, sort_order)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, 0)`,
+      `INSERT INTO routine_exercises (id, routine_day_id, exercise_id, target_sets, target_reps_min, target_reps_max, notes, sort_order)
+       VALUES (?, ?, ?, ?, ?, ?, ?, 0)`,
       id,
       dayId,
       data.exerciseId,
       data.targetSets ?? null,
       data.targetRepsMin ?? null,
       data.targetRepsMax ?? null,
-      data.restSeconds ?? null,
       data.notes ?? null,
     );
 
@@ -458,10 +452,6 @@ export class RoutineRepo {
     if (updates.targetRepsMax !== undefined) {
       clauses.push('target_reps_max = ?');
       params.push(updates.targetRepsMax);
-    }
-    if (updates.restSeconds !== undefined) {
-      clauses.push('rest_seconds = ?');
-      params.push(updates.restSeconds);
     }
     if (updates.notes !== undefined) {
       clauses.push('notes = ?');

@@ -8,7 +8,12 @@
     "android": "expo run:android",
     "ios": "expo run:ios",
     "web": "expo start --web",
-    "lint": "expo lint"
+    "lint": "expo lint",
+    "typecheck": "tsc --noEmit",
+    "test": "jest",
+    "test:agent:web": "playwright test --config playwright.agent.config.ts",
+    "test:agent:ios": "bash ./scripts/run-maestro-ios-smoke.sh",
+    "test:agent:smoke": "pnpm typecheck && pnpm test && pnpm test:agent:web && pnpm test:agent:ios"
   },
   "dependencies": {
     "@expo/vector-icons": "^15.1.1",
@@ -57,6 +62,7 @@
     "zustand": "^5.0.13"
   },
   "devDependencies": {
+    "@playwright/test": "^1.60.0",
     "@types/jest": "^29.5.14",
     "@types/react": "~19.2.2",
     "@types/react-test-renderer": "^19.1.0",

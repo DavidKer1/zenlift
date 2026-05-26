@@ -41,7 +41,7 @@ Necesita:
 - Cuando voy al gimnasio, quiero saber qué rutina toca, registrar cada serie rápido y ver mis pesos anteriores para progresar sin depender de memoria o notas.
 - Cuando llevo semanas entrenando, quiero saber si levanto más peso, hago más reps o acumulo más volumen.
 - Cuando intento mantener el hábito, quiero ver frecuencia semanal e historial para no perder continuidad.
-- Cuando sigo un programa, quiero días, ejercicios, series y descansos organizados.
+- Cuando sigo un programa, quiero días, ejercicios, series y repeticiones organizadas.
 
 ## Loop core
 

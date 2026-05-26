@@ -21,6 +21,7 @@ export function FAB({
     <Pressable
       accessibilityLabel={accessibilityLabel}
       accessibilityRole="button"
+      testID="routine-create-fab"
       onPress={onPress}
       style={({ pressed }) => [
         styles.button,

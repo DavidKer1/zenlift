@@ -2,7 +2,7 @@
 
 ## Purpose
 
-Defines the persistent storage of user preferences (weight unit, theme mode, weekly goal, default rest timer) in MMKV with namespaced keys, defaults, clamping, and a reactive `useSettings` hook.
+Defines the persistent storage of user preferences (weight unit, theme mode, weekly goal) in MMKV with namespaced keys, defaults, clamping, and a reactive `useSettings` hook.
 
 ## Requirements
 
@@ -68,33 +68,14 @@ The system SHALL persist the user's weekly workout goal (integer 1-7) in MMKV un
 - **WHEN** weekly goal is set to `0` or `8`
 - **THEN** the value is clamped to `1` or `7` respectively before being stored
 
-### Requirement: Default rest timer preference storage
-
-The system SHALL persist the default rest timer in seconds (integer 30-300) in MMKV under the key `zenlift.settings.default_rest` and default to `90` when no value is stored.
-
-#### Scenario: Default rest timer is 90 seconds
-
-- **WHEN** no default_rest value exists in MMKV
-- **THEN** the settings hook returns `90`
-
-#### Scenario: User adjusts rest timer
-
-- **WHEN** default rest is set to `120`
-- **THEN** subsequent reads return `120` and the value persists after app restart
-
-#### Scenario: Out-of-range value clamps to bounds
-
-- **WHEN** default rest is set to `10` or `500`
-- **THEN** the value is clamped to `30` or `300` respectively before being stored
-
 ### Requirement: Settings hook provides reactive values
 
-The system SHALL provide a `useSettings` React hook that returns the current values for all four settings and setter functions, and SHALL re-render consuming components when any setting changes via MMKV listener.
+The system SHALL provide a `useSettings` React hook that returns the current values for launch-phase settings and setter functions, and SHALL re-render consuming components when any setting changes via MMKV listener.
 
 #### Scenario: Hook returns all settings
 
 - **WHEN** `useSettings()` is called
-- **THEN** the returned object contains `weightUnit`, `themeMode`, `weeklyGoal`, `defaultRest`, and their corresponding setter functions
+- **THEN** the returned object contains `weightUnit`, `themeMode`, `weeklyGoal`, and their corresponding setter functions
 
 #### Scenario: Component re-renders on change
 

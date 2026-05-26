@@ -8,6 +8,7 @@ import {
   ACTIVE_WORKOUT_SHARED_TAGS,
   getActiveWorkoutSharedProps,
 } from '@/components/workout/activeWorkoutMotion';
+import type { ThemeColor } from '@/theme';
 
 const ORANGE = '#F97316';
 
@@ -17,6 +18,7 @@ type ActiveWorkoutHeaderContentProps = {
   mutedTextColor: string;
   onChevronPress: () => void;
   sessionName: string;
+  sessionNameColor?: ThemeColor;
   textColor: string;
 };
 
@@ -26,6 +28,7 @@ export function ActiveWorkoutHeaderContent({
   mutedTextColor,
   onChevronPress,
   sessionName,
+  sessionNameColor,
   textColor,
 }: ActiveWorkoutHeaderContentProps) {
   return (
@@ -36,7 +39,7 @@ export function ActiveWorkoutHeaderContent({
       >
         <ThemedText
           type="smallBold"
-          themeColor="mutedText"
+          themeColor={sessionNameColor}
           numberOfLines={1}
           style={styles.sessionLabel}
         >

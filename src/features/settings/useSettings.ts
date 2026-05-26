@@ -2,7 +2,6 @@ import { useCallback, useEffect, useState } from 'react';
 import { createMMKV } from 'react-native-mmkv';
 
 import {
-  DEFAULT_REST_RANGE,
   DEFAULT_SETTINGS,
   LEGACY_THEME_MODE_KEY,
   SETTINGS_KEYS,
@@ -20,7 +19,6 @@ type SettingsSnapshot = {
   weightUnit: WeightUnit;
   themeMode: ThemeMode;
   weeklyGoal: number;
-  defaultRest: number;
 };
 
 type SettingsValue = WeightUnit | ThemeMode | number;
@@ -29,7 +27,6 @@ const SETTINGS_KEY_SET = new Set<string>([
   SETTINGS_KEYS.weightUnit,
   SETTINGS_KEYS.themeMode,
   SETTINGS_KEYS.weeklyGoal,
-  SETTINGS_KEYS.defaultRest,
   LEGACY_THEME_MODE_KEY,
 ]);
 
@@ -70,12 +67,6 @@ function readSettingsSnapshot(): SettingsSnapshot {
       DEFAULT_SETTINGS.weeklyGoal,
       WEEKLY_GOAL_RANGE.min,
       WEEKLY_GOAL_RANGE.max,
-    ),
-    defaultRest: readInteger(
-      SETTINGS_KEYS.defaultRest,
-      DEFAULT_SETTINGS.defaultRest,
-      DEFAULT_REST_RANGE.min,
-      DEFAULT_REST_RANGE.max,
     ),
   };
 }
@@ -126,17 +117,10 @@ export function useSettings() {
     setSettings(readSettingsSnapshot());
   }, []);
 
-  const setDefaultRest = useCallback((defaultRest: number) => {
-    const nextRest = clamp(Math.round(defaultRest), DEFAULT_REST_RANGE.min, DEFAULT_REST_RANGE.max);
-    persistNumber(SETTINGS_KEYS.defaultRest, nextRest);
-    setSettings(readSettingsSnapshot());
-  }, []);
-
   return {
     ...settings,
     setWeightUnit,
     setThemeMode,
     setWeeklyGoal,
-    setDefaultRest,
   };
 }

@@ -23,7 +23,6 @@ Objetivo: validar que el usuario puede crear rutinas, iniciar workouts, registra
 
 ### P1
 
-- Timer de descanso.
 - Personal records.
 - Gráficas por ejercicio.
 - Volumen por sesión.
@@ -77,7 +76,6 @@ Objetivo: validar que el usuario puede crear rutinas, iniciar workouts, registra
 ### 1.0 Play Store release
 
 - UI final consistente.
-- Timer.
 - PRs.
 - Historial completo.
 - Progreso básico.
@@ -115,10 +113,22 @@ Objetivo: validar que el usuario puede crear rutinas, iniciar workouts, registra
 | Rendimiento Android bajo | Alta | FlashList, WAL, índices, medir en dispositivo real. |
 | Onboarding complejo | Alta | Máximo 3 pantallas, skipeable, templates y Quick Workout. |
 | Errores silenciosos SQLite | Crítica | Repositories con try/catch, DatabaseError, tests de integridad. |
-| Fatiga del teclado | Media | returnKeyType, +/- buttons, teclado numérico, timer fijo. |
+| Fatiga del teclado | Media | returnKeyType, +/- buttons y teclado numérico. |
 | IDs no aptos para sync futuro | Crítica futura | UUIDs desde el día 1. |
 
 ## Testing
+
+### Pirámide de testing
+
+```text
+Manual en dispositivo real
+Maestro iOS Simulator smoke
+Playwright Expo web mobile smoke
+Integration tests SQLite
+Unit tests dominio/utils
+```
+
+La pirámide mantiene los tests rápidos abajo y usa smoke móvil solo para validar flujos de usuario. Playwright y Maestro ayudan a agentes IA, pero no sustituyen las pruebas unitarias, de repositorios o de dispositivo físico.
 
 ### Unit tests P0
 
@@ -144,6 +154,30 @@ Cubrir repositorios SQLite:
 - Aplicar migraciones una sola vez.
 - Validar cascades.
 
+### Agent smoke tests P1
+
+Usar los scripts compartidos para Codex, Copilot y Opencode:
+
+- `pnpm test:agent:web`: Playwright + Expo web en viewport móvil. Debe cubrir crear rutina, iniciar workout, registrar al menos 2 sets, finalizar sesión y confirmar resumen/historial.
+- `pnpm test:agent:ios`: Maestro + iOS Simulator contra `com.zenlift.workout`. Debe cubrir el mismo core loop con launch nativo y estado limpio.
+- `pnpm test:agent:smoke`: typecheck, Jest, Playwright web smoke y Maestro iOS smoke en orden.
+
+Prerequisitos:
+
+- Playwright browsers instalados con `pnpm exec playwright install chromium`.
+- Para iOS: macOS, Xcode Command Line Tools, un iOS Simulator iniciado, app instalada con `pnpm ios`, y Maestro CLI.
+
+Artefactos:
+
+- Playwright: `test-results/agent-web/`, `playwright-report/agent-web/`.
+- Maestro: `e2e/artifacts/maestro/`.
+
+Límites:
+
+- Expo web valida navegación y layout móvil rápido, no haptics ni APIs nativas.
+- iOS Simulator valida interacción nativa, pero no reemplaza Android físico.
+- Real-device testing sigue siendo obligatorio para teclado, haptics, modo avión, performance, uso con una mano y recuperación tras matar la app.
+
 ### Manual tests críticos
 
 1. Crear rutina desde cero.
@@ -160,6 +194,7 @@ Cubrir repositorios SQLite:
 Recomendado:
 
 - GitHub Actions para typecheck y tests.
+- Smoke agent web como verificación opcional para cambios de UI cuando Expo web esté estable.
 - Conventional commits.
 - `main` protegida.
 - EAS Build para Android development, preview y production.

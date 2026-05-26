@@ -23,23 +23,56 @@ In the output, you'll find options to open the app in a
 - [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
 - [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+## Verification
 
-## Get a fresh project
-
-When you're ready, run:
+Core local checks:
 
 ```bash
-pnpm run reset-project
+pnpm typecheck
+pnpm test
+pnpm lint
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+## Agent Mobile Testing
 
-### Other setup steps
+Codex, Copilot, and Opencode share the same script surface for mobile-focused smoke testing. Use these commands instead of agent-specific one-off steps:
 
-- To run linting, run `pnpm lint`, or follow our guide on ["Using ESLint and Prettier"](https://docs.expo.dev/guides/using-eslint/)
-- If you'd like to set up unit testing, follow our guide on ["Unit Testing with Jest"](https://docs.expo.dev/develop/unit-testing/)
-- Learn more about the TypeScript setup in this template in our guide on ["Using TypeScript"](https://docs.expo.dev/guides/typescript/)
+```bash
+pnpm test:agent:web
+pnpm test:agent:ios
+pnpm test:agent:smoke
+```
+
+The web smoke path runs Playwright against Expo web with a mobile browser profile. It is fast and agent-friendly, and browser MCP tools can inspect the same local target at `http://127.0.0.1:8081` when a failure needs manual reproduction.
+
+Before the first web smoke run, install the Playwright browser binary:
+
+```bash
+pnpm exec playwright install chromium
+```
+
+The iOS smoke path runs Maestro against the native iOS app bundle id `com.zenlift.workout`. Requirements:
+
+- macOS with Xcode Command Line Tools installed.
+- A booted iOS Simulator.
+- The Zenlift iOS app installed in that simulator, usually via `pnpm ios`.
+- Maestro CLI installed.
+
+Run the native smoke test with:
+
+```bash
+open -a Simulator
+pnpm ios
+pnpm test:agent:ios
+```
+
+Agent smoke tests cover the Zenlift core loop: create routine, start workout, log two sets, finish the session, and confirm the summary/history result. Generated artifacts are ignored by git:
+
+- `test-results/agent-web/`
+- `playwright-report/agent-web/`
+- `e2e/artifacts/maestro/`
+
+These smoke tests complement Jest, typecheck, SQLite repository tests, and real-device manual testing. They do not replace Android hardware validation for keyboard ergonomics, haptics, offline behavior, performance, active-session recovery, or gym-use feel.
 
 ## Learn more
 

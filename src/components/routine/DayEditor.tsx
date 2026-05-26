@@ -114,6 +114,7 @@ export function DayEditor({
             render={({ field: { onBlur, onChange, value } }) => (
               <TextInput
                 accessibilityLabel={`Nombre del dia ${dayIndex + 1}`}
+                testID={`routine-day-${dayIndex + 1}-name-input`}
                 onBlur={onBlur}
                 onChangeText={onChange}
                 placeholder="Nombre del dia"
@@ -239,6 +240,7 @@ export function DayEditor({
 
           <Pressable
             accessibilityLabel={`Agregar ejercicio al dia ${dayIndex + 1}`}
+            testID={`routine-day-${dayIndex + 1}-add-exercise`}
             onPress={() => setIsPickerVisible(true)}
             style={({ pressed }) => [
               styles.addExerciseButton,
@@ -276,7 +278,6 @@ export function DayEditor({
                 targetSets: configurator.exercise.targetSets,
                 targetRepsMin: configurator.exercise.targetRepsMin,
                 targetRepsMax: configurator.exercise.targetRepsMax,
-                restSeconds: configurator.exercise.restSeconds,
               }
             : undefined
         }
@@ -325,9 +326,8 @@ function SmallActionButton({
 function formatExerciseSummary(exercise: Partial<ExerciseFormValues>): string {
   const sets = exercise.targetSets ?? 1;
   const reps = formatReps(exercise.targetRepsMin, exercise.targetRepsMax);
-  const rest = exercise.restSeconds === undefined ? 'sin descanso' : `${exercise.restSeconds}s`;
 
-  return `${sets}x ${reps} · ${rest}`;
+  return `${sets}x ${reps}`;
 }
 
 function formatReps(min?: number, max?: number): string {

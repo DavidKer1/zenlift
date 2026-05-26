@@ -136,6 +136,7 @@ function WorkoutExerciseCardComponent({
       <Pressable
         accessibilityLabel={`${exercise.exercise?.name ?? 'Ejercicio'}, ${completedCount}/${totalSets} sets completados`}
         accessibilityRole="button"
+        testID={`active-workout-exercise-${exercise.id}-header`}
         onPress={handleHeaderPress}
         style={({ pressed }) => [
           styles.header,
@@ -282,6 +283,7 @@ function WorkoutExerciseCardComponent({
           <Pressable
             accessibilityLabel="Agregar set"
             accessibilityRole="button"
+            testID={`active-workout-exercise-${exercise.id}-add-set`}
             onPress={handleAddSet}
             style={({ pressed }) => [
               styles.addSetButton,

@@ -178,6 +178,7 @@ export function ExercisePicker({ visible, onClose, onSelect }: ExercisePickerPro
     ({ item }: { item: Exercise }) => (
       <Pressable
         accessibilityLabel={`Seleccionar ejercicio ${item.name}`}
+        testID={`exercise-picker-option-${item.id}`}
         onPress={() => {
           onSelect({ id: item.id, name: item.name });
           onClose();
@@ -250,6 +251,7 @@ export function ExercisePicker({ visible, onClose, onSelect }: ExercisePickerPro
 
           <TextInput
             accessibilityLabel="Buscar ejercicios"
+            testID="exercise-picker-search"
             onChangeText={setQuery}
             placeholder="Buscar ejercicio"
             placeholderTextColor={colors.mutedText}

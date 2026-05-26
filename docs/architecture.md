@@ -26,7 +26,7 @@ Objetivos técnicos:
 - FlashList para listas con inputs o listas grandes.
 - StyleSheet y componentes propios, sin UI kits pesados.
 - date-fns para fechas.
-- expo-haptics para feedback al completar sets y timer.
+- expo-haptics para feedback al completar sets.
 - react-native-svg + victory-native o gifted-charts para gráficas.
 
 TanStack Query no es necesario mientras no haya API.
@@ -70,7 +70,6 @@ Las pantallas no deben contener lógica pesada. Cálculos, PRs, volumen y progre
 Estado global mínimo:
 
 - Workout activo.
-- Timer activo.
 - Preferencias.
 - Tema, con `dark` como default.
 - Unidad de peso.
@@ -128,20 +127,10 @@ El teclado es crítico en Active Workout.
 - Usar `keyboardType="numeric"` para peso y reps.
 - Evitar `KeyboardAvoidingView` si causa saltos de layout.
 - Hacer scroll automático al input enfocado.
-- Mantener timer visible en header fijo.
+- Mantener la duración visible en header fijo.
 - Botones +/- junto a inputs para ajustar sin teclear.
 - `returnKeyType="next"` en peso.
 - `returnKeyType="done"` en reps para completar set.
-
-## Timer de descanso
-
-No implementar countdown dependiente de un componente. Usar timestamps absolutos:
-
-- Guardar `targetEnd = Date.now() + seconds * 1000`.
-- Persistir `targetEnd` en MMKV.
-- Calcular segundos restantes con `targetEnd - Date.now()`.
-- La UI solo refleja el estado.
-- Haptics al llegar a cero.
 
 ## Backup y exportación
 

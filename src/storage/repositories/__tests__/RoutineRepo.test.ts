@@ -85,7 +85,6 @@ function makeExercise(overrides: Partial<RoutineExercise> = {}): RoutineExercise
     target_sets: 4,
     target_reps_min: 8,
     target_reps_max: 12,
-    rest_seconds: 90,
     notes: null,
     sort_order: 0,
     ...overrides,
@@ -100,7 +99,6 @@ function makeJoinRow(overrides: Record<string, unknown> = {}) {
     target_sets: 4,
     target_reps_min: 8,
     target_reps_max: 12,
-    rest_seconds: 90,
     notes: null,
     sort_order: 0,
     ex_id: 'ex-1',
@@ -226,7 +224,6 @@ describe('RoutineRepo', () => {
         target_sets: 5,
         target_reps_min: 6,
         target_reps_max: 8,
-        rest_seconds: 120,
         sort_order: 0,
       });
       const ex2 = makeExercise({
@@ -275,7 +272,6 @@ describe('RoutineRepo', () => {
             target_sets: 5,
             target_reps_min: 6,
             target_reps_max: 8,
-            rest_seconds: 120,
           });
           const join2 = makeJoinRow({
             id: 'new-re-2',
@@ -347,7 +343,6 @@ describe('RoutineRepo', () => {
         target_sets: 3,
         target_reps_min: 6,
         target_reps_max: 8,
-        rest_seconds: 90,
         notes: 'Go slow',
         sort_order: 5,
       });
@@ -366,7 +361,6 @@ describe('RoutineRepo', () => {
               target_sets: 3,
               target_reps_min: 6,
               target_reps_max: 8,
-              rest_seconds: 90,
               notes: 'Go slow',
               sort_order: 5,
             }),
@@ -387,9 +381,8 @@ describe('RoutineRepo', () => {
       expect(exInsert[4]).toBe(3);
       expect(exInsert[5]).toBe(6);
       expect(exInsert[6]).toBe(8);
-      expect(exInsert[7]).toBe(90);
-      expect(exInsert[8]).toBe('Go slow');
-      expect(exInsert[9]).toBe(5);
+      expect(exInsert[7]).toBe('Go slow');
+      expect(exInsert[8]).toBe(5);
     });
 
     it('throws when source routine not found', async () => {
@@ -667,7 +660,6 @@ describe('RoutineRepo', () => {
         targetSets: 5,
         targetRepsMin: 8,
         targetRepsMax: 12,
-        restSeconds: 90,
       });
 
       expect(result.routine_day_id).toBe('d-1');

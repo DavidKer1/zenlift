@@ -7,11 +7,6 @@ const optionalPositiveInt = z.preprocess(
   z.coerce.number().int().min(1).optional(),
 );
 
-const optionalNonNegativeInt = z.preprocess(
-  (value) => (value === '' || value === null || value === undefined ? undefined : value),
-  z.coerce.number().int().min(0).optional(),
-);
-
 export const exerciseFormSchema = z.object({
   key: z.string().min(1),
   id: z.string().optional(),
@@ -20,7 +15,6 @@ export const exerciseFormSchema = z.object({
   targetSets: z.coerce.number().int().min(1, 'Mínimo 1 serie'),
   targetRepsMin: optionalPositiveInt,
   targetRepsMax: optionalPositiveInt,
-  restSeconds: optionalNonNegativeInt,
 });
 
 export const dayFormSchema = z.object({

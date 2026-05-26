@@ -5,7 +5,6 @@ import { Alert, StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { BottomBar } from '@/components/workout/BottomBar';
-import { RestTimer, REST_DURATIONS } from '@/components/workout/RestTimer';
 import { WorkoutExerciseCard } from '@/components/workout/WorkoutExerciseCard';
 import { WorkoutHeader } from '@/components/workout/WorkoutHeader';
 import { ThemedText } from '@/components/themed-text';
@@ -27,7 +26,6 @@ export default function ActiveWorkoutScreen() {
 
   const session = useActiveWorkoutStore((s) => s.session);
   const exercises = useActiveWorkoutStore((s) => s.exercises);
-  const timerTargetEnd = useActiveWorkoutStore((s) => s.timerTargetEnd);
 
   const recoverSession = useActiveWorkoutStore((s) => s.recoverSession);
   const addSet = useActiveWorkoutStore((s) => s.addSet);
@@ -35,8 +33,6 @@ export default function ActiveWorkoutScreen() {
   const updateSet = useActiveWorkoutStore((s) => s.updateSet);
   const addExercise = useActiveWorkoutStore((s) => s.addExercise);
   const cancelWorkout = useActiveWorkoutStore((s) => s.cancelWorkout);
-  const startTimer = useActiveWorkoutStore((s) => s.startTimer);
-  const skipTimer = useActiveWorkoutStore((s) => s.skipTimer);
 
   const [isRecovering, setIsRecovering] = useState(true);
   const [expandedExerciseId, setExpandedExerciseId] = useState<string | null>(null);
@@ -277,26 +273,6 @@ export default function ActiveWorkoutScreen() {
         sessionName={session.name ?? 'Quick Workout'}
         elapsedSeconds={elapsedSeconds}
         onCancel={handleCancel}
-      />
-
-      <RestTimer
-        targetEnd={timerTargetEnd}
-        onComplete={skipTimer}
-        onSkip={skipTimer}
-        onAddTime={(seconds) => {
-          const store = useActiveWorkoutStore.getState();
-          if (!store.timerTargetEnd) return;
-          const remaining = Math.max(
-            0,
-            Math.ceil((store.timerTargetEnd - Date.now()) / 1000),
-          );
-          startTimer(remaining + seconds);
-        }}
-        exerciseName={
-          exercises.length > 0
-            ? exercises[0].exercise?.name
-            : undefined
-        }
       />
 
       <FlashList

@@ -81,7 +81,6 @@ export interface RoutineExercise {
   target_sets: number | null;
   target_reps_min: number | null;
   target_reps_max: number | null;
-  rest_seconds: number | null;
   notes: string | null;
   sort_order: number;
 }

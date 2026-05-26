@@ -12,8 +12,8 @@
     "hash": "b713dd66aa3ad59ed5098d7b9f8dc202"
   },
   "/Users/victorsanchez/Documents/portfolio/projects/zenlift/jest.config.js": {
-    "mtime": 1779665949397.132,
-    "hash": "9699cc61d4840fdf67ddefcfc302bb07"
+    "mtime": 1779773929346.2163,
+    "hash": "7726f10728cd0c78a30cab2ad5e8f1f5"
   },
   "/Users/victorsanchez/Documents/portfolio/projects/zenlift/scripts/reset-project.js": {
     "mtime": 1778979426243.5642,
@@ -60,16 +60,16 @@
     "hash": "810a5bdd0afa9832cb9e6f23d23d87f6"
   },
   "/Users/victorsanchez/Documents/portfolio/projects/zenlift/src/app/settings.tsx": {
-    "mtime": 1779688772267.4587,
-    "hash": "59f4cabadd5699da0983f840b9152306"
+    "mtime": 1779773336704.9966,
+    "hash": "a8777ccc5e38653123f93fc46da89f24"
   },
   "/Users/victorsanchez/Documents/portfolio/projects/zenlift/src/app/workout/active.tsx": {
-    "mtime": 1779696600083.1482,
-    "hash": "4d7b738324237206c3103bfe97e8a7d6"
+    "mtime": 1779773298400.86,
+    "hash": "9f15b594667a8c75220aaa71b93f9133"
   },
   "/Users/victorsanchez/Documents/portfolio/projects/zenlift/src/app/workout/summary.tsx": {
-    "mtime": 1779677561610.433,
-    "hash": "9a4f5ec1073d6ceb8ced08b571cea29f"
+    "mtime": 1779773773399.0781,
+    "hash": "e51fcd8d2814b1a74b75cc0ce4c31bc3"
   },
   "/Users/victorsanchez/Documents/portfolio/projects/zenlift/src/components/animated-icon.tsx": {
     "mtime": 1778979426253.3198,
@@ -80,8 +80,8 @@
     "hash": "2defa175163e104a6e2232436fa77e30"
   },
   "/Users/victorsanchez/Documents/portfolio/projects/zenlift/src/components/app-tabs.tsx": {
-    "mtime": 1779772312118.8088,
-    "hash": "c268d81f0d5aee57fe1e91d857ca2ce6"
+    "mtime": 1779773714978.0337,
+    "hash": "816936b0f0220cf17d033176081d78f5"
   },
   "/Users/victorsanchez/Documents/portfolio/projects/zenlift/src/components/charts/ProgressChart.tsx": {
     "mtime": 1779687912575.039,
@@ -132,28 +132,28 @@
     "hash": "ba940fa91ba40f854fbc73c3a9861c4e"
   },
   "/Users/victorsanchez/Documents/portfolio/projects/zenlift/src/components/routine/DayEditor.tsx": {
-    "mtime": 1779671064152.152,
-    "hash": "263852741f39c2b330ae3d007b82486b"
+    "mtime": 1779773786989.0635,
+    "hash": "412fdb86c1c592efb0f88f9ac7619ea8"
   },
   "/Users/victorsanchez/Documents/portfolio/projects/zenlift/src/components/routine/DaySection.tsx": {
-    "mtime": 1779672214910.419,
-    "hash": "89dbbc47ddb30cae2c28fb1502b7ea7e"
+    "mtime": 1779773736735.4363,
+    "hash": "c5126c9a55c802f972c2dd5cde4b1a33"
   },
   "/Users/victorsanchez/Documents/portfolio/projects/zenlift/src/components/routine/EmptyState.tsx": {
-    "mtime": 1779672829195.394,
-    "hash": "53b0dd054885720001601c995bd31f02"
+    "mtime": 1779773720576.3882,
+    "hash": "2bfe1ce9baed4be4a990217f53c79870"
   },
   "/Users/victorsanchez/Documents/portfolio/projects/zenlift/src/components/routine/ExerciseConfigurator.tsx": {
-    "mtime": 1779672843749.534,
-    "hash": "0deb66adc5b66b94faddf7b5ed57729b"
+    "mtime": 1779773748932.4832,
+    "hash": "36738b5223031eed060f902512e528cc"
   },
   "/Users/victorsanchez/Documents/portfolio/projects/zenlift/src/components/routine/ExercisePicker.tsx": {
-    "mtime": 1779672849906.9453,
-    "hash": "c28ac0e35a56b0d792d2f1d3a75e7b61"
+    "mtime": 1779773745217.7603,
+    "hash": "5d052bd4ea1d43b31456387406b9e33b"
   },
   "/Users/victorsanchez/Documents/portfolio/projects/zenlift/src/components/routine/ExerciseRow.tsx": {
-    "mtime": 1779672190575.161,
-    "hash": "947a2e8cd54999f2a779d639fb9663cf"
+    "mtime": 1779773397541.7358,
+    "hash": "21719543fb61e998e56eed403fb77131"
   },
   "/Users/victorsanchez/Documents/portfolio/projects/zenlift/src/components/routine/MuscleDot.tsx": {
     "mtime": 1779672144674.6409,
@@ -164,20 +164,20 @@
     "hash": "f8fd2bf19a098b76bfef4926682da232"
   },
   "/Users/victorsanchez/Documents/portfolio/projects/zenlift/src/components/routine/RoutineForm.tsx": {
-    "mtime": 1779672823174.7192,
-    "hash": "272a25d27d0f16f0a8aa417e818cd619"
+    "mtime": 1779773728406.43,
+    "hash": "0ba11518348bb5c68cbcbf924e2b6120"
   },
   "/Users/victorsanchez/Documents/portfolio/projects/zenlift/src/components/routine/RoutineHeader.tsx": {
     "mtime": 1779672285763.4487,
     "hash": "f4b9ad44fb763848a9c85043babb1fe2"
   },
   "/Users/victorsanchez/Documents/portfolio/projects/zenlift/src/components/routine/StartWorkoutButton.tsx": {
-    "mtime": 1779676193371.4563,
-    "hash": "b22b2e878e44d614dd8c845677cda04a"
+    "mtime": 1779773739905.9453,
+    "hash": "e6e365362163bb657b5c579c3f9d130d"
   },
   "/Users/victorsanchez/Documents/portfolio/projects/zenlift/src/components/routine/SuggestedTemplates.tsx": {
-    "mtime": 1779687912556.0981,
-    "hash": "e58beda4cba2114bc54c3d4c6a94a5e3"
+    "mtime": 1779773723564.8806,
+    "hash": "99b4d00bcb02822154c72df30855c16c"
   },
   "/Users/victorsanchez/Documents/portfolio/projects/zenlift/src/components/themed-text.tsx": {
     "mtime": 1779687407773.2498,
@@ -196,8 +196,8 @@
     "hash": "f288732c39d9199762a0ddba57c88841"
   },
   "/Users/victorsanchez/Documents/portfolio/projects/zenlift/src/components/ui/FAB.tsx": {
-    "mtime": 1779687407795.9883,
-    "hash": "87c58de9c5ef182e20b418f2f2006ffa"
+    "mtime": 1779773717650.2754,
+    "hash": "d8dfec6172ded4755c9a464f6c7523c0"
   },
   "/Users/victorsanchez/Documents/portfolio/projects/zenlift/src/components/ui/FilterChip.tsx": {
     "mtime": 1779687407795.9976,
@@ -223,33 +223,45 @@
     "mtime": 1778979426254.5923,
     "hash": "f87b4ccdf60d257a6ee5da3e48b04e6d"
   },
+  "/Users/victorsanchez/Documents/portfolio/projects/zenlift/src/components/workout/ActiveWorkoutExpandedSurface.tsx": {
+    "mtime": 1779773948714.4324,
+    "hash": "89d60ca0b4ebcb1fa3714d20d7b10fbd"
+  },
+  "/Users/victorsanchez/Documents/portfolio/projects/zenlift/src/components/workout/ActiveWorkoutHeaderContent.tsx": {
+    "mtime": 1779773925084.0632,
+    "hash": "e34978392b36b8fc0176c1db2396963c"
+  },
+  "/Users/victorsanchez/Documents/portfolio/projects/zenlift/src/components/workout/ActiveWorkoutMinimizedHeader.tsx": {
+    "mtime": 1779772272554.6282,
+    "hash": "0c64d29cc87f02bd3dece4accae2f1a6"
+  },
   "/Users/victorsanchez/Documents/portfolio/projects/zenlift/src/components/workout/ActiveWorkoutModal.tsx": {
-    "mtime": 1779772780012.143,
-    "hash": "f7d72415eb5cbc5b981f43c2bccca808"
+    "mtime": 1779773298304.813,
+    "hash": "566650d32694fabf99163137b9555cdc"
   },
   "/Users/victorsanchez/Documents/portfolio/projects/zenlift/src/components/workout/BottomBar.tsx": {
-    "mtime": 1779677440030.8914,
-    "hash": "d0b2f05fd696d2211cba82a81a288b6d"
-  },
-  "/Users/victorsanchez/Documents/portfolio/projects/zenlift/src/components/workout/RestTimer.tsx": {
-    "mtime": 1779677739205.4832,
-    "hash": "0106db06900070b06c10829fb65b6eb9"
+    "mtime": 1779773763525.643,
+    "hash": "0905f4059ad8aa800afbc859388a9215"
   },
   "/Users/victorsanchez/Documents/portfolio/projects/zenlift/src/components/workout/SetRow.tsx": {
-    "mtime": 1779676815485.0818,
-    "hash": "7e172bfc5b74abc605599ce9d05c57c6"
+    "mtime": 1779773759851.0417,
+    "hash": "048b6c74de04a5102bb1de99cac59f27"
   },
   "/Users/victorsanchez/Documents/portfolio/projects/zenlift/src/components/workout/WorkoutExerciseCard.tsx": {
-    "mtime": 1779676603728.9153,
-    "hash": "cb7492763b61803fa27c454643a80411"
+    "mtime": 1779773753509.0288,
+    "hash": "ecb191602da43bab0a1000258dd09b02"
   },
   "/Users/victorsanchez/Documents/portfolio/projects/zenlift/src/components/workout/WorkoutHeader.tsx": {
     "mtime": 1779676542711.993,
     "hash": "91b6e1701c0dbb8ef57ce8dc153778ff"
   },
-  "/Users/victorsanchez/Documents/portfolio/projects/zenlift/src/components/workout/__tests__/RestTimer.test.tsx": {
-    "mtime": 1779677798760.035,
-    "hash": "a6ea8b8507f189c4b33c67733b6007d3"
+  "/Users/victorsanchez/Documents/portfolio/projects/zenlift/src/components/workout/activeWorkoutMotion.ts": {
+    "mtime": 1779772241324.987,
+    "hash": "edef0d881c206be0e298942b7e19bbfc"
+  },
+  "/Users/victorsanchez/Documents/portfolio/projects/zenlift/src/constants/layout.ts": {
+    "mtime": 1779772236090.7747,
+    "hash": "554156a664583a127d6f20b16fc2c91c"
   },
   "/Users/victorsanchez/Documents/portfolio/projects/zenlift/src/constants/theme.ts": {
     "mtime": 1778979426252.7588,
@@ -272,8 +284,8 @@
     "hash": "06652a471f27e2a3d35844c85a420090"
   },
   "/Users/victorsanchez/Documents/portfolio/projects/zenlift/src/domain/entities/index.ts": {
-    "mtime": 1779677190091.2078,
-    "hash": "aac9df79926125dc28a4ff73ed88ce8e"
+    "mtime": 1779773367328.6907,
+    "hash": "318424f4b2e35f6f38cf0391a8edfd26"
   },
   "/Users/victorsanchez/Documents/portfolio/projects/zenlift/src/domain/services/__tests__/exerciseStats.test.ts": {
     "mtime": 1779672157983.3767,
@@ -296,36 +308,36 @@
     "hash": "03dcc5d21f6dc7700818d59b932cdea4"
   },
   "/Users/victorsanchez/Documents/portfolio/projects/zenlift/src/features/onboarding/OnboardingScreen.tsx": {
-    "mtime": 1779672899203.7654,
-    "hash": "3d12f892771ca8b99673de33c67b6bb3"
+    "mtime": 1779773770171.8647,
+    "hash": "bf34e941ec0926f5867e62e55c13b90c"
   },
   "/Users/victorsanchez/Documents/portfolio/projects/zenlift/src/features/routine/routineFormMapping.ts": {
-    "mtime": 1779670882558.133,
-    "hash": "fce77718eef0c83a2ac66692a306d6c1"
+    "mtime": 1779773397343.4954,
+    "hash": "eb7613b4403701a4b78b0d4b65aa0aa5"
   },
   "/Users/victorsanchez/Documents/portfolio/projects/zenlift/src/features/routine/routineFormPersistence.ts": {
-    "mtime": 1779671468811.9844,
-    "hash": "9a5280801667ccc2d75c670285460408"
+    "mtime": 1779773397388.524,
+    "hash": "b6c8405214347f2fbb6118a006ec757e"
   },
   "/Users/victorsanchez/Documents/portfolio/projects/zenlift/src/features/routine/routineFormSchema.test.ts": {
-    "mtime": 1779670882558.6218,
-    "hash": "791c1ea8969786d6713df27ed5e6e341"
+    "mtime": 1779773448695.1077,
+    "hash": "0c550cb6fe10f3db173117e6212eb08d"
   },
   "/Users/victorsanchez/Documents/portfolio/projects/zenlift/src/features/routine/routineFormSchema.ts": {
-    "mtime": 1779671294485.8735,
-    "hash": "fddfdc8d65521c950c062cd5e59c3d38"
+    "mtime": 1779773397300.9565,
+    "hash": "9e618eeece2b5e50e7f2e293fb2e79b8"
   },
   "/Users/victorsanchez/Documents/portfolio/projects/zenlift/src/features/settings/constants.ts": {
-    "mtime": 1779685134432.2944,
-    "hash": "ae8f7ad8ac96fb77e97ffe10dbd97173"
+    "mtime": 1779773321437.117,
+    "hash": "aedd1e5d18b8fa56edd7c8c85749afd5"
   },
   "/Users/victorsanchez/Documents/portfolio/projects/zenlift/src/features/settings/dataPortability.ts": {
-    "mtime": 1779670928299.3914,
-    "hash": "c2b0ec12108610f6c7efbd1b1e6a20fd"
+    "mtime": 1779773367505.406,
+    "hash": "620a226c4de870a53b883104fb541036"
   },
   "/Users/victorsanchez/Documents/portfolio/projects/zenlift/src/features/settings/useSettings.ts": {
-    "mtime": 1779670856120.0422,
-    "hash": "8723df25ada63076e6afe9a924d33264"
+    "mtime": 1779773321477.635,
+    "hash": "12c6b6df427cb179f18716eb0199e409"
   },
   "/Users/victorsanchez/Documents/portfolio/projects/zenlift/src/features/workout/FinishWorkoutFlow.ts": {
     "mtime": 1779677400764.5356,
@@ -340,16 +352,16 @@
     "hash": "220c89d554c0e9e4aa69591d5e7d7e99"
   },
   "/Users/victorsanchez/Documents/portfolio/projects/zenlift/src/features/workout/stores/__tests__/activeWorkoutStore.test.ts": {
-    "mtime": 1779696517336.6992,
-    "hash": "072e43301cc1d031189cd45643ebdb9a"
+    "mtime": 1779773436065.2056,
+    "hash": "c1b1b5110691a8245d8dbc39c07c7591"
   },
   "/Users/victorsanchez/Documents/portfolio/projects/zenlift/src/features/workout/stores/activeWorkoutStore.ts": {
-    "mtime": 1779696517276.5254,
-    "hash": "6be63c202fecc3462696fa097af846b3"
+    "mtime": 1779773298222.141,
+    "hash": "549009851f16d03eae3fd68c5cb15820"
   },
   "/Users/victorsanchez/Documents/portfolio/projects/zenlift/src/features/workout/stores/mmkv.ts": {
-    "mtime": 1779676027590.9648,
-    "hash": "2b3c28ea5d86e42df448c141b583a7f1"
+    "mtime": 1779773267159.9766,
+    "hash": "97ca4fbfdd6c48bb9f61133c46773c12"
   },
   "/Users/victorsanchez/Documents/portfolio/projects/zenlift/src/hooks/use-color-scheme.ts": {
     "mtime": 1778979426252.9053,
@@ -372,20 +384,20 @@
     "hash": "ff022a0eee59418d726cd47b2e5ff355"
   },
   "/Users/victorsanchez/Documents/portfolio/projects/zenlift/src/storage/database/schema.ts": {
-    "mtime": 1779666019202.6294,
-    "hash": "d98ff78df0dd94529eb754c1d630d4ca"
+    "mtime": 1779773367372.7131,
+    "hash": "2500b0629bf1dc85aefb6a5e7943cfb4"
   },
   "/Users/victorsanchez/Documents/portfolio/projects/zenlift/src/storage/migrations/index.ts": {
-    "mtime": 1779680797504.9468,
-    "hash": "7e1ee15c2ece3e6d26a95b2331276e31"
+    "mtime": 1779773367417.1814,
+    "hash": "b3339469f70d00b5d388f32013638af9"
   },
   "/Users/victorsanchez/Documents/portfolio/projects/zenlift/src/storage/repositories/RoutineRepo.ts": {
-    "mtime": 1779670793864.886,
-    "hash": "2309b5750e9cd1bce385f730b9110739"
+    "mtime": 1779773367463.5122,
+    "hash": "a6b82ac5e8c19aa8c08749e426a63a7c"
   },
   "/Users/victorsanchez/Documents/portfolio/projects/zenlift/src/storage/repositories/__tests__/RoutineRepo.test.ts": {
-    "mtime": 1779670808094.9797,
-    "hash": "f83fd860f5de940bfbca302b69c77a20"
+    "mtime": 1779773410780.1384,
+    "hash": "64a233094aa8f8997dde1a8b0550e74d"
   },
   "/Users/victorsanchez/Documents/portfolio/projects/zenlift/src/storage/repositories/__tests__/exerciseRepo.test.ts": {
     "mtime": 1779666851285.3364,
@@ -428,16 +440,16 @@
     "hash": "9a4e3c716cc97fdd50b6fd9bf0403c36"
   },
   "/Users/victorsanchez/Documents/portfolio/projects/zenlift/src/utils/id.test.ts": {
-    "mtime": 1779656844138.902,
-    "hash": "d09485d59932569bae77d190670332ba"
+    "mtime": 1779773959859.9324,
+    "hash": "d1247736140d96a88ab99cd3565dce46"
   },
   "/Users/victorsanchez/Documents/portfolio/projects/zenlift/src/utils/id.ts": {
     "mtime": 1779656844138.1045,
     "hash": "7e916cad859689851cbec530369646b0"
   },
   "/Users/victorsanchez/Documents/portfolio/projects/zenlift/src/utils/units.test.ts": {
-    "mtime": 1779666004497.1528,
-    "hash": "a8d3a3058a105c12c0247dfed001f406"
+    "mtime": 1779773946621.2856,
+    "hash": "1e19f96f7b241c6857863ccfe36298fa"
   },
   "/Users/victorsanchez/Documents/portfolio/projects/zenlift/src/utils/units.ts": {
     "mtime": 1779665953393.0605,
@@ -1496,8 +1508,8 @@
     "hash": "65264f406b872b015211f7368383e656"
   },
   "/Users/victorsanchez/Documents/portfolio/projects/zenlift/.graphify/GRAPH_REPORT.md": {
-    "mtime": 1779772705281.062,
-    "hash": "dbeafea2453b8d78bd31a9b78605f7c4"
+    "mtime": 1779772795347.3315,
+    "hash": "f6308be19a47282e2214374f8d6e44eb"
   },
   "/Users/victorsanchez/Documents/portfolio/projects/zenlift/.graphify/graph.html": {
     "mtime": 1779675431229.1646,
@@ -1560,40 +1572,40 @@
     "hash": "d78eb2fda7b05998397aeed6b29abf2f"
   },
   "/Users/victorsanchez/Documents/portfolio/projects/zenlift/README.md": {
-    "mtime": 1779675655056.308,
-    "hash": "5dd23774b8aa7ed63adebd2d814a34b9"
+    "mtime": 1779773812461.0889,
+    "hash": "5ae6ef8d831f14c65c931e724a35c14f"
   },
   "/Users/victorsanchez/Documents/portfolio/projects/zenlift/docs/README.md": {
     "mtime": 1779653150732.9175,
     "hash": "8362af9691cceca1cb2fa5109746b935"
   },
   "/Users/victorsanchez/Documents/portfolio/projects/zenlift/docs/ai_development_strategy.md": {
-    "mtime": 1779657285159.021,
-    "hash": "4de6c7619066140f1a906f18be334252"
+    "mtime": 1779773828819.401,
+    "hash": "cfa29f1335fcc4489721fc22161edb55"
   },
   "/Users/victorsanchez/Documents/portfolio/projects/zenlift/docs/architecture.md": {
-    "mtime": 1779686127817.9602,
-    "hash": "58993e38febb9f4fafce9e61b9558792"
+    "mtime": 1779773540789.1614,
+    "hash": "d0ec168a409050f8a0fb21e4abe357e1"
   },
   "/Users/victorsanchez/Documents/portfolio/projects/zenlift/docs/data_model.md": {
-    "mtime": 1779653150734.4216,
-    "hash": "80f5268e6c3dc063386d02463099c13d"
+    "mtime": 1779773540833.3728,
+    "hash": "b10addbc4e0ab777f48b268a17325922"
   },
   "/Users/victorsanchez/Documents/portfolio/projects/zenlift/docs/product_context.md": {
-    "mtime": 1779686127823.405,
-    "hash": "e2b71350efb31e7a098a483bc8270bb5"
+    "mtime": 1779773540749.0525,
+    "hash": "f704de8b5876e381df85f275d4ddf0bc"
   },
   "/Users/victorsanchez/Documents/portfolio/projects/zenlift/docs/roadmap_testing.md": {
-    "mtime": 1779684306337.1658,
-    "hash": "ebbbe4739387c8066db86ab4977eb6b0"
+    "mtime": 1779773841706.7095,
+    "hash": "06482503fecc0dc146e72c9ca0505442"
   },
   "/Users/victorsanchez/Documents/portfolio/projects/zenlift/docs/ux_workflows.md": {
     "mtime": 1779686127817.938,
     "hash": "7a941c56ee8487ac431149f7fbc3fdb1"
   },
   "/Users/victorsanchez/Documents/portfolio/projects/zenlift/docs/zenlift_product_blueprint.md": {
-    "mtime": 1779686127817.9646,
-    "hash": "5729c71f86c566fb7ca85322311e3f43"
+    "mtime": 1779773540937.5457,
+    "hash": "e37f82abd778428c20c4ea60fa0e5254"
   },
   "/Users/victorsanchez/Documents/portfolio/projects/zenlift/openspec/changes/archive/2026-05-24-add-uuid-id-generation/design.md": {
     "mtime": 1779656376322.628,
@@ -2343,9 +2355,21 @@
     "mtime": 1779666889170.1226,
     "hash": "04d4b8ceb21efc8bb62eae8a1ca6cc42"
   },
-  "/Users/victorsanchez/Documents/portfolio/projects/zenlift/openspec/changes/fix-active-workout-minimized-header/proposal.md": {
+  "/Users/victorsanchez/Documents/portfolio/projects/zenlift/openspec/changes/archive/2026-05-26-fix-active-workout-minimized-header/design.md": {
+    "mtime": 1779771658823.613,
+    "hash": "2dd3f4a3fd3d1c6ded4423d9babd52ce"
+  },
+  "/Users/victorsanchez/Documents/portfolio/projects/zenlift/openspec/changes/archive/2026-05-26-fix-active-workout-minimized-header/proposal.md": {
     "mtime": 1779771377531.2637,
     "hash": "36c5ad00d7c67c2afb0b285ea1bfc219"
+  },
+  "/Users/victorsanchez/Documents/portfolio/projects/zenlift/openspec/changes/archive/2026-05-26-fix-active-workout-minimized-header/specs/active-workout-modal/spec.md": {
+    "mtime": 1779771658830.3755,
+    "hash": "e5a022a75d664e03e1c67af8b6610f95"
+  },
+  "/Users/victorsanchez/Documents/portfolio/projects/zenlift/openspec/changes/archive/2026-05-26-fix-active-workout-minimized-header/tasks.md": {
+    "mtime": 1779772643825.909,
+    "hash": "26471acf100fc488c6753c8ce8635468"
   },
   "/Users/victorsanchez/Documents/portfolio/projects/zenlift/openspec/config.yaml": {
     "mtime": 1778988464483.4321,
@@ -2356,8 +2380,8 @@
     "hash": "c5f06235484f93caffbad0e591129504"
   },
   "/Users/victorsanchez/Documents/portfolio/projects/zenlift/openspec/specs/active-workout-modal/spec.md": {
-    "mtime": 1779771282145.6936,
-    "hash": "d38aceb07c5f7dd78d520e68e3998ce7"
+    "mtime": 1779773587092.5613,
+    "hash": "09c08663f39e919702e06786530e0211"
   },
   "/Users/victorsanchez/Documents/portfolio/projects/zenlift/openspec/specs/app-theme/spec.md": {
     "mtime": 1779688249024.8276,
@@ -2388,8 +2412,8 @@
     "hash": "5a3930dbf6755ebf87d2c9bd886f6318"
   },
   "/Users/victorsanchez/Documents/portfolio/projects/zenlift/openspec/specs/domain-entities/spec.md": {
-    "mtime": 1779659815580.2234,
-    "hash": "1573a9da6e125683717cf93c16e4cdef"
+    "mtime": 1779773587141.946,
+    "hash": "739c3eca81a7e83276eee33d196fb063"
   },
   "/Users/victorsanchez/Documents/portfolio/projects/zenlift/openspec/specs/domain-volume-calculation/spec.md": {
     "mtime": 1779668731069.6292,
@@ -2444,36 +2468,36 @@
     "hash": "2e4f358554884da3de334144ab265454"
   },
   "/Users/victorsanchez/Documents/portfolio/projects/zenlift/openspec/specs/routine-detail-screen/spec.md": {
-    "mtime": 1779673596022.9712,
-    "hash": "2160a72adff9b2370f11fab2ed0efd68"
+    "mtime": 1779773587046.7908,
+    "hash": "364bed8a971d4387944d68667427c88a"
   },
   "/Users/victorsanchez/Documents/portfolio/projects/zenlift/openspec/specs/routine-form-screen/spec.md": {
-    "mtime": 1779673609065.6204,
-    "hash": "7daaa65a7e6908bc01b61c3d845cc8a6"
+    "mtime": 1779773586845.442,
+    "hash": "0e3e85cd260335bc0b77bbb81a945371"
   },
   "/Users/victorsanchez/Documents/portfolio/projects/zenlift/openspec/specs/routine-list-screen/spec.md": {
     "mtime": 1779673597301.1187,
     "hash": "ca5540946751dd9d42afd7b098fc3096"
   },
   "/Users/victorsanchez/Documents/portfolio/projects/zenlift/openspec/specs/routine-repository/spec.md": {
-    "mtime": 1779668735382.327,
-    "hash": "f6585655d4b57f927a06e6b02cda1feb"
+    "mtime": 1779773586894.0588,
+    "hash": "12e6c30b4e422f79e2cf561f263fc4f5"
   },
   "/Users/victorsanchez/Documents/portfolio/projects/zenlift/openspec/specs/seed-data/spec.md": {
     "mtime": 1779668737117.9768,
     "hash": "c15a96d608b4f7372449105e2275077a"
   },
   "/Users/victorsanchez/Documents/portfolio/projects/zenlift/openspec/specs/settings-storage/spec.md": {
-    "mtime": 1779684318491.719,
-    "hash": "222a220e7fffc1d2ea5a7f445fbcad2e"
+    "mtime": 1779773586799.7834,
+    "hash": "58ce9eb8bb07a47fe69de34a8600c115"
   },
   "/Users/victorsanchez/Documents/portfolio/projects/zenlift/openspec/specs/settings-ui/spec.md": {
-    "mtime": 1779673640715.7952,
-    "hash": "f4a0827dc6bd6b02c3e5def0b995ede7"
+    "mtime": 1779773586754.5713,
+    "hash": "3fbd1611540435aa2c0d791d34f1ad9a"
   },
   "/Users/victorsanchez/Documents/portfolio/projects/zenlift/openspec/specs/sqlite-ddl/spec.md": {
-    "mtime": 1779668724737.6755,
-    "hash": "f3325650792327f70500bdb0f67a1996"
+    "mtime": 1779773587193.1646,
+    "hash": "c48b0bd891b658846482f2ec6c312b72"
   },
   "/Users/victorsanchez/Documents/portfolio/projects/zenlift/openspec/specs/tab-bar-icons/spec.md": {
     "mtime": 1779694367508.0242,
@@ -2488,8 +2512,8 @@
     "hash": "1d3e93cffc7152c672cb54e8f9144a0c"
   },
   "/Users/victorsanchez/Documents/portfolio/projects/zenlift/pnpm-lock.yaml": {
-    "mtime": 1779769803889.481,
-    "hash": "e2719de75654e54307f52da69c78ada8"
+    "mtime": 1779773491129.3882,
+    "hash": "548c0b4c357d645a04d4f1e8197254b6"
   },
   "/Users/victorsanchez/Documents/portfolio/projects/zenlift/assets/expo.icon/Assets/expo-symbol 2.svg": {
     "mtime": 1778979426252.5884,

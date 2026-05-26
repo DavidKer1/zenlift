@@ -22,7 +22,7 @@ The system SHALL render an active workout overlay when `useActiveWorkoutStore.se
 
 ### Requirement: Minimized state renders only the active workout header
 
-The active workout modal SHALL render only a compact header row when minimized. The minimized state SHALL NOT expose any workout body content, sheet background, list content, rest timer, cancel row, or bottom bar above or behind the header.
+The active workout modal SHALL render only a compact header row when minimized. The minimized state SHALL NOT expose any workout body content, sheet background, list content, cancel row, or bottom bar above or behind the header.
 
 #### Scenario: Minimized header is the only visible workout UI
 
@@ -49,7 +49,21 @@ The active workout modal SHALL separate the minimized header surface from the ex
 #### Scenario: Expanded surface contains full workout controls
 
 - **WHEN** the active workout modal is expanded
-- **THEN** the expanded surface SHALL render the active workout controls, including cancel, rest timer, exercise list, add exercise, finish, and exercise picker entry points
+- **THEN** the expanded surface SHALL render the active workout controls, including cancel, exercise list, add exercise, finish, and exercise picker entry points
+
+### Requirement: Modal excludes break and rest timer UI
+
+The active workout modal SHALL NOT render break, rest timer, countdown, skip rest, or add-rest-time controls in minimized or expanded states.
+
+#### Scenario: Expanded modal has no rest controls
+
+- **WHEN** the modal is expanded during an active workout
+- **THEN** the modal SHALL render active workout controls without any break or rest timer UI
+
+#### Scenario: Completing sets does not reveal rest UI
+
+- **WHEN** the user completes a set while the modal is visible
+- **THEN** the modal SHALL NOT show a rest countdown, skip rest button, or add-rest-time button
 
 ### Requirement: Header row is horizontal and always visible
 

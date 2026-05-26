@@ -30,6 +30,7 @@ export function StartWorkoutButton({
   return (
     <Pressable
       accessibilityLabel={`Iniciar workout para ${day.name}`}
+      testID={`routine-day-${day.id}-start-workout`}
       onPress={handlePress}
       style={({ pressed }) => [
         styles.button,

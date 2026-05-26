@@ -17,7 +17,6 @@ export function createExerciseFormValues(input: {
   targetSets: number;
   targetRepsMin?: number;
   targetRepsMax?: number;
-  restSeconds?: number;
 }): ExerciseFormValues {
   return {
     key: generateId(),
@@ -26,7 +25,6 @@ export function createExerciseFormValues(input: {
     targetSets: input.targetSets,
     targetRepsMin: input.targetRepsMin,
     targetRepsMax: input.targetRepsMax,
-    restSeconds: input.restSeconds,
   };
 }
 
@@ -47,7 +45,6 @@ export function mapFullRoutineToFormValues(routine: FullRoutine): RoutineFormVal
         targetSets: exercise.target_sets ?? 1,
         targetRepsMin: exercise.target_reps_min ?? undefined,
         targetRepsMax: exercise.target_reps_max ?? undefined,
-        restSeconds: exercise.rest_seconds ?? undefined,
       })),
     })),
   };

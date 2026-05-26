@@ -152,6 +152,7 @@ function SetRowComponent({
         <TextInput
           ref={weightInputRef}
           accessibilityLabel={`Peso set ${setNumber}`}
+          testID={`active-set-${setNumber}-weight-input`}
           keyboardType="numeric"
           returnKeyType="next"
           onSubmitEditing={() => repsInputRef.current?.focus()}
@@ -204,6 +205,7 @@ function SetRowComponent({
         <TextInput
           ref={repsInputRef}
           accessibilityLabel={`Repeticiones set ${setNumber}`}
+          testID={`active-set-${setNumber}-reps-input`}
           keyboardType="numeric"
           returnKeyType="done"
           value={reps === 0 ? '' : String(reps)}
@@ -243,6 +245,7 @@ function SetRowComponent({
             : `Completar set ${setNumber}`
         }
         accessibilityRole="button"
+        testID={`active-set-${setNumber}-complete`}
         disabled={isCompleted}
         onPress={handleComplete}
         style={({ pressed }) => [

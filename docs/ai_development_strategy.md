@@ -60,6 +60,43 @@ Usar `agent-browser` como capa de smoke testing asistida por IA cuando una tarea
 - `agent-browser` no reemplaza prueba manual en Android físico para ergonomía, teclado, haptics, rendimiento real, modo avión o recuperación tras matar la app.
 - No usarlo para validar features fuera del core loop ni para ampliar alcance del producto.
 
+## Sistema de testing móvil para agentes
+
+Codex, Copilot y Opencode deben usar los scripts compartidos del proyecto como contrato de verificación. Las herramientas propias de cada agente sirven para inspección o debug, pero el pase/fallo debe venir de comandos reproducibles:
+
+```bash
+pnpm typecheck
+pnpm test
+pnpm test:agent:web
+pnpm test:agent:ios
+pnpm test:agent:smoke
+```
+
+### Capas
+
+- `pnpm test:agent:web`: Playwright levanta Expo web en `http://127.0.0.1:8081` y ejecuta el core loop con viewport móvil. Es la ruta rápida para agentes y permite reproducir fallos con browser MCP sobre la misma URL.
+- `pnpm test:agent:ios`: Maestro ejecuta el core loop en iOS Simulator contra el bundle id `com.zenlift.workout`. Es la ruta nativa para validar launch, touch, teclado y superficie móvil realista.
+- `pnpm test:agent:smoke`: corre typecheck, Jest, Playwright web smoke y Maestro iOS smoke en orden.
+
+### Cuándo usar cada capa
+
+- Cambios de UI, navegación o formularios: ejecutar `pnpm test:agent:web` como smoke mínimo cuando Expo web funcione.
+- Cambios del Active Workout, inputs de sets, finalizar sesión, recuperación visual o ergonomía móvil: ejecutar `pnpm test:agent:ios` si hay macOS, Xcode, Simulator y Maestro disponibles.
+- Antes de cerrar un cambio grande: ejecutar `pnpm test:agent:smoke` o reportar exactamente qué prerequisito impidió la parte iOS.
+
+### Artefactos
+
+- Playwright: `test-results/agent-web/` y `playwright-report/agent-web/`.
+- Maestro: `e2e/artifacts/maestro/`.
+
+Reportar URL, pasos, error visible y ruta de screenshot/trace/log cuando falle.
+
+### Límites
+
+- Playwright/Expo web es smoke rápido; no prueba comportamiento nativo completo.
+- Maestro/iOS Simulator es smoke nativo; no reemplaza Android físico.
+- Ninguna capa de agente reemplaza Jest, typecheck, pruebas de repositorios SQLite, migraciones, modo avión, haptics, rendimiento real o recuperación tras matar la app en dispositivo.
+
 ## Lo que la IA hace bien
 
 - Modelos de datos.
@@ -87,5 +124,6 @@ Usar `agent-browser` como capa de smoke testing asistida por IA cuando una tarea
 - Usar Context7 para documentación actual de librerías/frameworks/SDKs/CLI/cloud.
 - Escribir o actualizar tests.
 - Ejecutar typecheck/tests disponibles.
-- Si hay cambios de UI o navegación, ejecutar smoke testing con `agent-browser` cuando exista una URL local verificable.
+- Si hay cambios de UI o navegación, ejecutar `pnpm test:agent:web` cuando exista una URL local verificable.
+- Si el cambio toca comportamiento móvil nativo o Active Workout, ejecutar `pnpm test:agent:ios` cuando estén disponibles Xcode, iOS Simulator y Maestro.
 - Reportar archivos cambiados y verificación.

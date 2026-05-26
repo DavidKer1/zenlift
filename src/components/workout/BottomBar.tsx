@@ -37,6 +37,7 @@ function BottomBarComponent({ onAddExercise, onFinish, finishDisabled = false }:
       <Pressable
         accessibilityLabel="Agregar ejercicio"
         accessibilityRole="button"
+        testID="active-workout-add-exercise"
         onPress={onAddExercise}
         style={({ pressed }) => [
           styles.addButton,
@@ -53,6 +54,7 @@ function BottomBarComponent({ onAddExercise, onFinish, finishDisabled = false }:
       <Pressable
         accessibilityLabel="Finalizar entrenamiento"
         accessibilityRole="button"
+        testID="active-workout-finish"
         disabled={finishDisabled}
         onPress={finishDisabled ? undefined : onFinish}
         style={({ pressed }) => [

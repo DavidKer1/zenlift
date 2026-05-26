@@ -69,6 +69,7 @@ export function SuggestedTemplates({ onTemplatePress }: SuggestedTemplatesProps)
           <Pressable
             accessibilityLabel={`${template.name}, ${formatDays(template.dayCount)}`}
             accessibilityRole="button"
+            testID={`routine-template-${template.id}`}
             key={template.id}
             onPress={() => onTemplatePress(template)}
             style={({ pressed }) => [

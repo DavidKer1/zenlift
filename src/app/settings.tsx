@@ -1,4 +1,3 @@
-import Slider from '@react-native-community/slider';
 import { useRouter } from 'expo-router';
 import { useMemo, useState, type ReactNode } from 'react';
 import {
@@ -23,7 +22,6 @@ import {
   pickZenliftImportFile,
 } from '@/features/settings/dataPortability';
 import {
-  DEFAULT_REST_RANGE,
   WEEKLY_GOAL_RANGE,
   type WeightUnit,
 } from '@/features/settings/constants';
@@ -41,12 +39,6 @@ const WEIGHT_UNIT_OPTIONS: { label: string; value: WeightUnit }[] = [
   { label: 'KG', value: 'kg' },
   { label: 'LB', value: 'lb' },
 ];
-
-function formatRestTime(seconds: number): string {
-  const minutes = Math.floor(seconds / 60);
-  const remainingSeconds = seconds % 60;
-  return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
-}
 
 function getErrorMessage(error: unknown, fallback: string): string {
   if (error instanceof Error && error.message) {
@@ -76,11 +68,9 @@ export default function SettingsScreen() {
     weightUnit,
     themeMode,
     weeklyGoal,
-    defaultRest,
     setWeightUnit,
     setThemeMode,
     setWeeklyGoal,
-    setDefaultRest,
   } = useSettings();
   const metadata = useMemo(() => getAppMetadata(), []);
   const [isExporting, setIsExporting] = useState(false);
@@ -223,35 +213,6 @@ export default function SettingsScreen() {
                 onChange={setWeeklyGoal}
               />
             </SettingRow>
-
-            <ThemedView type="surface" style={[styles.sliderRow, { borderColor: colors.border }]}>
-              <View style={styles.rowHeader}>
-                <ThemedText type="default">Descanso predeterminado</ThemedText>
-                <ThemedText type="smallBold" style={{ color: colors.primary }}>
-                  {formatRestTime(defaultRest)}
-                </ThemedText>
-              </View>
-              <Slider
-                accessibilityLabel="Ajustar descanso predeterminado"
-                accessibilityValue={{ text: formatRestTime(defaultRest) }}
-                minimumValue={DEFAULT_REST_RANGE.min}
-                maximumValue={DEFAULT_REST_RANGE.max}
-                step={DEFAULT_REST_RANGE.step}
-                value={defaultRest}
-                minimumTrackTintColor={colors.primary}
-                maximumTrackTintColor={colors.border}
-                thumbTintColor={colors.primary}
-                onSlidingComplete={setDefaultRest}
-              />
-              <View style={styles.sliderScale}>
-                <ThemedText type="small" themeColor="mutedText">
-                  0:30
-                </ThemedText>
-                <ThemedText type="small" themeColor="mutedText">
-                  5:00
-                </ThemedText>
-              </View>
-            </ThemedView>
           </SettingsSection>
 
           <SettingsSection title="Datos">
@@ -686,20 +647,6 @@ const styles = StyleSheet.create({
   stepperValue: {
     minWidth: 24,
     textAlign: 'center',
-  },
-  sliderRow: {
-    borderTopWidth: 0,
-    gap: 8,
-    paddingTop: 2,
-  },
-  rowHeader: {
-    alignItems: 'center',
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-  },
-  sliderScale: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
   },
   actionButton: {
     alignItems: 'center',

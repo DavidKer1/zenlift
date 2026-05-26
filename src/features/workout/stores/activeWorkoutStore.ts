@@ -12,14 +12,10 @@ import { WorkoutRepo } from '@/storage/repositories/workoutRepo';
 import { getDatabase } from '@/storage/database/connection';
 import { detectPRs } from '@/domain/services/prDetection';
 import { calculateSessionVolume } from '@/domain/calculations/volume';
-import { getSettingsValue } from '@/features/settings/useSettings';
 import {
   getSessionId,
   setSessionId,
   clearSessionId,
-  getTimerTarget,
-  setTimerTarget,
-  clearTimerTarget,
 } from './mmkv';
 
 export interface StartWorkoutParams {
@@ -33,8 +29,6 @@ export interface StartWorkoutParams {
 export interface ActiveWorkoutState {
   session: WorkoutSession | null;
   exercises: WorkoutExerciseWithSets[];
-  isResting: boolean;
-  timerTargetEnd: number | null;
 }
 
 export interface ActiveWorkoutActions {
@@ -52,9 +46,6 @@ export interface ActiveWorkoutActions {
   addExercise: (exerciseId: string) => Promise<WorkoutExerciseWithSets>;
   removeExercise: (workoutExerciseId: string) => Promise<void>;
   reorderExercises: (orderedIds: string[]) => void;
-  startTimer: (seconds: number) => void;
-  getTimerRemaining: () => number;
-  skipTimer: () => void;
   finishWorkout: () => Promise<WorkoutSummary>;
   cancelWorkout: () => Promise<void>;
   recoverSession: () => Promise<void>;
@@ -89,8 +80,6 @@ function computeDurationSeconds(startedAt: string): number {
 export const useActiveWorkoutStore = create<ActiveWorkoutStore>((set, get) => ({
   session: null,
   exercises: [],
-  isResting: false,
-  timerTargetEnd: null,
 
   startWorkout: async (params) => {
     const existingMMKVSid = getSessionId();
@@ -175,8 +164,6 @@ export const useActiveWorkoutStore = create<ActiveWorkoutStore>((set, get) => ({
             updated_at: fullSession.updated_at,
           },
           exercises: fullSession.exercises,
-          isResting: false,
-          timerTargetEnd: null,
         });
         return session;
       }
@@ -186,8 +173,6 @@ export const useActiveWorkoutStore = create<ActiveWorkoutStore>((set, get) => ({
     set({
       session,
       exercises: [],
-      isResting: false,
-      timerTargetEnd: null,
     });
     return session;
   },
@@ -222,11 +207,6 @@ export const useActiveWorkoutStore = create<ActiveWorkoutStore>((set, get) => ({
       await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
     } catch {
       // Haptics may not be available on all platforms
-    }
-
-    const defaultRest = Number(getSettingsValue('defaultRest'));
-    if (Number.isFinite(defaultRest) && defaultRest > 0) {
-      get().startTimer(defaultRest);
     }
   },
 
@@ -317,34 +297,6 @@ export const useActiveWorkoutStore = create<ActiveWorkoutStore>((set, get) => ({
     });
   },
 
-  startTimer: (seconds) => {
-    const targetEnd = Date.now() + seconds * 1000;
-    setTimerTarget(targetEnd);
-    set({ timerTargetEnd: targetEnd, isResting: true });
-  },
-
-  getTimerRemaining: () => {
-    const { timerTargetEnd } = get();
-    if (timerTargetEnd === null) return 0;
-
-    const remaining = Math.max(
-      0,
-      Math.ceil((timerTargetEnd - Date.now()) / 1000),
-    );
-
-    if (remaining === 0) {
-      clearTimerTarget();
-      set({ timerTargetEnd: null, isResting: false });
-    }
-
-    return remaining;
-  },
-
-  skipTimer: () => {
-    clearTimerTarget();
-    set({ timerTargetEnd: null, isResting: false });
-  },
-
   finishWorkout: async () => {
     const { session, exercises } = get();
     if (!session) {
@@ -397,13 +349,10 @@ export const useActiveWorkoutStore = create<ActiveWorkoutStore>((set, get) => ({
     const totalVolume = calculateSessionVolume(fullSession.exercises);
 
     clearSessionId();
-    clearTimerTarget();
 
     set({
       session: null,
       exercises: [],
-      isResting: false,
-      timerTargetEnd: null,
     });
 
     const summary: WorkoutSummary = {
@@ -433,13 +382,10 @@ export const useActiveWorkoutStore = create<ActiveWorkoutStore>((set, get) => ({
     await repo.cancelSession(session.id);
 
     clearSessionId();
-    clearTimerTarget();
 
     set({
       session: null,
       exercises: [],
-      isResting: false,
-      timerTargetEnd: null,
     });
   },
 
@@ -467,11 +413,8 @@ export const useActiveWorkoutStore = create<ActiveWorkoutStore>((set, get) => ({
 
     if (!fullSession || fullSession.status !== 'active') {
       clearSessionId();
-      clearTimerTarget();
       return;
     }
-
-    const timerTarget = getTimerTarget();
 
     set({
       session: {
@@ -488,11 +431,6 @@ export const useActiveWorkoutStore = create<ActiveWorkoutStore>((set, get) => ({
         updated_at: fullSession.updated_at,
       },
       exercises: fullSession.exercises,
-      isResting: timerTarget !== undefined && timerTarget > Date.now(),
-      timerTargetEnd:
-        timerTarget !== undefined && timerTarget > Date.now()
-          ? timerTarget
-          : null,
     });
   },
 }));
