@@ -1,17 +1,12 @@
-import { FlashList, type FlashListRef } from '@shopify/flash-list';
+import { type FlashListRef } from '@shopify/flash-list';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { Alert, Pressable, StyleSheet, View } from 'react-native';
-import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
-import BottomSheet, {
-  BottomSheetView,
-} from '@gorhom/bottom-sheet';
+import { Alert, StyleSheet, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
-import ActiveWorkoutHandle from '@/components/workout/ActiveWorkoutHandle';
-import { BottomBar } from '@/components/workout/BottomBar';
-import { RestTimer } from '@/components/workout/RestTimer';
+import { ActiveWorkoutExpandedSurface } from '@/components/workout/ActiveWorkoutExpandedSurface';
+import { ActiveWorkoutMinimizedHeader } from '@/components/workout/ActiveWorkoutMinimizedHeader';
 import { WorkoutExerciseCard } from '@/components/workout/WorkoutExerciseCard';
 import { ThemedText } from '@/components/themed-text';
-import { ExercisePicker } from '@/components/routine/ExercisePicker';
 import { useActiveWorkoutStore } from '@/features/workout/stores/activeWorkoutStore';
 import { finishWorkoutFlow } from '@/features/workout/FinishWorkoutFlow';
 import { useSettings } from '@/features/settings/useSettings';
@@ -32,7 +27,6 @@ function formatTime(totalSeconds: number): string {
 export default function ActiveWorkoutModal() {
   const { colors } = useZenliftTheme();
   const { weightUnit } = useSettings();
-  const insets = useSafeAreaInsets();
 
   const session = useActiveWorkoutStore((s) => s.session);
   const exercises = useActiveWorkoutStore((s) => s.exercises);
@@ -48,8 +42,7 @@ export default function ActiveWorkoutModal() {
   const skipTimer = useActiveWorkoutStore((s) => s.skipTimer);
 
   // ---- Expand / minimize state ----
-  const [currentIndex, setCurrentIndex] = useState(1);
-  const sheetRef = useRef<BottomSheet>(null);
+  const [isMinimized, setIsMinimized] = useState(false);
 
   // ---- Workout state (extracted from active.tsx) ----
   const [isRecovering, setIsRecovering] = useState(true);
@@ -58,6 +51,7 @@ export default function ActiveWorkoutModal() {
   const [elapsedSeconds, setElapsedSeconds] = useState(0);
   const [prevPerfMap, setPrevPerfMap] = useState<Map<string, PrevPerfEntry>>(new Map());
   const prevExCountRef = useRef(0);
+  const activeSessionIdRef = useRef<string | null>(null);
 
   const flashListRef = useRef<FlashListRef<WorkoutExerciseWithSets>>(null);
   const increment = useMemo(() => getIncrement(weightUnit), [weightUnit]);
@@ -79,6 +73,16 @@ export default function ActiveWorkoutModal() {
     init();
   }, [recoverSession]);
 
+  // ---- New sessions should always open expanded ----
+  useEffect(() => {
+    const sessionId = session?.id ?? null;
+    if (sessionId && sessionId !== activeSessionIdRef.current) {
+      setIsMinimized(false);
+      setPickerVisible(false);
+    }
+    activeSessionIdRef.current = sessionId;
+  }, [session?.id]);
+
   // ---- Elapsed timer ----
   useEffect(() => {
     if (!session?.started_at) return;
@@ -91,6 +95,20 @@ export default function ActiveWorkoutModal() {
     const interval = setInterval(tick, 1000);
     return () => clearInterval(interval);
   }, [session?.started_at]);
+
+  // ---- Rest timer completion while minimized ----
+  useEffect(() => {
+    if (timerTargetEnd === null) return;
+
+    const delay = Math.max(0, timerTargetEnd - Date.now());
+    const timeout = setTimeout(() => {
+      if (useActiveWorkoutStore.getState().timerTargetEnd === timerTargetEnd) {
+        skipTimer();
+      }
+    }, delay);
+
+    return () => clearTimeout(timeout);
+  }, [skipTimer, timerTargetEnd]);
 
   // ---- Auto-expand first exercise ----
   useEffect(() => {
@@ -175,12 +193,27 @@ export default function ActiveWorkoutModal() {
     await cancelWorkout();
   }, [cancelWorkout]);
 
+  const handleRequestCancel = useCallback(() => {
+    Alert.alert(
+      'Cancelar entrenamiento?',
+      'Los datos registrados se conservaran.',
+      [
+        { text: 'Seguir entrenando', style: 'cancel' },
+        { text: 'Cancelar', style: 'destructive', onPress: handleCancel },
+      ],
+    );
+  }, [handleCancel]);
+
   const handleFinish = useCallback(async () => {
     await finishWorkoutFlow();
   }, []);
 
   const handleAddExercise = useCallback(() => {
     setPickerVisible(true);
+  }, []);
+
+  const handleClosePicker = useCallback(() => {
+    setPickerVisible(false);
   }, []);
 
   const handleExerciseSelected = useCallback(
@@ -195,6 +228,16 @@ export default function ActiveWorkoutModal() {
       }
     },
     [addExercise],
+  );
+
+  const handleAddRestTime = useCallback(
+    (seconds: number) => {
+      const store = useActiveWorkoutStore.getState();
+      if (!store.timerTargetEnd) return;
+      const remaining = Math.max(0, Math.ceil((store.timerTargetEnd - Date.now()) / 1000));
+      startTimer(remaining + seconds);
+    },
+    [startTimer],
   );
 
   const renderItem = useCallback(
@@ -223,38 +266,15 @@ export default function ActiveWorkoutModal() {
 
   // ---- Expand / minimize helpers ----
   const expand = useCallback(() => {
-    sheetRef.current?.snapToIndex(1);
+    setIsMinimized(false);
   }, []);
 
   const minimize = useCallback(() => {
-    sheetRef.current?.snapToIndex(0);
+    setIsMinimized(true);
   }, []);
-
-  const handleSheetChange = useCallback((index: number) => {
-    setCurrentIndex(index);
-  }, []);
-
-  // ---- Snap points ----
-  const snapPoints = useMemo(() => ['15%', '95%'], []);
 
   // Compute session name for handle
   const sessionName = session?.name ?? 'Quick Workout';
-
-  // ---- Custom handle (miniplayer row) ----
-  const renderHandle = useCallback(
-    () => (
-      <ActiveWorkoutHandle
-        sessionName={sessionName}
-        elapsed={formatTime(elapsedSeconds)}
-        isExpanded={currentIndex > 0}
-        surfaceColor={colors.surface}
-        mutedTextColor={colors.mutedText}
-        onExpand={expand}
-        onMinimize={minimize}
-      />
-    ),
-    [colors, elapsedSeconds, currentIndex, expand, minimize, sessionName],
-  );
 
   // ---- Render ----
   if (isRecovering) {
@@ -271,123 +291,52 @@ export default function ActiveWorkoutModal() {
 
   if (!session) return null;
 
+  const elapsed = formatTime(elapsedSeconds);
+
   return (
-    <View pointerEvents="box-none" style={styles.gestureRoot}>
-      <BottomSheet
-        ref={sheetRef}
-        index={1}
-        snapPoints={snapPoints}
-        onChange={handleSheetChange}
-        handleComponent={renderHandle}
-        topInset={insets.top}
-        backgroundStyle={{ backgroundColor: colors.background }}
-        handleIndicatorStyle={{ backgroundColor: 'transparent' }}
-        enablePanDownToClose={false}
-        enableDynamicSizing={false}
-      >
-        <BottomSheetView style={styles.contentContainer}>
-          {/* Cancel button */}
-          <View style={styles.cancelRow}>
-            <Pressable
-              onPress={() => {
-                Alert.alert(
-                  'Cancelar entrenamiento?',
-                  'Los datos registrados se conservaran.',
-                  [
-                    { text: 'Seguir entrenando', style: 'cancel' },
-                    { text: 'Cancelar', style: 'destructive', onPress: handleCancel },
-                  ],
-                );
-              }}
-              hitSlop={12}
-              accessibilityLabel="Cancelar entrenamiento"
-            >
-              <ThemedText type="small" themeColor="danger">
-                Cancel
-              </ThemedText>
-            </Pressable>
-          </View>
-
-          {/* Rest timer */}
-          <RestTimer
-            targetEnd={timerTargetEnd}
-            onComplete={skipTimer}
-            onSkip={skipTimer}
-            onAddTime={(seconds) => {
-              const store = useActiveWorkoutStore.getState();
-              if (!store.timerTargetEnd) return;
-              const remaining = Math.max(0, Math.ceil((store.timerTargetEnd - Date.now()) / 1000));
-              startTimer(remaining + seconds);
-            }}
-            exerciseName={exercises.length > 0 ? exercises[0].exercise?.name : undefined}
-          />
-
-          {/* Exercise list */}
-          <FlashList
-            ref={flashListRef}
-            data={exercises}
-            keyExtractor={keyExtractor}
-            renderItem={renderItem}
-            contentContainerStyle={styles.listContent}
-            ListEmptyComponent={
-              <View style={styles.empty}>
-                <ThemedText type="small" themeColor="mutedText">
-                  No hay ejercicios aún.
-                </ThemedText>
-                <ThemedText type="small" themeColor="mutedText">
-                  Toca &quot;Add Exercise&quot; para empezar.
-                </ThemedText>
-              </View>
-            }
-          />
-
-          {/* Bottom bar */}
-          <BottomBar
-            onAddExercise={handleAddExercise}
-            onFinish={handleFinish}
-            finishDisabled={exercises.length === 0}
-          />
-
-          {/* Exercise picker modal */}
-          <ExercisePicker
-            visible={pickerVisible}
-            onClose={() => setPickerVisible(false)}
-            onSelect={handleExerciseSelected}
-          />
-        </BottomSheetView>
-      </BottomSheet>
+    <View pointerEvents="box-none" style={styles.overlayRoot}>
+      {isMinimized ? (
+        <ActiveWorkoutMinimizedHeader
+          elapsed={elapsed}
+          onExpand={expand}
+          sessionName={sessionName}
+        />
+      ) : (
+        <ActiveWorkoutExpandedSurface
+          elapsed={elapsed}
+          exercises={exercises}
+          finishDisabled={exercises.length === 0}
+          flashListRef={flashListRef}
+          keyExtractor={keyExtractor}
+          onAddExercise={handleAddExercise}
+          onAddRestTime={handleAddRestTime}
+          onClosePicker={handleClosePicker}
+          onExerciseSelected={handleExerciseSelected}
+          onFinish={handleFinish}
+          onMinimize={minimize}
+          onRequestCancel={handleRequestCancel}
+          onSkipTimer={skipTimer}
+          pickerVisible={pickerVisible}
+          renderExercise={renderItem}
+          sessionName={sessionName}
+          timerTargetEnd={timerTargetEnd}
+        />
+      )}
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  gestureRoot: {
+  overlayRoot: {
     ...StyleSheet.absoluteFillObject,
     zIndex: 10,
   },
   loadingOverlay: {
     ...StyleSheet.absoluteFillObject,
   },
-  // ---- Content ----
-  contentContainer: {
-    flex: 1,
-  },
-  cancelRow: {
-    alignItems: 'center',
-    paddingVertical: 8,
-  },
   center: {
     alignItems: 'center',
     flex: 1,
     justifyContent: 'center',
-  },
-  empty: {
-    alignItems: 'center',
-    gap: 8,
-    padding: 48,
-  },
-  listContent: {
-    paddingBottom: 8,
-    paddingTop: 12,
   },
 });

@@ -17,6 +17,11 @@ import Animated, {
 } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
+import {
+  BOTTOM_TAB_BOTTOM_PADDING_MIN,
+  BOTTOM_TAB_BUTTON_MIN_HEIGHT,
+  BOTTOM_TAB_TOP_PADDING,
+} from '@/constants/layout';
 import { useZenliftTheme } from '@/providers/ThemeProvider';
 
 type TabItem = {
@@ -145,7 +150,7 @@ function CustomTabList(props: TabListProps) {
         styles.tabListContainer,
         {
           backgroundColor: colors.background,
-          paddingBottom: Math.max(insets.bottom, 8),
+          paddingBottom: Math.max(insets.bottom, BOTTOM_TAB_BOTTOM_PADDING_MIN),
         },
       ]}>
       <View style={styles.innerContainer} {...props} />
@@ -163,7 +168,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'center',
     left: 0,
-    paddingTop: 6,
+    paddingTop: BOTTOM_TAB_TOP_PADDING,
     position: 'absolute',
     right: 0,
     width: '100%',
@@ -178,7 +183,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     flex: 1,
     justifyContent: 'center',
-    minHeight: 52,
+    minHeight: BOTTOM_TAB_BUTTON_MIN_HEIGHT,
     paddingVertical: 4,
   },
   tabContent: {
