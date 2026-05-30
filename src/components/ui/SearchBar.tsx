@@ -6,14 +6,18 @@ import { useZenliftTheme } from '@/providers/ThemeProvider';
 type SearchBarProps = {
   value: string;
   onChangeText: (value: string) => void;
+  accessibilityLabel?: string;
+  clearAccessibilityLabel?: string;
   placeholder?: string;
   inputProps?: Omit<TextInputProps, 'value' | 'onChangeText' | 'placeholder'>;
 };
 
 export function SearchBar({
+  accessibilityLabel = 'Search',
+  clearAccessibilityLabel = 'Clear search',
   value,
   onChangeText,
-  placeholder = 'Buscar ejercicio...',
+  placeholder = 'Search...',
   inputProps,
 }: SearchBarProps) {
   const { colors, radius, spacing, typography } = useZenliftTheme();
@@ -36,7 +40,7 @@ export function SearchBar({
       />
 
       <TextInput
-        accessibilityLabel="Buscar ejercicio"
+        accessibilityLabel={accessibilityLabel}
         autoCapitalize="none"
         autoCorrect={false}
         clearButtonMode="never"
@@ -58,7 +62,7 @@ export function SearchBar({
 
       {hasValue ? (
         <Pressable
-          accessibilityLabel="Limpiar busqueda"
+          accessibilityLabel={clearAccessibilityLabel}
           accessibilityRole="button"
           hitSlop={8}
           onPress={() => onChangeText('')}

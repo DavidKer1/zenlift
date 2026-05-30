@@ -1,6 +1,7 @@
 import { SymbolView, type SymbolViewProps } from 'expo-symbols';
 import React, { memo } from 'react';
 import { Pressable, StyleSheet, View } from 'react-native';
+import { useTranslation } from 'react-i18next';
 
 import { ThemedText } from '@/components/themed-text';
 import type { Equipment, SQLiteBoolean } from '@/domain/entities';
@@ -21,19 +22,6 @@ type ExerciseCardProps = {
   exercise: ExerciseCardExercise;
   onPress: (exerciseId: string) => void;
   onFavoriteToggle: (exerciseId: string) => void;
-};
-
-const equipmentLabels: Record<Equipment, string> = {
-  barbell: 'Barra',
-  dumbbell: 'Mancuernas',
-  machine: 'Maquina',
-  cable: 'Cable',
-  bodyweight: 'Peso corporal',
-  kettlebell: 'Kettlebell',
-  smith_machine: 'Smith',
-  ez_bar: 'Barra EZ',
-  cardio_machine: 'Cardio',
-  other: 'Otro',
 };
 
 function getEquipmentIcon(equipment: Equipment): SymbolViewProps['name'] {
@@ -57,13 +45,20 @@ function getMuscleColor(name: string | null, fallback: string | null, defaultCol
 
 function ExerciseCardComponent({ exercise, onPress, onFavoriteToggle }: ExerciseCardProps) {
   const { colors, radius, spacing, typography } = useZenliftTheme();
+  const { i18n, t } = useTranslation();
   const isFavorite = exercise.is_favorite === 1;
   const muscleColor = getMuscleColor(exercise.primaryMuscleName, exercise.primaryMuscleColor, colors.mutedText);
-  const muscleLabel = exercise.primaryMuscleLabel ?? 'Sin musculo';
+  const muscleLabel =
+    exercise.primaryMuscleName && i18n.language !== 'es'
+      ? exercise.primaryMuscleName
+          .split('_')
+          .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+          .join(' ')
+      : exercise.primaryMuscleLabel ?? String(t('exercises.noMuscle'));
 
   return (
     <Pressable
-      accessibilityLabel={`Abrir ${exercise.name}`}
+      accessibilityLabel={String(t('exercises.a11y.openExercise', { name: exercise.name }))}
       accessibilityRole="button"
       onPress={() => onPress(exercise.id)}
       style={({ pressed }) => [
@@ -103,13 +98,15 @@ function ExerciseCardComponent({ exercise, onPress, onFavoriteToggle }: Exercise
           </ThemedText>
           <SymbolView name={getEquipmentIcon(exercise.equipment)} size={13} tintColor={colors.textSecondary} />
           <ThemedText themeColor="textSecondary" type="bodyMd" numberOfLines={1} style={styles.metaText}>
-            {equipmentLabels[exercise.equipment]}
+            {t(`exercises.equipmentOptions.${exercise.equipment}`)}
           </ThemedText>
         </View>
       </View>
 
       <Pressable
-        accessibilityLabel={isFavorite ? 'Quitar favorito' : 'Marcar favorito'}
+        accessibilityLabel={String(
+          t(isFavorite ? 'exercises.a11y.removeFavorite' : 'exercises.a11y.markFavorite'),
+        )}
         accessibilityRole="button"
         accessibilityState={{ selected: isFavorite }}
         hitSlop={8}

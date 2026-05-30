@@ -13,6 +13,7 @@ import {
   TextInput,
   View,
 } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import { z } from 'zod/v4';
 
 import type {
@@ -29,52 +30,36 @@ import {
   type UpdateExerciseData,
 } from '@/storage/repositories/exerciseRepo';
 import { MuscleGroupRepo } from '@/storage/repositories/muscleGroupRepo';
-import { useZenliftTheme } from '@/providers/ThemeProvider';
+import {
+  categoryValues,
+  equipmentValues,
+  getCategoryLabel,
+  getEquipmentLabel,
+  getMuscleDisplayName,
+} from '@/features/exercises/exerciseFilterOptions';
 import { radius, spacing, typography, zenliftColors } from '@/theme';
 
 const colors = zenliftColors.light;
-const DUPLICATE_NAME_MESSAGE = 'Ya existe un ejercicio con este nombre';
-
-const EQUIPMENT_OPTIONS = [
-  { value: 'barbell', label: 'Barra' },
-  { value: 'dumbbell', label: 'Mancuernas' },
-  { value: 'machine', label: 'Máquina' },
-  { value: 'cable', label: 'Cable' },
-  { value: 'bodyweight', label: 'Peso corporal' },
-  { value: 'kettlebell', label: 'Kettlebell' },
-  { value: 'smith_machine', label: 'Smith' },
-  { value: 'ez_bar', label: 'Barra Z' },
-  { value: 'cardio_machine', label: 'Cardio' },
-] as const satisfies ReadonlyArray<{ value: Equipment; label: string }>;
-
-const CATEGORY_OPTIONS = [
-  { value: 'strength', label: 'Fuerza' },
-  { value: 'cardio', label: 'Cardio' },
-  { value: 'mobility', label: 'Movilidad' },
-  { value: 'core', label: 'Core' },
-] as const satisfies ReadonlyArray<{ value: ExerciseCategory; label: string }>;
-
-const EQUIPMENT_VALUES = EQUIPMENT_OPTIONS.map((option) => option.value);
-const CATEGORY_VALUES = CATEGORY_OPTIONS.map((option) => option.value);
+const DUPLICATE_NAME_MESSAGE = 'exercises.validation.duplicateName';
 
 export const exerciseFormSchema = z.object({
   name: z
     .string()
     .trim()
-    .min(1, 'El nombre es obligatorio')
-    .min(2, 'Mínimo 2 caracteres'),
-  primaryMuscleGroupId: z.string().min(1, 'Selecciona un músculo principal'),
+    .min(1, 'exercises.validation.nameRequired')
+    .min(2, 'exercises.validation.nameMin'),
+  primaryMuscleGroupId: z.string().min(1, 'exercises.validation.primaryMuscleRequired'),
   equipment: z
     .string()
-    .min(1, 'Selecciona el equipamiento')
+    .min(1, 'exercises.validation.equipmentRequired')
     .refine((value) => isEquipment(value), {
-      message: 'Selecciona el equipamiento',
+      message: 'exercises.validation.equipmentRequired',
     }),
   category: z
     .string()
-    .min(1, 'Selecciona la categoría')
+    .min(1, 'exercises.validation.categoryRequired')
     .refine((value) => isExerciseCategory(value), {
-      message: 'Selecciona la categoría',
+      message: 'exercises.validation.categoryRequired',
     }),
   secondaryMuscleGroupIds: z.array(z.string()),
   notes: z.string().optional(),
@@ -115,11 +100,11 @@ const EMPTY_FORM_VALUES = {
 } satisfies ExerciseFormData;
 
 function isEquipment(value: string): boolean {
-  return EQUIPMENT_VALUES.includes(value as (typeof EQUIPMENT_VALUES)[number]);
+  return equipmentValues.includes(value as (typeof equipmentValues)[number]);
 }
 
 function isExerciseCategory(value: string): boolean {
-  return CATEGORY_VALUES.includes(value as ExerciseCategory);
+  return categoryValues.includes(value as ExerciseCategory);
 }
 
 function normalizeName(name: string): string {
@@ -166,6 +151,20 @@ function getChangedExerciseFields(
   }
 
   return updates;
+}
+
+function translateValidationMessage(
+  message: string,
+  t: ReturnType<typeof useTranslation>['t'],
+): string {
+  return message.startsWith('exercises.') ? String(t(message)) : message;
+}
+
+function translateMaybeValidationMessage(
+  message: string | undefined,
+  t: ReturnType<typeof useTranslation>['t'],
+): string | undefined {
+  return message ? translateValidationMessage(message, t) : undefined;
 }
 
 async function loadExerciseMuscleEntries(
@@ -283,14 +282,18 @@ function OptionPicker({
 function MultiSelectChips({
   label,
   muscles,
+  language,
   selectedIds,
   primaryMuscleGroupId,
+  secondaryA11yLabel,
   onChange,
 }: {
   label: string;
   muscles: MuscleGroup[];
+  language: string;
   selectedIds: string[];
   primaryMuscleGroupId: string;
+  secondaryA11yLabel: string;
   onChange: (selectedIds: string[]) => void;
 }) {
   const secondaryOptions = muscles.filter(
@@ -308,11 +311,12 @@ function MultiSelectChips({
       >
         {secondaryOptions.map((muscle) => {
           const isSelected = selectedIds.includes(muscle.id);
+          const muscleLabel = getMuscleDisplayName(muscle, language);
 
           return (
             <Pressable
               key={muscle.id}
-              accessibilityLabel={`Músculo secundario: ${muscle.display_name_es}`}
+              accessibilityLabel={`${secondaryA11yLabel}: ${muscleLabel}`}
               accessibilityRole="button"
               accessibilityState={{ selected: isSelected }}
               onPress={() => {
@@ -333,7 +337,7 @@ function MultiSelectChips({
               ]}
             >
               <Text style={[styles.chipText, isSelected && styles.chipTextSelected]}>
-                {muscle.display_name_es}
+                {muscleLabel}
               </Text>
             </Pressable>
           );
@@ -350,6 +354,7 @@ export function ExerciseFormModal({
   onClose,
   onSave,
 }: ExerciseFormModalProps) {
+  const { i18n, t } = useTranslation();
   const exerciseRepo = useMemo(() => new ExerciseRepo(db), [db]);
   const muscleGroupRepo = useMemo(() => new MuscleGroupRepo(db), [db]);
   const [muscleGroups, setMuscleGroups] = useState<MuscleGroup[]>([]);
@@ -378,10 +383,26 @@ export function ExerciseFormModal({
     () =>
       muscleGroups.map((muscle) => ({
         value: muscle.id,
-        label: muscle.display_name_es,
+        label: getMuscleDisplayName(muscle, i18n.language),
         color: muscle.color,
       })),
-    [muscleGroups],
+    [i18n.language, muscleGroups],
+  );
+  const equipmentOptions = useMemo<PickerOption[]>(
+    () =>
+      equipmentValues.map((value) => ({
+        value,
+        label: getEquipmentLabel(t, value),
+      })),
+    [t],
+  );
+  const categoryOptions = useMemo<PickerOption[]>(
+    () =>
+      categoryValues.map((value) => ({
+        value,
+        label: getCategoryLabel(t, value),
+      })),
+    [t],
   );
 
   const checkDuplicateName = useCallback(
@@ -453,7 +474,7 @@ export function ExerciseFormModal({
         });
       } catch (error) {
         if (!isCancelled) {
-          setSubmitError('No se pudo cargar el formulario.');
+          setSubmitError(String(t('exercises.form.loadFailed')));
         }
       } finally {
         if (!isCancelled) {
@@ -474,6 +495,7 @@ export function ExerciseFormModal({
     exerciseRepo,
     muscleGroupRepo,
     reset,
+    t,
     visible,
   ]);
 
@@ -549,7 +571,7 @@ export function ExerciseFormModal({
       await onSave(updatedExercise ?? exercise);
       onClose();
     } catch (error) {
-      setSubmitError('No se pudo guardar el ejercicio. Inténtalo de nuevo.');
+      setSubmitError(String(t('exercises.form.saveFailed')));
     }
   });
 
@@ -563,13 +585,13 @@ export function ExerciseFormModal({
       <SafeAreaView style={styles.safeArea}>
         <View style={styles.header}>
           <View>
-            <Text style={styles.eyebrow}>Biblioteca</Text>
+            <Text style={styles.eyebrow}>{t('exercises.library')}</Text>
             <Text style={styles.title}>
-              {isEditMode ? 'Editar ejercicio' : 'Nuevo ejercicio'}
+              {isEditMode ? t('exercises.edit') : t('exercises.newExercise')}
             </Text>
           </View>
           <Pressable
-            accessibilityLabel="Cerrar formulario de ejercicio"
+            accessibilityLabel={String(t('exercises.form.closeA11y'))}
             accessibilityRole="button"
             onPress={onClose}
             style={({ pressed }) => [
@@ -589,7 +611,7 @@ export function ExerciseFormModal({
           {isLoadingForm ? (
             <View style={styles.loadingPanel}>
               <ActivityIndicator color={colors.primary} />
-              <Text style={styles.loadingText}>Cargando...</Text>
+              <Text style={styles.loadingText}>{t('common.loading')}</Text>
             </View>
           ) : (
             <>
@@ -598,9 +620,9 @@ export function ExerciseFormModal({
                 name="name"
                 render={({ field: { onBlur, onChange, value } }) => (
                   <View style={styles.fieldGroup}>
-                    <Text style={styles.label}>Nombre</Text>
+                    <Text style={styles.label}>{t('exercises.fields.name')}</Text>
                     <TextInput
-                      accessibilityLabel="Nombre del ejercicio"
+                      accessibilityLabel={String(t('exercises.form.nameA11y'))}
                       autoCapitalize="words"
                       onBlur={onBlur}
                       onChangeText={(text) => {
@@ -609,7 +631,7 @@ export function ExerciseFormModal({
                           clearErrors('name');
                         }
                       }}
-                      placeholder="Press inclinado con mancuernas"
+                      placeholder={String(t('exercises.form.namePlaceholder'))}
                       placeholderTextColor={colors.mutedText}
                       returnKeyType="next"
                       style={[
@@ -619,7 +641,9 @@ export function ExerciseFormModal({
                       value={value}
                     />
                     {errors.name?.message ? (
-                      <Text style={styles.errorText}>{errors.name.message}</Text>
+                      <Text style={styles.errorText}>
+                        {translateValidationMessage(String(errors.name.message), t)}
+                      </Text>
                     ) : null}
                   </View>
                 )}
@@ -630,12 +654,12 @@ export function ExerciseFormModal({
                 name="primaryMuscleGroupId"
                 render={({ field: { onChange, value } }) => (
                   <OptionPicker
-                    label="Músculo principal"
-                    accessibilityLabel="Seleccionar músculo principal"
+                    label={String(t('exercises.fields.primaryMuscle'))}
+                    accessibilityLabel={String(t('exercises.form.selectPrimaryMuscleA11y'))}
                     options={muscleOptions}
                     value={value}
                     onChange={onChange}
-                    error={errors.primaryMuscleGroupId?.message}
+                    error={translateMaybeValidationMessage(errors.primaryMuscleGroupId?.message, t)}
                   />
                 )}
               />
@@ -645,10 +669,12 @@ export function ExerciseFormModal({
                 name="secondaryMuscleGroupIds"
                 render={({ field: { onChange, value } }) => (
                   <MultiSelectChips
-                    label="Músculos secundarios"
+                    label={String(t('exercises.fields.secondaryMuscles'))}
                     muscles={muscleGroups}
+                    language={i18n.language}
                     selectedIds={value}
                     primaryMuscleGroupId={primaryMuscleGroupId}
+                    secondaryA11yLabel={String(t('exercises.fields.secondaryMuscles'))}
                     onChange={onChange}
                   />
                 )}
@@ -659,12 +685,12 @@ export function ExerciseFormModal({
                 name="equipment"
                 render={({ field: { onChange, value } }) => (
                   <OptionPicker
-                    label="Equipamiento"
-                    accessibilityLabel="Seleccionar equipamiento"
-                    options={EQUIPMENT_OPTIONS}
+                    label={String(t('exercises.fields.equipment'))}
+                    accessibilityLabel={String(t('exercises.form.selectEquipmentA11y'))}
+                    options={equipmentOptions}
                     value={value}
                     onChange={onChange}
-                    error={errors.equipment?.message}
+                    error={translateMaybeValidationMessage(errors.equipment?.message, t)}
                   />
                 )}
               />
@@ -674,12 +700,12 @@ export function ExerciseFormModal({
                 name="category"
                 render={({ field: { onChange, value } }) => (
                   <OptionPicker
-                    label="Categoría"
-                    accessibilityLabel="Seleccionar categoría"
-                    options={CATEGORY_OPTIONS}
+                    label={String(t('exercises.fields.category'))}
+                    accessibilityLabel={String(t('exercises.form.selectCategoryA11y'))}
+                    options={categoryOptions}
                     value={value}
                     onChange={onChange}
-                    error={errors.category?.message}
+                    error={translateMaybeValidationMessage(errors.category?.message, t)}
                   />
                 )}
               />
@@ -689,14 +715,14 @@ export function ExerciseFormModal({
                 name="notes"
                 render={({ field: { onBlur, onChange, value } }) => (
                   <View style={styles.fieldGroup}>
-                    <Text style={styles.label}>Notas</Text>
+                    <Text style={styles.label}>{t('exercises.fields.notes')}</Text>
                     <TextInput
-                      accessibilityLabel="Notas del ejercicio"
+                      accessibilityLabel={String(t('exercises.form.notesA11y'))}
                       multiline
                       numberOfLines={4}
                       onBlur={onBlur}
                       onChangeText={onChange}
-                      placeholder="Detalles de técnica, agarre o rango de movimiento"
+                      placeholder={String(t('exercises.fields.notesPlaceholder'))}
                       placeholderTextColor={colors.mutedText}
                       style={[styles.input, styles.textArea]}
                       textAlignVertical="top"
@@ -715,7 +741,7 @@ export function ExerciseFormModal({
 
         <View style={styles.footer}>
           <Pressable
-            accessibilityLabel="Cancelar formulario de ejercicio"
+            accessibilityLabel={String(t('exercises.form.cancelA11y'))}
             accessibilityRole="button"
             disabled={isSubmitting}
             onPress={onClose}
@@ -725,11 +751,13 @@ export function ExerciseFormModal({
               isSubmitting && styles.disabledButton,
             ]}
           >
-            <Text style={styles.secondaryButtonText}>Cancelar</Text>
+            <Text style={styles.secondaryButtonText}>{t('common.cancel')}</Text>
           </Pressable>
           <Pressable
             accessibilityLabel={
-              isEditMode ? 'Guardar cambios del ejercicio' : 'Crear ejercicio'
+              isEditMode
+                ? String(t('exercises.form.saveChangesA11y'))
+                : String(t('exercises.form.createA11y'))
             }
             accessibilityRole="button"
             accessibilityState={{ disabled: isSubmitting || isLoadingForm }}
@@ -746,10 +774,10 @@ export function ExerciseFormModal({
             ) : null}
             <Text style={styles.primaryButtonText}>
               {isSubmitting
-                ? 'Guardando...'
+                ? t('exercises.form.saving')
                 : isEditMode
-                  ? 'Guardar cambios'
-                  : 'Crear ejercicio'}
+                  ? t('common.saveChanges')
+                  : t('exercises.create')}
             </Text>
           </Pressable>
         </View>

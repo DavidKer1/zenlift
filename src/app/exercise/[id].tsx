@@ -3,6 +3,7 @@ import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useCallback, useEffect, useState } from 'react';
 import { ActivityIndicator, Alert, Pressable, ScrollView, StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { useTranslation } from 'react-i18next';
 
 import { BestPerformanceCard } from '@/components/exercise/BestPerformanceCard';
 import { ExercisePRList } from '@/components/exercise/ExercisePRList';
@@ -24,27 +25,15 @@ import {
   getProgressData,
   type SessionSets,
 } from '@/domain/services/exerciseStats';
+import { getMuscleDisplayName } from '@/features/exercises/exerciseFilterOptions';
 import { useZenliftTheme } from '@/providers/ThemeProvider';
-import { startWorkoutFlow } from '@/features/workout/StartWorkoutFlow';
+import { createStartWorkoutFlowCopy, startWorkoutFlow } from '@/features/workout/StartWorkoutFlow';
 import { getDatabase } from '@/storage/database/connection';
 import { ExerciseRepo } from '@/storage/repositories/exerciseRepo';
 import { WorkoutRepo } from '@/storage/repositories/workoutRepo';
 import { muscleColors, type MuscleGroupName } from '@/theme/muscleColors';
 
 type SetRow = SetLog & { session_id: string; started_at: string };
-
-const equipmentLabels: Record<Equipment, string> = {
-  barbell: 'Barra',
-  dumbbell: 'Mancuernas',
-  machine: 'Maquina',
-  cable: 'Cable',
-  bodyweight: 'Peso corporal',
-  kettlebell: 'Kettlebell',
-  smith_machine: 'Smith',
-  ez_bar: 'Barra EZ',
-  cardio_machine: 'Cardio',
-  other: 'Otro',
-};
 
 const equipmentIcons: Record<Equipment, string> = {
   barbell: 'dumbbell.fill',
@@ -57,13 +46,6 @@ const equipmentIcons: Record<Equipment, string> = {
   ez_bar: 'dumbbell.fill',
   cardio_machine: 'figure.run',
   other: 'dumbbell.fill',
-};
-
-const categoryLabels: Record<string, string> = {
-  strength: 'Fuerza',
-  cardio: 'Cardio',
-  mobility: 'Movilidad',
-  core: 'Core',
 };
 
 function groupSetsBySession(rows: SetRow[]): SessionSets[] {
@@ -112,6 +94,8 @@ type AllSets = SetLog[];
 export default function ExerciseDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const router = useRouter();
+  const { i18n, t } = useTranslation();
+  const startWorkoutCopy = createStartWorkoutFlowCopy(t);
   const { colors, radius, spacing } = useZenliftTheme();
 
   const [exercise, setExercise] = useState<Exercise | null>(null);
@@ -127,7 +111,7 @@ export default function ExerciseDetailScreen() {
 
     async function load() {
       if (!id) {
-        setErrorMessage('Ejercicio no encontrado');
+        setErrorMessage(String(t('exercises.notFound')));
         setIsLoading(false);
         return;
       }
@@ -149,7 +133,7 @@ export default function ExerciseDetailScreen() {
         if (!isActive) return;
 
         if (!exerciseData) {
-          setErrorMessage('Ejercicio no encontrado');
+          setErrorMessage(String(t('exercises.notFound')));
           setIsLoading(false);
           return;
         }
@@ -175,7 +159,7 @@ export default function ExerciseDetailScreen() {
         } catch (loadError) {
           console.error('[ExerciseDetail] Failed to load:', loadError);
           if (isActive) {
-          setErrorMessage('Error al cargar el ejercicio');
+          setErrorMessage(String(t('exercises.loadError')));
         }
       } finally {
         if (isActive) {
@@ -189,7 +173,7 @@ export default function ExerciseDetailScreen() {
     return () => {
       isActive = false;
     };
-  }, [id]);
+  }, [id, t]);
 
   const bestMetrics = getBestMetrics(allSets);
   const history = getSessionHistory(sessionHistory);
@@ -199,12 +183,12 @@ export default function ExerciseDetailScreen() {
     if (!exercise) return;
 
     Alert.alert(
-      'Eliminar ejercicio',
-      `Seguro que quieres eliminar "${exercise.name}"?`,
+      String(t('exercises.alerts.deleteTitle')),
+      String(t('exercises.alerts.deleteBodyNamed', { name: exercise.name })),
       [
-        { text: 'Cancelar', style: 'cancel' },
+        { text: String(t('common.cancel')), style: 'cancel' },
         {
-          text: 'Eliminar',
+          text: String(t('common.delete')),
           style: 'destructive',
           onPress: async () => {
             try {
@@ -213,21 +197,21 @@ export default function ExerciseDetailScreen() {
               await exerciseRepo.delete(id!);
               router.back();
             } catch {
-              Alert.alert('Error', 'No se pudo eliminar el ejercicio');
+              Alert.alert(String(t('common.error')), String(t('exercises.alerts.deleteFailed')));
             }
           },
         },
       ],
     );
-  }, [exercise, id, router]);
+  }, [exercise, id, router, t]);
 
   const handleEdit = useCallback(() => {
     router.push(`/exercise/edit/${id}` as never);
   }, [id, router]);
 
   const handleQuickWorkout = useCallback(() => {
-    void startWorkoutFlow({ exerciseId: id });
-  }, [id]);
+    void startWorkoutFlow({ exerciseId: id }, startWorkoutCopy);
+  }, [id, startWorkoutCopy]);
 
   if (isLoading) {
     return (
@@ -244,10 +228,10 @@ export default function ExerciseDetailScreen() {
         style={[styles.safeArea, { backgroundColor: colors.background }]}>
         <View style={styles.centered}>
           <ThemedText type="subtitle" style={styles.errorTitle}>
-            {errorMessage ?? 'Ejercicio no encontrado'}
+            {errorMessage ?? t('exercises.notFound')}
           </ThemedText>
           <Pressable
-            accessibilityLabel="Volver"
+            accessibilityLabel={String(t('common.back'))}
             accessibilityRole="button"
             onPress={() => router.back()}
             style={({ pressed }) => [
@@ -259,7 +243,7 @@ export default function ExerciseDetailScreen() {
               },
             ]}>
             <ThemedText type="smallBold" style={{ color: colors.surface }}>
-              Volver
+              {t('common.back')}
             </ThemedText>
           </Pressable>
         </View>
@@ -287,7 +271,7 @@ export default function ExerciseDetailScreen() {
         {/* Header */}
         <View style={[styles.header, { marginBottom: spacing.three }]}>
           <Pressable
-            accessibilityLabel="Volver"
+            accessibilityLabel={String(t('common.back'))}
             accessibilityRole="button"
             hitSlop={8}
             onPress={() => router.back()}
@@ -301,7 +285,7 @@ export default function ExerciseDetailScreen() {
               tintColor={colors.mutedText}
             />
             <ThemedText type="small" themeColor="mutedText">
-              Biblioteca
+              {t('exercises.library')}
             </ThemedText>
           </Pressable>
 
@@ -315,7 +299,7 @@ export default function ExerciseDetailScreen() {
             {isCustom ? (
               <View style={styles.actionButtons}>
                 <Pressable
-                  accessibilityLabel="Editar ejercicio"
+                  accessibilityLabel={String(t('exercises.edit'))}
                   accessibilityRole="button"
                   onPress={handleEdit}
                   style={({ pressed }) => [
@@ -334,7 +318,7 @@ export default function ExerciseDetailScreen() {
                   />
                 </Pressable>
                 <Pressable
-                  accessibilityLabel="Eliminar ejercicio"
+                  accessibilityLabel={String(t('exercises.delete'))}
                   accessibilityRole="button"
                   onPress={handleDelete}
                   style={({ pressed }) => [
@@ -364,13 +348,13 @@ export default function ExerciseDetailScreen() {
                 tintColor={colors.mutedText}
               />
               <ThemedText type="small" themeColor="mutedText" style={styles.metaPillText}>
-                {equipmentLabels[exercise.equipment]}
+                {t(`exercises.equipmentOptions.${exercise.equipment}`)}
               </ThemedText>
             </View>
             {exercise.category ? (
               <View style={[styles.metaPill, { backgroundColor: colors.surfaceElevated, borderRadius: radius.pill }]}>
                 <ThemedText type="small" themeColor="mutedText" style={styles.metaPillText}>
-                  {categoryLabels[exercise.category] ?? exercise.category}
+                  {t(`exercises.categoryOptions.${exercise.category}`)}
                 </ThemedText>
               </View>
             ) : null}
@@ -387,7 +371,7 @@ export default function ExerciseDetailScreen() {
                 return (
                   <MuscleBadge
                     key={muscle.id}
-                    accessibilityLabel={muscle.display_name_es}
+                    accessibilityLabel={getMuscleDisplayName(muscle, i18n.language)}
                     isPrimary={name in muscleColors}
                     muscleName={name in muscleColors ? name : ('Full Body' as MuscleGroupName)}
                   />
@@ -408,7 +392,7 @@ export default function ExerciseDetailScreen() {
         {/* Quick Workout */}
         <View style={[styles.quickWorkoutContainer, { marginTop: spacing.four }]}>
           <Pressable
-            accessibilityLabel="Iniciar entrenamiento rapido"
+            accessibilityLabel={String(t('exercises.quickStart'))}
             accessibilityRole="button"
             onPress={handleQuickWorkout}
             style={({ pressed }) => [
@@ -425,7 +409,7 @@ export default function ExerciseDetailScreen() {
               tintColor={colors.surface}
             />
             <ThemedText type="smallBold" style={{ color: colors.surface }}>
-              Iniciar entrenamiento rapido
+              {t('exercises.quickStart')}
             </ThemedText>
           </Pressable>
         </View>

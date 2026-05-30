@@ -3,16 +3,23 @@ import { useRouter, type Href } from 'expo-router';
 import { SymbolView } from 'expo-symbols';
 import type { SQLiteDatabase } from 'expo-sqlite';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { ActivityIndicator, ScrollView, StyleSheet, View } from 'react-native';
+import { ActivityIndicator, StyleSheet, View } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useTranslation } from 'react-i18next';
 
+import { ExerciseFilterButton } from '@/components/exercise/ExerciseFilterButton';
+import { ExerciseFilterSheet } from '@/components/exercise/ExerciseFilterSheet';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { ExerciseCard } from '@/components/ui/ExerciseCard';
 import { FAB } from '@/components/ui/FAB';
-import { FilterChip } from '@/components/ui/FilterChip';
 import { SearchBar } from '@/components/ui/SearchBar';
 import type { Equipment, Exercise, MuscleGroup, SQLiteBoolean } from '@/domain/entities';
+import {
+  buildEquipmentFilterOptions,
+  buildMuscleFilterOptions,
+  getMuscleFilterLabel,
+} from '@/features/exercises/exerciseFilterOptions';
 import { useZenliftTheme } from '@/providers/ThemeProvider';
 import { getDatabase } from '@/storage/database/connection';
 import { ExerciseRepo } from '@/storage/repositories/exerciseRepo';
@@ -34,24 +41,6 @@ type Repositories = {
   muscleGroupRepo: MuscleGroupRepo;
 };
 
-type EquipmentOption = {
-  value: Equipment;
-  label: string;
-};
-
-const equipmentOptions: EquipmentOption[] = [
-  { value: 'barbell', label: 'Barra' },
-  { value: 'dumbbell', label: 'Mancuernas' },
-  { value: 'machine', label: 'Maquina' },
-  { value: 'cable', label: 'Cable' },
-  { value: 'bodyweight', label: 'Peso corporal' },
-  { value: 'kettlebell', label: 'Kettlebell' },
-  { value: 'smith_machine', label: 'Smith' },
-  { value: 'ez_bar', label: 'Barra EZ' },
-  { value: 'cardio_machine', label: 'Cardio' },
-  { value: 'other', label: 'Otro' },
-];
-
 const flashListSizingProps = { estimatedItemSize: 72 } as Record<string, unknown>;
 
 async function loadPrimaryMuscles(db: SQLiteDatabase) {
@@ -71,20 +60,9 @@ function applyExerciseIntersection(source: Exercise[], allowed: Exercise[]) {
   return source.filter((exercise) => allowedIds.has(exercise.id));
 }
 
-function mergeUniqueExercises(groups: Exercise[][]) {
-  const byId = new Map<string, Exercise>();
-
-  for (const group of groups) {
-    for (const exercise of group) {
-      byId.set(exercise.id, exercise);
-    }
-  }
-
-  return Array.from(byId.values());
-}
-
 export default function ExerciseLibraryScreen() {
   const router = useRouter();
+  const { i18n, t } = useTranslation();
   const insets = useSafeAreaInsets();
   const { colors, radius, spacing } = useZenliftTheme();
   const [repositories, setRepositories] = useState<Repositories | null>(null);
@@ -92,17 +70,30 @@ export default function ExerciseLibraryScreen() {
   const [exercises, setExercises] = useState<ExerciseListItem[]>([]);
   const [searchText, setSearchText] = useState('');
   const [debouncedSearchText, setDebouncedSearchText] = useState('');
-  const [selectedMuscleIds, setSelectedMuscleIds] = useState<Set<string>>(() => new Set());
+  const [selectedMuscleId, setSelectedMuscleId] = useState<string | null>(null);
   const [selectedEquipment, setSelectedEquipment] = useState<Equipment | null>(null);
+  const [activeFilterSheet, setActiveFilterSheet] = useState<'equipment' | 'muscle' | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const debounceTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  const selectedMuscleIdsArray = useMemo(
-    () => Array.from(selectedMuscleIds).sort(),
-    [selectedMuscleIds],
+  const muscleFilterOptions = useMemo(
+    () => buildMuscleFilterOptions(muscleGroups, i18n.language, t),
+    [i18n.language, muscleGroups, t],
   );
-  const selectedMuscleIdsKey = selectedMuscleIdsArray.join(',');
+  const selectedEquipmentLabel = selectedEquipment
+    ? String(t(`exercises.equipmentOptions.${selectedEquipment}`))
+    : String(t('exercises.all'));
+  const selectedMuscleLabel = getMuscleFilterLabel(
+    muscleGroups,
+    selectedMuscleId,
+    i18n.language,
+    t,
+  );
+  const visibleEquipmentOptions = useMemo(
+    () => buildEquipmentFilterOptions(t),
+    [t],
+  );
 
   useEffect(() => {
     let isActive = true;
@@ -122,7 +113,7 @@ export default function ExerciseLibraryScreen() {
         console.error('[ExerciseLibrary] Failed to initialize database:', error);
 
         if (isActive) {
-          setErrorMessage('No pudimos cargar la base de ejercicios');
+          setErrorMessage(String(t('exercises.loadError')));
           setIsLoading(false);
         }
       }
@@ -133,7 +124,7 @@ export default function ExerciseLibraryScreen() {
     return () => {
       isActive = false;
     };
-  }, []);
+  }, [t]);
 
   useEffect(() => {
     if (debounceTimerRef.current) {
@@ -200,11 +191,8 @@ export default function ExerciseLibraryScreen() {
 
         let filteredExercises = baseExercises;
 
-        if (selectedMuscleIdsArray.length > 0) {
-          const muscleExerciseGroups = await Promise.all(
-            selectedMuscleIdsArray.map((muscleId) => repos.exerciseRepo.getByMuscle(muscleId)),
-          );
-          const muscleMatches = mergeUniqueExercises(muscleExerciseGroups);
+        if (selectedMuscleId) {
+          const muscleMatches = await repos.exerciseRepo.getByMuscle(selectedMuscleId);
           filteredExercises = applyExerciseIntersection(filteredExercises, muscleMatches);
         }
 
@@ -232,7 +220,7 @@ export default function ExerciseLibraryScreen() {
         console.error('[ExerciseLibrary] Failed to load exercises:', error);
 
         if (isActive) {
-          setErrorMessage('No pudimos cargar ejercicios');
+          setErrorMessage(String(t('exercises.loadError')));
           setExercises([]);
         }
       } finally {
@@ -247,24 +235,16 @@ export default function ExerciseLibraryScreen() {
     return () => {
       isActive = false;
     };
-  }, [debouncedSearchText, repositories, selectedEquipment, selectedMuscleIdsArray, selectedMuscleIdsKey]);
+  }, [debouncedSearchText, repositories, selectedEquipment, selectedMuscleId, t]);
 
-  const toggleMuscleFilter = useCallback((muscleId: string) => {
-    setSelectedMuscleIds((current) => {
-      const next = new Set(current);
-
-      if (next.has(muscleId)) {
-        next.delete(muscleId);
-      } else {
-        next.add(muscleId);
-      }
-
-      return next;
-    });
+  const handleEquipmentSelect = useCallback((equipment: Equipment | null) => {
+    setSelectedEquipment(equipment);
+    setActiveFilterSheet(null);
   }, []);
 
-  const toggleEquipmentFilter = useCallback((equipment: Equipment | null) => {
-    setSelectedEquipment((current) => (current === equipment ? null : equipment));
+  const handleMuscleSelect = useCallback((muscleId: string | null) => {
+    setSelectedMuscleId(muscleId);
+    setActiveFilterSheet(null);
   }, []);
 
   const handleExercisePress = useCallback(
@@ -360,7 +340,7 @@ export default function ExerciseLibraryScreen() {
           />
         </View>
         <ThemedText type="smallBold" style={styles.emptyTitle}>
-          No se encontraron ejercicios
+          {t('exercises.emptyTitle')}
         </ThemedText>
         {errorMessage ? (
           <ThemedText themeColor="mutedText" type="small" style={styles.emptyCaption}>
@@ -369,59 +349,49 @@ export default function ExerciseLibraryScreen() {
         ) : null}
       </View>
     );
-  }, [colors.border, colors.primary, colors.primarySoft, errorMessage, isLoading, radius.pill]);
+  }, [colors.border, colors.primary, colors.primarySoft, errorMessage, isLoading, radius.pill, t]);
 
   return (
     <ThemedView style={styles.screen}>
       <SafeAreaView edges={['top', 'left', 'right']} style={styles.safeArea}>
         <View style={[styles.header, { paddingHorizontal: spacing.four, paddingTop: spacing.two }]}>
           <ThemedText type="subtitle" style={[styles.title, { color: colors.text }]}>
-            Ejercicios
+            {t('exercises.title')}
           </ThemedText>
 
-          <SearchBar value={searchText} onChangeText={setSearchText} />
+          <SearchBar
+            accessibilityLabel={String(t('exercises.a11y.search'))}
+            clearAccessibilityLabel={String(t('exercises.a11y.clearSearch'))}
+            placeholder={String(t('exercises.searchPlaceholder'))}
+            value={searchText}
+            onChangeText={setSearchText}
+          />
 
-          <View style={styles.filterSection}>
-            <ThemedText type="smallBold" themeColor="mutedText" style={styles.filterLabel}>
-              Musculos
-            </ThemedText>
-            <ScrollView
-              horizontal
-              showsHorizontalScrollIndicator={false}
-              contentContainerStyle={styles.chipRow}>
-              {muscleGroups.map((muscleGroup) => (
-                <FilterChip
-                  key={muscleGroup.id}
-                  label={muscleGroup.display_name_es}
-                  selected={selectedMuscleIds.has(muscleGroup.id)}
-                  onPress={() => toggleMuscleFilter(muscleGroup.id)}
-                />
-              ))}
-            </ScrollView>
-          </View>
-
-          <View style={styles.filterSection}>
-            <ThemedText type="smallBold" themeColor="mutedText" style={styles.filterLabel}>
-              Equipo
-            </ThemedText>
-            <ScrollView
-              horizontal
-              showsHorizontalScrollIndicator={false}
-              contentContainerStyle={styles.chipRow}>
-              <FilterChip
-                label="Todos"
-                selected={selectedEquipment === null}
-                onPress={() => setSelectedEquipment(null)}
-              />
-              {equipmentOptions.map((option) => (
-                <FilterChip
-                  key={option.value}
-                  label={option.label}
-                  selected={selectedEquipment === option.value}
-                  onPress={() => toggleEquipmentFilter(option.value)}
-                />
-              ))}
-            </ScrollView>
+          <View style={styles.filterButtonRow}>
+            <ExerciseFilterButton
+              label={String(t('exercises.equipment'))}
+              valueLabel={selectedEquipmentLabel}
+              selected={selectedEquipment !== null}
+              accessibilityLabel={String(
+                t('exercises.a11y.filterCurrent', {
+                  filter: t('exercises.equipment'),
+                  selection: selectedEquipmentLabel,
+                }),
+              )}
+              onPress={() => setActiveFilterSheet('equipment')}
+            />
+            <ExerciseFilterButton
+              label={String(t('exercises.muscles'))}
+              valueLabel={selectedMuscleLabel}
+              selected={selectedMuscleId !== null}
+              accessibilityLabel={String(
+                t('exercises.a11y.filterCurrent', {
+                  filter: t('exercises.muscles'),
+                  selection: selectedMuscleLabel,
+                }),
+              )}
+              onPress={() => setActiveFilterSheet('muscle')}
+            />
           </View>
         </View>
 
@@ -452,8 +422,26 @@ export default function ExerciseLibraryScreen() {
             right: spacing.four,
           },
         ]}>
-        <FAB accessibilityLabel="Crear ejercicio" onPress={handleCreatePress} />
+        <FAB accessibilityLabel={String(t('exercises.create'))} onPress={handleCreatePress} />
       </View>
+
+      <ExerciseFilterSheet
+        visible={activeFilterSheet === 'equipment'}
+        title={String(t('exercises.equipment'))}
+        options={visibleEquipmentOptions}
+        selectedValue={selectedEquipment}
+        onSelect={handleEquipmentSelect}
+        onDismiss={() => setActiveFilterSheet(null)}
+      />
+
+      <ExerciseFilterSheet
+        visible={activeFilterSheet === 'muscle'}
+        title={String(t('exercises.muscles'))}
+        options={muscleFilterOptions}
+        selectedValue={selectedMuscleId}
+        onSelect={handleMuscleSelect}
+        onDismiss={() => setActiveFilterSheet(null)}
+      />
     </ThemedView>
   );
 }
@@ -463,10 +451,6 @@ function ListSeparator() {
 }
 
 const styles = StyleSheet.create({
-  chipRow: {
-    gap: 8,
-    paddingRight: 24,
-  },
   emptyCaption: {
     maxWidth: 280,
     textAlign: 'center',
@@ -492,13 +476,9 @@ const styles = StyleSheet.create({
   fabContainer: {
     position: 'absolute',
   },
-  filterLabel: {
-    fontSize: 12,
-    lineHeight: 16,
-    textTransform: 'uppercase',
-  },
-  filterSection: {
-    gap: 8,
+  filterButtonRow: {
+    flexDirection: 'row',
+    gap: 12,
   },
   header: {
     gap: 16,

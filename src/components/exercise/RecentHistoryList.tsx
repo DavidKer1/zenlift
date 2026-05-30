@@ -1,6 +1,8 @@
 import { StyleSheet, View } from 'react-native';
+import { useTranslation } from 'react-i18next';
 
 import { ThemedText } from '@/components/themed-text';
+import { useI18nFormatters } from '@/i18n/useI18nFormatters';
 import { useZenliftTheme } from '@/providers/ThemeProvider';
 import type { SessionHistoryItem } from '@/domain/services/exerciseStats';
 
@@ -10,10 +12,12 @@ type RecentHistoryListProps = {
 
 export function RecentHistoryList({ sessions }: RecentHistoryListProps) {
   const { colors, radius, spacing } = useZenliftTheme();
+  const { t } = useTranslation();
+  const { formatShortDate, formatVolume } = useI18nFormatters();
 
   return (
     <View
-      accessibilityLabel="Historial reciente"
+      accessibilityLabel={String(t('exercises.stats.recentHistory'))}
       accessibilityRole="summary"
       style={[
         styles.container,
@@ -25,13 +29,13 @@ export function RecentHistoryList({ sessions }: RecentHistoryListProps) {
         },
       ]}>
       <ThemedText type="smallBold" themeColor="mutedText" style={styles.title}>
-        Historial reciente
+        {t('exercises.stats.recentHistory')}
       </ThemedText>
 
       {sessions.length === 0 ? (
         <View style={styles.emptyState}>
           <ThemedText type="small" themeColor="mutedText" style={styles.emptyText}>
-            Sin historial de uso
+            {t('exercises.stats.noHistory')}
           </ThemedText>
         </View>
       ) : (
@@ -48,15 +52,15 @@ export function RecentHistoryList({ sessions }: RecentHistoryListProps) {
               ]}>
               <View style={styles.dateColumn}>
                 <ThemedText type="smallBold" style={styles.dateText}>
-                  {formatDate(session.date)}
+                  {formatShortDate(session.date)}
                 </ThemedText>
               </View>
               <View style={styles.statsRow}>
                 <ThemedText type="small" themeColor="mutedText" style={styles.statText}>
-                  {session.setCount} series
+                  {t('exercises.stats.setCount', { count: session.setCount })}
                 </ThemedText>
                 <ThemedText type="small" style={[styles.statText, { color: colors.primary }]}>
-                  {formatVolume(session.volume)}
+                  {formatVolume(Math.round(session.volume), 'kg')}
                 </ThemedText>
               </View>
             </View>
@@ -65,22 +69,6 @@ export function RecentHistoryList({ sessions }: RecentHistoryListProps) {
       )}
     </View>
   );
-}
-
-function formatDate(dateStr: string): string {
-  try {
-    const date = new Date(dateStr);
-    const day = String(date.getDate()).padStart(2, '0');
-    const month = String(date.getMonth() + 1).padStart(2, '0');
-    const year = String(date.getFullYear()).slice(2);
-    return `${day}/${month}/${year}`;
-  } catch {
-    return dateStr;
-  }
-}
-
-function formatVolume(volume: number): string {
-  return `${Math.round(volume)} kg`;
 }
 
 const styles = StyleSheet.create({

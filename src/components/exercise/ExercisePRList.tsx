@@ -1,6 +1,8 @@
 import { StyleSheet, View } from 'react-native';
+import { useTranslation } from 'react-i18next';
 
 import { ThemedText } from '@/components/themed-text';
+import { useI18nFormatters } from '@/i18n/useI18nFormatters';
 import { useZenliftTheme } from '@/providers/ThemeProvider';
 import type { PersonalRecord } from '@/domain/entities';
 
@@ -8,20 +10,14 @@ type ExercisePRListProps = {
   prs: PersonalRecord[];
 };
 
-const prTypeLabels: Record<string, string> = {
-  max_weight: 'Peso maximo',
-  max_volume: 'Volumen maximo',
-  max_reps: 'Repeticiones',
-  estimated_1rm: '1RM estimado',
-  max_session_volume: 'Vol. sesion',
-};
-
 export function ExercisePRList({ prs }: ExercisePRListProps) {
   const { colors, radius, spacing } = useZenliftTheme();
+  const { t } = useTranslation();
+  const { formatShortDate, formatWeight, formatVolume } = useI18nFormatters();
 
   return (
     <View
-      accessibilityLabel="Records personales"
+      accessibilityLabel={String(t('exercises.stats.personalRecords'))}
       accessibilityRole="summary"
       style={[
         styles.container,
@@ -33,13 +29,13 @@ export function ExercisePRList({ prs }: ExercisePRListProps) {
         },
       ]}>
       <ThemedText type="smallBold" themeColor="mutedText" style={styles.title}>
-        Records personales
+        {t('exercises.stats.personalRecords')}
       </ThemedText>
 
       {prs.length === 0 ? (
         <View style={styles.emptyState}>
           <ThemedText type="small" themeColor="mutedText" style={styles.emptyText}>
-            Sin records personales
+            {t('exercises.stats.noPersonalRecords')}
           </ThemedText>
         </View>
       ) : (
@@ -56,19 +52,19 @@ export function ExercisePRList({ prs }: ExercisePRListProps) {
               ]}>
               <View style={styles.prInfo}>
                 <ThemedText type="smallBold" style={styles.prType}>
-                  {prTypeLabels[pr.type] ?? pr.type}
+                  {t(`workout.prTypes.${pr.type}`, { defaultValue: pr.type })}
                 </ThemedText>
                 <ThemedText type="small" themeColor="mutedText" style={styles.prDate}>
-                  {formatDate(pr.achieved_at)}
+                  {formatShortDate(pr.achieved_at)}
                 </ThemedText>
               </View>
               <View>
                 <ThemedText type="smallBold" style={[styles.prValue, { color: colors.primary }]}>
-                  {formatPRValue(pr)}
+                  {formatPRValue(pr, formatWeight, formatVolume, String(t('common.reps')))}
                 </ThemedText>
                 {pr.weight !== null && pr.reps !== null ? (
                   <ThemedText type="small" themeColor="mutedText" style={styles.prDetail}>
-                    {pr.weight} kg x {pr.reps}
+                    {formatWeight(pr.weight, 'kg')} x {pr.reps}
                   </ThemedText>
                 ) : null}
               </View>
@@ -80,30 +76,23 @@ export function ExercisePRList({ prs }: ExercisePRListProps) {
   );
 }
 
-function formatDate(dateStr: string): string {
-  try {
-    const date = new Date(dateStr);
-    const day = String(date.getDate()).padStart(2, '0');
-    const month = String(date.getMonth() + 1).padStart(2, '0');
-    const year = String(date.getFullYear()).slice(2);
-    return `${day}/${month}/${year}`;
-  } catch {
-    return dateStr;
-  }
-}
-
-function formatPRValue(pr: PersonalRecord): string {
+function formatPRValue(
+  pr: PersonalRecord,
+  formatWeight: (value: number, unit: 'kg') => string,
+  formatVolume: (value: number, unit: 'kg') => string,
+  repsLabel: string,
+): string {
   const value = Math.round(pr.value);
 
   switch (pr.type) {
     case 'max_reps':
-      return `${value} reps`;
+      return `${value} ${repsLabel}`;
     case 'estimated_1rm':
     case 'max_weight':
-      return `${value} kg`;
+      return formatWeight(value, 'kg');
     case 'max_volume':
     case 'max_session_volume':
-      return `${value} kg`;
+      return formatVolume(value, 'kg');
     default:
       return `${value}`;
   }

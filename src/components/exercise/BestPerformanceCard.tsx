@@ -1,6 +1,8 @@
 import { StyleSheet, View } from 'react-native';
+import { useTranslation } from 'react-i18next';
 
 import { ThemedText } from '@/components/themed-text';
+import { useI18nFormatters } from '@/i18n/useI18nFormatters';
 import { useZenliftTheme } from '@/providers/ThemeProvider';
 
 type BestPerformanceCardProps = {
@@ -15,16 +17,18 @@ export function BestPerformanceCard({
   bestVolume,
 }: BestPerformanceCardProps) {
   const { colors, radius, spacing } = useZenliftTheme();
+  const { t } = useTranslation();
+  const { formatWeight } = useI18nFormatters();
 
   const metrics = [
-    { label: 'Peso maximo', value: formatKg(maxWeight) },
-    { label: 'Mejor 1RM', value: formatKg(best1RM) },
-    { label: 'Volumen max.', value: formatKg(bestVolume) },
+    { label: String(t('exercises.stats.maxWeight')), value: formatKg(maxWeight, formatWeight) },
+    { label: String(t('exercises.stats.bestOneRm')), value: formatKg(best1RM, formatWeight) },
+    { label: String(t('exercises.stats.maxVolume')), value: formatKg(bestVolume, formatWeight) },
   ];
 
   return (
     <View
-      accessibilityLabel="Mejores marcas personales"
+      accessibilityLabel={String(t('exercises.stats.bestPerformanceA11y'))}
       accessibilityRole="summary"
       style={[
         styles.card,
@@ -36,7 +40,7 @@ export function BestPerformanceCard({
         },
       ]}>
       <ThemedText type="smallBold" themeColor="mutedText" style={styles.title}>
-        Mejor rendimiento
+        {t('exercises.stats.bestPerformance')}
       </ThemedText>
 
       <View style={styles.metricsRow}>
@@ -65,9 +69,9 @@ export function BestPerformanceCard({
   );
 }
 
-function formatKg(value: number): string {
+function formatKg(value: number, formatWeight: (value: number, unit: 'kg') => string): string {
   if (value === 0) return '--';
-  return `${Math.round(value)} kg`;
+  return formatWeight(Math.round(value), 'kg');
 }
 
 const styles = StyleSheet.create({
