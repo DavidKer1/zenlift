@@ -1,0 +1,79 @@
+# Tasks
+
+- [ ] 1. Freeze current Expo baseline and document parity gates.
+  - [ ] Capture the current Expo core loop behavior with screenshots or notes for create routine, start workout, log completed sets, finish session, history, progress, settings export/import, and delete data.
+  - [ ] Run the current Expo verification commands listed in `package.json` for typecheck, unit tests, and agent mobile smoke where the environment supports them.
+  - [ ] Record any environment-limited failures with command, error text, URL/device, and whether the blocker is external to the code.
+- [x] 2. Create OpenSpec migration proposal, design, task checklist, and Flutter deltas.
+  - [x] Update `proposal.md` with migration scope, non-goals, parity gate, and data-safety contract.
+  - [x] Update `design.md` with Flutter architecture, state, storage, first-launch cutover, import rollback, backup verification, and completed-set pending-write behavior.
+  - [x] Add or update delta specs for active workout, settings/database, data import, and data export safety.
+  - [x] Run `openspec validate migrate-app-to-flutter --strict`.
+- [ ] 3. Scaffold Flutter app in `flutter-version/`.
+  - [ ] Create the Flutter project without deleting or moving the Expo app.
+  - [ ] Add dependencies for Drift, Riverpod, go_router, test tooling, and local settings storage.
+  - [ ] Create the shared Clean Architecture folders under `lib/core`, `lib/storage`, and `lib/features/<feature>/{presentation,application,domain,data}` before feature work starts.
+  - [ ] Run `cd flutter-version && flutter pub get`.
+  - [ ] Run `cd flutter-version && flutter analyze`.
+- [ ] 4. Port design tokens and theme.
+  - [ ] Port `DESIGN.md` colors, typography, spacing, radii, and component tokens to Dart.
+  - [ ] Add unit tests for color, typography, spacing, radii, card no-shadow, and success-not-primary tokens.
+  - [ ] Run `cd flutter-version && flutter test test/theme`.
+- [ ] 5. Port domain entities, IDs, units, volume, 1RM, and PR detection.
+  - [ ] Preserve text UUID IDs and local-first entity boundaries.
+  - [ ] Port calculations as pure Dart functions with no widget or database dependency.
+  - [ ] Keep all domain files free of Flutter, Riverpod, Drift, SQLite, platform, and generated row imports.
+  - [ ] Run `cd flutter-version && flutter test test/domain`.
+- [ ] 6. Port SQLite schema, migrations, seed data, and repositories.
+  - [ ] Implement Drift tables matching the Zenlift SQLite entities and indexes.
+  - [ ] Enable foreign keys and WAL on connection open.
+  - [ ] Place repository contracts in feature domain layers and Drift implementations plus row/domain mappers in feature data layers.
+  - [ ] Add repository tests for routines, exercises, workouts, set logs, PRs, migrations, and seed idempotency.
+  - [ ] Run `cd flutter-version && flutter test test/storage`.
+- [ ] 7. Port settings, onboarding completion, and data bridge.
+  - [ ] Preserve existing Expo SQLite/MMKV files during first launch and import into Flutter storage only through validated bridge logic.
+  - [ ] Write the Flutter cutover marker only after row counts, required UUIDs, and settings keys are verified.
+  - [ ] Abort cutover without deleting source data when validation, import, settings write, or verification fails.
+  - [ ] Run `cd flutter-version && flutter test test/storage/migration_bridge_test.dart test/storage/settings_store_test.dart`.
+- [ ] 8. Port navigation shell and all routes.
+  - [ ] Match the mobile route map and back behavior for onboarding, tabs, active workout, routine detail, exercise detail, history, summary, and settings.
+  - [ ] Keep route files thin by delegating behavior to feature presentation widgets and application controllers.
+  - [ ] Run `cd flutter-version && flutter test test/navigation`.
+- [ ] 9. Port shared UI components.
+  - [ ] Port reusable controls with dark theme defaults, accessible labels, and no green primary styling.
+  - [ ] Add widget tests for interactive states and text fitting on small mobile widths.
+  - [ ] Add golden coverage for core surfaces, buttons, inputs, tabs, and shared card states once the widgets exist.
+  - [ ] Run `cd flutter-version && flutter test test/widgets`.
+- [ ] 10. Port onboarding, home, routines, exercises, active workout, summary, history, and settings.
+  - [ ] Keep screens thin and move business logic into feature application use cases/controllers, feature domain services, or domain repository contracts.
+  - [ ] Do not pass Drift rows, generated database classes, or storage DTOs into presentation widgets.
+  - [ ] Verify a set can be logged in under 3 seconds on Android hardware.
+  - [ ] Test Active Workout recovery after app restart with completed sets present.
+  - [ ] Run `cd flutter-version && flutter test integration_test/core_loop_test.dart`.
+- [ ] 11. Port export, import, and delete data.
+  - [ ] Export a `.zenlift` file containing all required tables, metadata, settings, and text UUIDs.
+  - [ ] Import valid files by merge-by-UUID with no overwrite of existing records.
+  - [ ] Reject invalid or unsupported files before any SQLite/settings write.
+  - [ ] Roll back inserted rows when import fails mid-transaction and preserve Expo SQLite/MMKV source data.
+  - [ ] Require a verified fresh export before destructive migration cleanup or delete-all-data can proceed.
+  - [ ] Run `cd flutter-version && flutter test test/storage/data_export_test.dart test/storage/data_import_test.dart test/storage/data_delete_test.dart`.
+- [ ] 12. Add golden, widget, repository, domain, and integration smoke coverage.
+  - [ ] Ensure the migrated areas have matching Dart tests before each screen is marked complete.
+  - [ ] Run Clean Architecture boundary scans: `rg -n "package:flutter|package:flutter_riverpod|package:drift|sqlite3|drift_database" flutter-version/lib/features/*/domain flutter-version/lib/core` and `rg -n "package:drift|drift_database|\\.g\\.dart" flutter-version/lib/features/*/presentation flutter-version/lib/features/*/application`; both should return no matches except documented false positives.
+  - [ ] Run `cd flutter-version && flutter test`.
+  - [ ] Run `cd flutter-version && flutter test integration_test/core_loop_test.dart` on an Android emulator or device.
+  - [ ] Run Maestro native smoke when installed and record skipped status when unavailable.
+- [ ] 13. Run parity gate and manual Android verification.
+  - [ ] Run `cd flutter-version && flutter analyze`.
+  - [ ] Run `cd flutter-version && flutter test`.
+  - [ ] Run the Android manual core loop: create routine, start workout, log sets, finish session, inspect history/progress, export data, import data, and cancel/delete paths.
+  - [ ] Record device model, OS version, commands, screenshots, failures, and unresolved parity gaps.
+- [ ] 14. Update docs and archive Expo-specific specs.
+  - [ ] Update compact docs and README entries for Flutter setup, commands, artifact paths, data migration, and known limits.
+  - [ ] Archive or supersede Expo-only requirements only after Flutter parity is verified.
+  - [ ] Run `openspec validate migrate-app-to-flutter --strict`.
+- [ ] 15. Cut over to Flutter and remove Expo only after parity passes.
+  - [ ] Confirm no open parity blockers remain in tasks or docs.
+  - [ ] Move Flutter implementation to the repository root through an orchestrated change.
+  - [ ] Remove Expo dependencies, routes, and scripts only after verified backup/export and rollback instructions exist.
+  - [ ] Rebuild Graphify with `/graphify src` after significant code movement.
