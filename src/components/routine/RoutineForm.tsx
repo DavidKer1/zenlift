@@ -11,6 +11,7 @@ import {
   TextInput,
   View,
 } from 'react-native';
+import { useTranslation } from 'react-i18next';
 
 import { DayEditor } from '@/components/routine/DayEditor';
 import { ThemedText } from '@/components/themed-text';
@@ -31,23 +32,20 @@ type RoutineFormProps = {
   title?: string;
 };
 
-const goalLabels: Record<NonNullable<RoutineFormValues['goal']>, string> = {
-  hipertrofia: 'Hipertrofia',
-  fuerza: 'Fuerza',
-  resistencia: 'Resistencia',
-};
-
 export function RoutineForm({
   initialData,
   onSubmit,
   submitLabel,
-  title = initialData ? 'Editar rutina' : 'Crear rutina',
+  title,
 }: RoutineFormProps) {
   const router = useRouter();
   const navigation = useNavigation();
   const { colors, radius, spacing, typography } = useZenliftTheme();
+  const { t } = useTranslation();
   const [submitError, setSubmitError] = useState<string | null>(null);
   const allowLeaveRef = useRef(false);
+  const formTitle = title ?? String(t(initialData ? 'routines.edit' : 'routines.create'));
+  const formSubmitLabel = submitLabel ?? String(t(initialData ? 'routines.saveChanges' : 'routines.create'));
   const defaultValues = useMemo(
     () => initialData ?? createEmptyRoutineFormValues(),
     [initialData],
@@ -80,16 +78,16 @@ export function RoutineForm({
 
   const confirmDiscard = useCallback(
     (onDiscard: () => void) => {
-      Alert.alert('¿Descartar cambios?', 'Los cambios no guardados se perderán.', [
-        { text: 'Seguir editando', style: 'cancel' },
+      Alert.alert(String(t('routines.alerts.discardTitle')), String(t('routines.alerts.discardBody')), [
+        { text: String(t('routines.alerts.keepEditing')), style: 'cancel' },
         {
-          text: 'Descartar',
+          text: String(t('routines.alerts.discard')),
           style: 'destructive',
           onPress: onDiscard,
         },
       ]);
     },
-    [],
+    [t],
   );
 
   useEffect(() => {
@@ -118,7 +116,7 @@ export function RoutineForm({
       allowLeaveRef.current = false;
     } catch (error) {
       allowLeaveRef.current = false;
-      setSubmitError(error instanceof Error ? error.message : 'No se pudo guardar la rutina');
+      setSubmitError(error instanceof Error ? error.message : String(t('routines.validation.saveFailed')));
     }
   }
 
@@ -147,17 +145,17 @@ export function RoutineForm({
         ]}>
         <View style={styles.header}>
           <Pressable
-            accessibilityLabel="Volver"
+            accessibilityLabel={String(t('common.back'))}
             onPress={handleBack}
             style={({ pressed }) => [
               styles.backButton,
               { backgroundColor: colors.surface, borderRadius: radius.md },
               pressed && styles.pressed,
             ]}>
-            <ThemedText type="smallBold">Volver</ThemedText>
+            <ThemedText type="smallBold">{t('common.back')}</ThemedText>
           </Pressable>
           <ThemedText type="subtitle" style={styles.screenTitle}>
-            {title}
+            {formTitle}
           </ThemedText>
         </View>
 
@@ -167,12 +165,12 @@ export function RoutineForm({
             style={[styles.errorSummary, { borderColor: colors.primary, borderRadius: radius.md }]}>
             {submitError ? (
               <ThemedText type="smallBold" style={{ color: colors.danger }}>
-                ! {submitError}
+                ! {translateValidationMessage(submitError, t)}
               </ThemedText>
             ) : null}
             {validationMessages.map((message) => (
               <ThemedText key={message} type="smallBold" style={{ color: colors.danger }}>
-                ! {message}
+                ! {translateValidationMessage(message, t)}
               </ThemedText>
             ))}
           </ThemedView>
@@ -190,18 +188,18 @@ export function RoutineForm({
           ]}>
           <View style={styles.inputGroup}>
             <ThemedText type="smallBold" themeColor="mutedText">
-              Nombre de la rutina
+              {t('routines.form.name')}
             </ThemedText>
             <Controller
               control={control}
               name="name"
               render={({ field: { onBlur, onChange, value } }) => (
                 <TextInput
-                  accessibilityLabel="Nombre de la rutina"
+                  accessibilityLabel={String(t('routines.form.name'))}
                   testID="routine-name-input"
                   onBlur={onBlur}
                   onChangeText={onChange}
-                  placeholder="Push Day"
+                  placeholder={String(t('routines.form.placeholderName'))}
                   placeholderTextColor={colors.mutedText}
                   style={[
                     styles.titleInput,
@@ -217,26 +215,26 @@ export function RoutineForm({
             />
             {errors.name?.message ? (
               <ThemedText type="small" style={{ color: colors.danger }}>
-                ! {errors.name.message}
+                ! {translateValidationMessage(String(errors.name.message), t)}
               </ThemedText>
             ) : null}
           </View>
 
           <View style={styles.inputGroup}>
             <ThemedText type="smallBold" themeColor="mutedText">
-              Descripcion
+              {t('routines.form.description')}
             </ThemedText>
             <Controller
               control={control}
               name="description"
               render={({ field: { onBlur, onChange, value } }) => (
                 <TextInput
-                  accessibilityLabel="Descripcion de la rutina"
+                  accessibilityLabel={String(t('routines.form.description'))}
                   testID="routine-description-input"
                   multiline
                   onBlur={onBlur}
                   onChangeText={onChange}
-                  placeholder="Notas opcionales"
+                  placeholder={String(t('routines.form.placeholderDescription'))}
                   placeholderTextColor={colors.mutedText}
                   style={[
                     styles.descriptionInput,
@@ -254,23 +252,25 @@ export function RoutineForm({
 
           <View style={styles.inputGroup}>
             <ThemedText type="smallBold" themeColor="mutedText">
-              Objetivo
+              {t('routines.form.goal')}
             </ThemedText>
             <Controller
               control={control}
               name="goal"
               render={({ field: { onChange, value } }) => (
                 <View style={styles.goalRow}>
-                  <GoalButton
-                    active={value === undefined}
-                    label="Sin objetivo"
+                    <GoalButton
+                      active={value === undefined}
+                    accessibilityLabel={String(t('routines.form.noGoal'))}
+                    label={String(t('routines.form.noGoal'))}
                     onPress={() => onChange(undefined)}
                   />
                   {routineGoalOptions.map((goal) => (
                     <GoalButton
                       key={goal}
                       active={value === goal}
-                      label={goalLabels[goal]}
+                      accessibilityLabel={String(t('routines.form.selectGoalA11y', { label: t(`routines.goal.${goal}`) }))}
+                      label={String(t(`routines.goal.${goal}`))}
                       onPress={() => onChange(goal)}
                     />
                   ))}
@@ -282,10 +282,10 @@ export function RoutineForm({
 
         <View style={styles.daysHeader}>
           <ThemedText type="smallBold" themeColor="mutedText">
-            Dias
+            {t('routines.form.days')}
           </ThemedText>
           <ThemedText type="small" themeColor="mutedText">
-            {dayFields.length} configurados
+            {t('routines.day.configured', { count: dayFields.length })}
           </ThemedText>
         </View>
 
@@ -302,9 +302,16 @@ export function RoutineForm({
         ))}
 
         <Pressable
-          accessibilityLabel="Agregar dia a la rutina"
+          accessibilityLabel={String(t('routines.form.addDayA11y'))}
           testID="routine-add-day"
-          onPress={() => appendDay(createDefaultDay(dayFields.length + 1))}
+          onPress={() =>
+            appendDay(
+              createDefaultDay(
+                dayFields.length + 1,
+                String(t('routines.day.titleFallback', { number: dayFields.length + 1 })),
+              ),
+            )
+          }
           style={({ pressed }) => [
             styles.addDayButton,
             {
@@ -314,14 +321,14 @@ export function RoutineForm({
             pressed && styles.pressed,
           ]}>
           <ThemedText type="smallBold" style={{ color: colors.primary }}>
-            + Agregar dia
+            + {t('routines.form.addDay')}
           </ThemedText>
         </Pressable>
       </ScrollView>
 
       <ThemedView type="background" style={[styles.footer, { padding: spacing.four }]}>
         <Pressable
-          accessibilityLabel={submitLabel ?? (initialData ? 'Guardar cambios' : 'Crear rutina')}
+          accessibilityLabel={formSubmitLabel}
           testID="routine-submit"
           disabled={isSubmitting}
           onPress={handleSubmit(submit)}
@@ -337,7 +344,7 @@ export function RoutineForm({
             <ActivityIndicator color={colors.surface} />
           ) : (
             <ThemedText type="smallBold" style={[styles.submitText, { color: colors.surface }]}>
-              {submitLabel ?? (initialData ? 'Guardar cambios' : 'Crear rutina')}
+              {formSubmitLabel}
             </ThemedText>
           )}
         </Pressable>
@@ -348,10 +355,12 @@ export function RoutineForm({
 
 function GoalButton({
   active,
+  accessibilityLabel,
   label,
   onPress,
 }: {
   active: boolean;
+  accessibilityLabel: string;
   label: string;
   onPress: () => void;
 }) {
@@ -359,7 +368,7 @@ function GoalButton({
 
   return (
     <Pressable
-      accessibilityLabel={`Seleccionar objetivo ${label}`}
+      accessibilityLabel={accessibilityLabel}
       onPress={onPress}
       style={({ pressed }) => [
         styles.goalButton,
@@ -374,6 +383,13 @@ function GoalButton({
       </ThemedText>
     </Pressable>
   );
+}
+
+function translateValidationMessage(
+  message: string,
+  t: ReturnType<typeof useTranslation>['t'],
+): string {
+  return message.startsWith('routines.') ? String(t(message)) : message;
 }
 
 function collectValidationMessages(errors: ReturnType<typeof useForm<RoutineFormValues>>['formState']['errors']) {

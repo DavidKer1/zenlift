@@ -2,6 +2,7 @@ import { useFocusEffect, useLocalSearchParams, useRouter } from 'expo-router';
 import React, { useCallback, useState } from 'react';
 import { ActivityIndicator, ScrollView, StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { useTranslation } from 'react-i18next';
 
 import { DaySection } from '@/components/routine/DaySection';
 import { RoutineHeader } from '@/components/routine/RoutineHeader';
@@ -54,6 +55,7 @@ async function resolvePrimaryMuscleColors(
 
 export default function RoutineDetailScreen() {
   const router = useRouter();
+  const { t } = useTranslation();
   const params = useLocalSearchParams<{ id?: string | string[] }>();
   const id = Array.isArray(params.id) ? params.id[0] : params.id;
   const { colors, radius, spacing } = useZenliftTheme();
@@ -106,7 +108,7 @@ export default function RoutineDetailScreen() {
     return (
       <SafeAreaView style={[styles.safeArea, { backgroundColor: colors.background }]}>
         <ThemedView style={styles.centered}>
-          <ThemedText themeColor="mutedText">ID de rutina no valido</ThemedText>
+          <ThemedText themeColor="mutedText">{t('routines.invalidId')}</ThemedText>
         </ThemedView>
       </SafeAreaView>
     );
@@ -118,7 +120,7 @@ export default function RoutineDetailScreen() {
         <ThemedView style={styles.centered}>
           <ActivityIndicator color={colors.primary} size="large" />
           <ThemedText themeColor="mutedText" style={styles.loadingText}>
-            Cargando rutina...
+            {t('routines.loading')}
           </ThemedText>
         </ThemedView>
       </SafeAreaView>
@@ -130,10 +132,10 @@ export default function RoutineDetailScreen() {
       <SafeAreaView style={[styles.safeArea, { backgroundColor: colors.background }]}>
         <ThemedView style={styles.centered}>
           <ThemedText type="subtitle" style={styles.errorTitle}>
-            Rutina no encontrada
+            {t('routines.notFound')}
           </ThemedText>
           <ThemedText themeColor="mutedText" style={styles.errorText}>
-            Esta rutina pudo haber sido eliminada o archivada.
+            {t('routines.notFoundBody')}
           </ThemedText>
           <View
             style={[
@@ -149,7 +151,7 @@ export default function RoutineDetailScreen() {
               type="smallBold"
               onPress={() => router.replace('/routines')}
               style={[styles.buttonText, { color: colors.surface }]}>
-              Volver a mis rutinas
+              {t('routines.backToRoutines')}
             </ThemedText>
           </View>
         </ThemedView>
@@ -185,7 +187,7 @@ export default function RoutineDetailScreen() {
                 },
               ]}>
               <ThemedText themeColor="mutedText" style={styles.emptyText}>
-                Esta rutina no tiene dias. Edita la rutina para agregar dias y ejercicios.
+                {t('routines.emptyRoutineBody')}
               </ThemedText>
             </ThemedView>
           ) : (

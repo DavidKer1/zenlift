@@ -7,8 +7,10 @@ import {
   type TabTriggerSlotProps,
 } from 'expo-router/ui';
 import { Ionicons } from '@expo/vector-icons';
+import { SymbolView } from 'expo-symbols';
 import React, { useEffect } from 'react';
 import { Pressable, StyleSheet, View, type GestureResponderEvent } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import Animated, {
   ReduceMotion,
   useAnimatedStyle,
@@ -17,6 +19,7 @@ import Animated, {
 } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
+import { appTabs, type AppTabItem } from '@/components/app-tabs.config';
 import {
   BOTTOM_TAB_BOTTOM_PADDING_MIN,
   BOTTOM_TAB_BUTTON_MIN_HEIGHT,
@@ -24,58 +27,17 @@ import {
 } from '@/constants/layout';
 import { useZenliftTheme } from '@/providers/ThemeProvider';
 
-type TabItem = {
-  href: '/' | '/routines' | '/history' | '/settings';
-  iconInactive: keyof typeof Ionicons.glyphMap;
-  iconActive: keyof typeof Ionicons.glyphMap;
-  label: string;
-  name: string;
-};
-
-const tabs: TabItem[] = [
-  {
-    name: 'home',
-    href: '/',
-    label: 'Home',
-    iconInactive: 'grid-outline',
-    iconActive: 'grid',
-  },
-  {
-    name: 'routines',
-    href: '/routines',
-    label: 'Routines',
-    iconInactive: 'barbell-outline',
-    iconActive: 'barbell',
-  },
-  {
-    name: 'history',
-    href: '/history',
-    label: 'History',
-    iconInactive: 'time-outline',
-    iconActive: 'time',
-  },
-  {
-    name: 'settings',
-    href: '/settings',
-    label: 'Settings',
-    iconInactive: 'settings-outline',
-    iconActive: 'settings',
-  },
-];
-
 export default function AppTabs() {
+  const { t } = useTranslation();
+
   return (
     <Tabs>
       <TabSlot style={styles.slot} />
       <TabList asChild>
         <CustomTabList>
-          {tabs.map((tab) => (
+          {appTabs.map((tab) => (
             <TabTrigger key={tab.name} name={tab.name} href={tab.href} asChild>
-              <TabButton
-                iconInactive={tab.iconInactive}
-                iconActive={tab.iconActive}
-                label={tab.label}
-              />
+              <TabButton icon={tab.icon} label={String(t(tab.labelKey))} name={tab.name} />
             </TabTrigger>
           ))}
         </CustomTabList>
@@ -85,18 +47,17 @@ export default function AppTabs() {
 }
 
 function TabButton({
-  iconInactive,
-  iconActive,
+  icon,
   label,
+  name,
   isFocused,
   onPressIn,
   onPressOut,
   ...props
-}: TabTriggerSlotProps & Pick<TabItem, 'iconInactive' | 'iconActive' | 'label'>) {
+}: TabTriggerSlotProps & Pick<AppTabItem, 'icon' | 'name'> & { label: string }) {
   const { colors } = useZenliftTheme();
   const focusProgress = useSharedValue(isFocused ? 1 : 0);
   const pressProgress = useSharedValue(0);
-  const iconName = isFocused ? iconActive : iconInactive;
 
   useEffect(() => {
     focusProgress.value = withTiming(isFocused ? 1 : 0, {
@@ -129,12 +90,24 @@ function TabButton({
     <Pressable
       {...props}
       accessibilityLabel={label}
-      testID={`tab-${label.toLowerCase()}`}
+      testID={`tab-${name}`}
       onPressIn={handlePressIn}
       onPressOut={handlePressOut}
       style={styles.tabButton}>
       <Animated.View style={[styles.tabContent, animatedContentStyle]}>
-        <Ionicons name={iconName} size={20} color={colors.textPrimary} />
+        {icon.type === 'ionicon' ? (
+          <Ionicons
+            name={isFocused ? icon.active : icon.inactive}
+            size={20}
+            color={colors.textPrimary}
+          />
+        ) : (
+          <SymbolView
+            name={isFocused ? icon.active : icon.inactive}
+            size={21}
+            tintColor={colors.textPrimary}
+          />
+        )}
       </Animated.View>
     </Pressable>
   );

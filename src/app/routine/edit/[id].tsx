@@ -2,6 +2,7 @@ import { useLocalSearchParams, useRouter } from 'expo-router';
 import React, { useEffect, useMemo, useState } from 'react';
 import { ActivityIndicator, Pressable, StyleSheet } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { useTranslation } from 'react-i18next';
 
 import { RoutineForm } from '@/components/routine/RoutineForm';
 import { ThemedText } from '@/components/themed-text';
@@ -16,6 +17,7 @@ import { RoutineRepo } from '@/storage/repositories/RoutineRepo';
 
 export default function EditRoutineScreen() {
   const router = useRouter();
+  const { t } = useTranslation();
   const params = useLocalSearchParams<{ id?: string | string[] }>();
   const id = Array.isArray(params.id) ? params.id[0] : params.id;
   const { colors, radius, spacing } = useZenliftTheme();
@@ -28,7 +30,7 @@ export default function EditRoutineScreen() {
 
     async function loadRoutine() {
       if (!id) {
-        setLoadError('Rutina no encontrada');
+        setLoadError(String(t('routines.notFound')));
         setIsLoading(false);
         return;
       }
@@ -44,14 +46,14 @@ export default function EditRoutineScreen() {
         if (!isMounted) return;
 
         if (!nextRoutine) {
-          setLoadError('Rutina no encontrada');
+          setLoadError(String(t('routines.notFound')));
           setRoutine(null);
         } else {
           setRoutine(nextRoutine);
         }
       } catch (error) {
         if (isMounted) {
-          setLoadError(error instanceof Error ? error.message : 'No se pudo cargar la rutina');
+          setLoadError(error instanceof Error ? error.message : String(t('routines.alerts.loadFailed')));
         }
       } finally {
         if (isMounted) setIsLoading(false);
@@ -63,7 +65,7 @@ export default function EditRoutineScreen() {
     return () => {
       isMounted = false;
     };
-  }, [id]);
+  }, [id, t]);
 
   const initialData = useMemo(
     () => (routine ? mapFullRoutineToFormValues(routine) : undefined),
@@ -71,7 +73,7 @@ export default function EditRoutineScreen() {
   );
 
   async function handleSubmit(values: RoutineFormValues) {
-    if (!id) throw new Error('Rutina no encontrada');
+    if (!id) throw new Error(String(t('routines.notFound')));
 
     const db = await getDatabase();
     await updateRoutineFromForm(db, id, values);
@@ -83,7 +85,7 @@ export default function EditRoutineScreen() {
       <ThemedView style={styles.centered}>
         <ActivityIndicator color={colors.primary} />
         <ThemedText type="small" themeColor="mutedText">
-          Cargando rutina
+          {t('routines.loading')}
         </ThemedText>
       </ThemedView>
     );
@@ -92,12 +94,12 @@ export default function EditRoutineScreen() {
   if (loadError || !initialData) {
     return (
       <ThemedView style={[styles.centered, { padding: spacing.four }]}>
-        <ThemedText type="subtitle">Rutina no encontrada</ThemedText>
+        <ThemedText type="subtitle">{t('routines.notFound')}</ThemedText>
         <ThemedText themeColor="mutedText">
-          {loadError ?? 'No se pudo encontrar esta rutina.'}
+          {loadError ?? t('routines.notFoundBody')}
         </ThemedText>
         <Pressable
-          accessibilityLabel="Volver a rutinas"
+          accessibilityLabel={String(t('routines.backToRoutines'))}
           onPress={() => router.replace('/routines')}
           style={({ pressed }) => [
             styles.backButton,
@@ -108,7 +110,7 @@ export default function EditRoutineScreen() {
             },
           ]}>
           <ThemedText type="smallBold" style={[styles.buttonText, { color: colors.surface }]}>
-            Volver a rutinas
+            {t('routines.backToRoutines')}
           </ThemedText>
         </Pressable>
       </ThemedView>
@@ -119,8 +121,8 @@ export default function EditRoutineScreen() {
     <SafeAreaView style={{ flex: 1 }}>
       <RoutineForm
         initialData={initialData}
-        title="Editar rutina"
-        submitLabel="Guardar cambios"
+        title={String(t('routines.edit'))}
+        submitLabel={String(t('routines.saveChanges'))}
         onSubmit={handleSubmit}
       />
     </SafeAreaView>

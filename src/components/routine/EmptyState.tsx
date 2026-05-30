@@ -1,6 +1,7 @@
 import { SymbolView, type SymbolViewProps } from 'expo-symbols';
 import React from 'react';
 import { Pressable, StyleSheet, View } from 'react-native';
+import { useTranslation } from 'react-i18next';
 
 import { ThemedText } from '@/components/themed-text';
 import { useZenliftTheme } from '@/providers/ThemeProvider';
@@ -11,6 +12,7 @@ type EmptyStateProps = {
 
 export function EmptyState({ onCreatePress }: EmptyStateProps) {
   const { colors, radius, spacing } = useZenliftTheme();
+  const { t } = useTranslation();
 
   return (
     <View style={[styles.container, { paddingHorizontal: spacing.four }]}>
@@ -32,15 +34,15 @@ export function EmptyState({ onCreatePress }: EmptyStateProps) {
 
       <View style={styles.copy}>
         <ThemedText type="subtitle" style={styles.title}>
-          No tienes rutinas aún
+          {t('routines.emptyTitle')}
         </ThemedText>
         <ThemedText themeColor="mutedText" style={styles.message}>
-          Crea una rutina simple para llegar rápido a tu primer workout.
+          {t('routines.emptyBody')}
         </ThemedText>
       </View>
 
       <Pressable
-        accessibilityLabel="Crear primera rutina"
+        accessibilityLabel={String(t('routines.createFirst'))}
         accessibilityRole="button"
         testID="routine-empty-create"
         onPress={onCreatePress}
@@ -59,7 +61,7 @@ export function EmptyState({ onCreatePress }: EmptyStateProps) {
           tintColor={colors.surface}
         />
         <ThemedText type="smallBold" style={[styles.buttonText, { color: colors.surface }]}>
-          Crear primera rutina
+          {t('routines.createFirst')}
         </ThemedText>
       </Pressable>
     </View>

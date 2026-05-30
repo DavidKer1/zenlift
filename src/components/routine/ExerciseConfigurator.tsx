@@ -7,6 +7,7 @@ import {
   TextInput,
   View,
 } from 'react-native';
+import { useTranslation } from 'react-i18next';
 
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
@@ -36,6 +37,7 @@ export function ExerciseConfigurator({
   onConfirm,
 }: ExerciseConfiguratorProps) {
   const { colors, radius, spacing, typography } = useZenliftTheme();
+  const { t } = useTranslation();
   const [targetSets, setTargetSets] = useState('3');
   const [targetRepsMin, setTargetRepsMin] = useState('8');
   const [targetRepsMax, setTargetRepsMax] = useState('12');
@@ -95,12 +97,12 @@ export function ExerciseConfigurator({
     const parsedMax = parseOptionalInteger(targetRepsMax);
 
     if (!parsedSets || parsedSets < 1) {
-      setError('Minimo 1 serie');
+      setError(String(t('routines.validation.minSets')));
       return;
     }
 
     if ((parsedMin !== undefined && parsedMin < 1) || (parsedMax !== undefined && parsedMax < 1)) {
-      setError('Las reps deben ser 1 o mas');
+      setError(String(t('routines.exerciseConfig.minRepsError')));
       return;
     }
 
@@ -117,7 +119,7 @@ export function ExerciseConfigurator({
       <View style={styles.backdrop}>
         <ThemedView type="surface" style={stylesWithTheme.sheet}>
           <ThemedText type="smallBold" themeColor="mutedText">
-            Configurar ejercicio
+            {t('routines.exerciseConfig.title')}
           </ThemedText>
           <ThemedText type="subtitle" style={styles.title}>
             {exerciseName}
@@ -135,38 +137,38 @@ export function ExerciseConfigurator({
 
           <View style={styles.grid}>
             <ConfigInput
-              label="Series"
+              label={String(t('routines.exerciseConfig.sets'))}
               value={targetSets}
               onChangeText={setTargetSets}
-              accessibilityLabel="Series objetivo"
+              accessibilityLabel={String(t('routines.exerciseConfig.setsA11y'))}
               style={stylesWithTheme.input}
             />
             <ConfigInput
-              label="Reps min"
+              label={String(t('routines.exerciseConfig.repsMin'))}
               value={targetRepsMin}
               onChangeText={setTargetRepsMin}
-              accessibilityLabel="Repeticiones minimas"
+              accessibilityLabel={String(t('routines.exerciseConfig.repsMinA11y'))}
               style={stylesWithTheme.input}
             />
             <ConfigInput
-              label="Reps max"
+              label={String(t('routines.exerciseConfig.repsMax'))}
               value={targetRepsMax}
               onChangeText={setTargetRepsMax}
-              accessibilityLabel="Repeticiones maximas"
+              accessibilityLabel={String(t('routines.exerciseConfig.repsMaxA11y'))}
               style={stylesWithTheme.input}
             />
           </View>
 
           <View style={styles.actions}>
             <Pressable
-              accessibilityLabel="Cancelar configuracion de ejercicio"
+              accessibilityLabel={String(t('routines.exerciseConfig.cancelA11y'))}
               disabled={isSaving}
               onPress={onCancel}
               style={({ pressed }) => [stylesWithTheme.secondaryButton, pressed && styles.pressed]}>
-              <ThemedText type="smallBold">Cancelar</ThemedText>
+              <ThemedText type="smallBold">{t('common.cancel')}</ThemedText>
             </Pressable>
             <Pressable
-              accessibilityLabel="Confirmar configuracion de ejercicio"
+              accessibilityLabel={String(t('routines.exerciseConfig.confirmA11y'))}
               testID="exercise-configurator-confirm"
               disabled={isSaving}
               onPress={handleConfirm}
@@ -179,7 +181,7 @@ export function ExerciseConfigurator({
                 <ActivityIndicator color={colors.surface} />
               ) : (
                 <ThemedText type="smallBold" style={[styles.primaryText, { color: colors.surface }]}>
-                  Confirmar
+                  {t('common.confirm')}
                 </ThemedText>
               )}
             </Pressable>

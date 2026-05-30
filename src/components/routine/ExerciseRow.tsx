@@ -1,6 +1,7 @@
 import { SymbolView, type SymbolViewProps } from 'expo-symbols';
 import React, { useCallback } from 'react';
 import { Pressable, StyleSheet, View } from 'react-native';
+import { useTranslation } from 'react-i18next';
 
 import { MuscleDot } from '@/components/routine/MuscleDot';
 import { ThemedText } from '@/components/themed-text';
@@ -28,6 +29,7 @@ export const ExerciseRow = React.memo(function ExerciseRow({
   onMoveDown,
 }: ExerciseRowProps) {
   const { colors, radius, spacing } = useZenliftTheme();
+  const { t } = useTranslation();
 
   const handleRemove = useCallback(() => {
     onRemove(exercise.id);
@@ -46,7 +48,7 @@ export const ExerciseRow = React.memo(function ExerciseRow({
 
   const repsLabel =
     hasRepsRange
-      ? `${exercise.target_reps_min ?? '-'}-${exercise.target_reps_max ?? '-'} reps`
+      ? `${exercise.target_reps_min ?? '-'}-${exercise.target_reps_max ?? '-'} ${t('common.reps')}`
       : null;
 
   return (
@@ -69,7 +71,7 @@ export const ExerciseRow = React.memo(function ExerciseRow({
           <View style={styles.targetsRow}>
             {exercise.target_sets !== null ? (
               <ThemedText themeColor="mutedText" style={styles.target}>
-                {exercise.target_sets} sets
+                {t('routines.exerciseConfig.setsWithCount', { count: exercise.target_sets })}
               </ThemedText>
             ) : null}
             {repsLabel ? (
@@ -83,7 +85,7 @@ export const ExerciseRow = React.memo(function ExerciseRow({
 
       <View style={[styles.actionsRow, { borderColor: colors.border }]}>
         <Pressable
-          accessibilityLabel={`Eliminar ${exercise.exercise.name}`}
+          accessibilityLabel={String(t('routines.day.removeExerciseA11y', { name: exercise.exercise.name }))}
           onPress={handleRemove}
           style={({ pressed }) => [
             styles.iconButton,
@@ -99,7 +101,7 @@ export const ExerciseRow = React.memo(function ExerciseRow({
 
         <View style={styles.moveGroup}>
           <Pressable
-            accessibilityLabel={`Mover ${exercise.exercise.name} arriba`}
+            accessibilityLabel={String(t('routines.day.moveExerciseUpA11y', { name: exercise.exercise.name }))}
             disabled={isFirst}
             onPress={handleMoveUp}
             style={({ pressed }) => [
@@ -117,7 +119,7 @@ export const ExerciseRow = React.memo(function ExerciseRow({
             />
           </Pressable>
           <Pressable
-            accessibilityLabel={`Mover ${exercise.exercise.name} abajo`}
+            accessibilityLabel={String(t('routines.day.moveExerciseDownA11y', { name: exercise.exercise.name }))}
             disabled={isLast}
             onPress={handleMoveDown}
             style={({ pressed }) => [

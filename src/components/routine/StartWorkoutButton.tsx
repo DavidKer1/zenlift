@@ -1,9 +1,10 @@
 import React, { useCallback } from 'react';
 import { Pressable, StyleSheet } from 'react-native';
+import { useTranslation } from 'react-i18next';
 
 import { ThemedText } from '@/components/themed-text';
 import type { FullRoutineDay } from '@/domain/entities';
-import { startWorkoutFlow } from '@/features/workout/StartWorkoutFlow';
+import { createStartWorkoutFlowCopy, startWorkoutFlow } from '@/features/workout/StartWorkoutFlow';
 import { useZenliftTheme } from '@/providers/ThemeProvider';
 
 type StartWorkoutButtonProps = {
@@ -18,18 +19,20 @@ export function StartWorkoutButton({
   routineName,
 }: StartWorkoutButtonProps) {
   const { colors, radius, spacing, typography } = useZenliftTheme();
+  const { t } = useTranslation();
+  const startWorkoutCopy = createStartWorkoutFlowCopy(t);
 
   const handlePress = useCallback(() => {
     void startWorkoutFlow({
       routineId,
       routineDayId: day.id,
       name: `${routineName} - ${day.name}`,
-    });
-  }, [day.id, day.name, routineId, routineName]);
+    }, startWorkoutCopy);
+  }, [day.id, day.name, routineId, routineName, startWorkoutCopy]);
 
   return (
     <Pressable
-      accessibilityLabel={`Iniciar workout para ${day.name}`}
+      accessibilityLabel={String(t('routines.startWorkoutA11y', { day: day.name }))}
       testID={`routine-day-${day.id}-start-workout`}
       onPress={handlePress}
       style={({ pressed }) => [
@@ -43,7 +46,7 @@ export function StartWorkoutButton({
         },
       ]}>
       <ThemedText style={[styles.label, { color: colors.surface, fontSize: typography.size.md }]}>
-        Iniciar Workout
+        {t('routines.startWorkout')}
       </ThemedText>
     </Pressable>
   );

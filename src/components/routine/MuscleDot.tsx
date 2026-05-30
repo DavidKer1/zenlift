@@ -12,7 +12,9 @@ export const MuscleDot = React.memo(function MuscleDot({
 }: MuscleDotProps) {
   return (
     <View
-      accessibilityLabel="Muscle color dot"
+      accessible={false}
+      accessibilityElementsHidden
+      importantForAccessibility="no"
       style={[
         styles.dot,
         {

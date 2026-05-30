@@ -1,5 +1,6 @@
 import React, { useCallback, useState } from 'react';
 import { Pressable, StyleSheet, View } from 'react-native';
+import { useTranslation } from 'react-i18next';
 
 import { ExercisePicker, type ExercisePickerSelection } from '@/components/routine/ExercisePicker';
 import { ExerciseRow } from '@/components/routine/ExerciseRow';
@@ -27,6 +28,7 @@ export function DaySection({
   onRefresh,
 }: DaySectionProps) {
   const { colors, radius, spacing } = useZenliftTheme();
+  const { t } = useTranslation();
   const [showPicker, setShowPicker] = useState(false);
 
   const handleRemoveExercise = useCallback(
@@ -113,7 +115,7 @@ export function DaySection({
             },
           ]}>
           <ThemedText type="smallBold" style={[styles.badgeText, { color: colors.primary }]}>
-            {exerciseCount} {exerciseCount === 1 ? 'ejercicio' : 'ejercicios'}
+            {t('routines.day.exerciseCount', { count: exerciseCount })}
           </ThemedText>
         </View>
       </View>
@@ -130,10 +132,10 @@ export function DaySection({
             },
           ]}>
           <ThemedText themeColor="mutedText" style={styles.emptyText}>
-            No hay ejercicios en este dia
+            {t('routines.day.empty')}
           </ThemedText>
           <Pressable
-            accessibilityLabel={`Agregar ejercicio a ${day.name}`}
+            accessibilityLabel={String(t('routines.day.addExerciseA11y', { day: day.name }))}
             testID={`routine-day-${day.id}-add-exercise`}
             onPress={() => setShowPicker(true)}
             style={({ pressed }) => [
@@ -145,7 +147,7 @@ export function DaySection({
               pressed && styles.pressed,
             ]}>
             <ThemedText type="smallBold" style={{ color: colors.primary }}>
-              + Agregar ejercicio
+              + {t('routines.form.addExercise')}
             </ThemedText>
           </Pressable>
         </ThemedView>
@@ -169,7 +171,7 @@ export function DaySection({
       <View style={styles.dayFooter}>
         {exerciseCount > 0 ? (
           <Pressable
-            accessibilityLabel={`Agregar ejercicio a ${day.name}`}
+            accessibilityLabel={String(t('routines.day.addExerciseA11y', { day: day.name }))}
             testID={`routine-day-${day.id}-add-exercise`}
             onPress={() => setShowPicker(true)}
             style={({ pressed }) => [
@@ -181,7 +183,7 @@ export function DaySection({
               pressed && styles.pressed,
             ]}>
             <ThemedText type="smallBold" style={{ color: colors.primary }}>
-              + Agregar ejercicio
+              + {t('routines.form.addExercise')}
             </ThemedText>
           </Pressable>
         ) : null}

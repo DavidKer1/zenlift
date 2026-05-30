@@ -1,9 +1,10 @@
 import { FlashList, type FlashListProps } from '@shopify/flash-list';
 import { router, useFocusEffect } from 'expo-router';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { Pressable, StyleSheet, View } from 'react-native';
+import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useTranslation } from 'react-i18next';
 
 import { EmptyState } from '@/components/routine/EmptyState';
 import { RoutineCard } from '@/components/routine/RoutineCard';
@@ -14,6 +15,7 @@ import {
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { FAB } from '@/components/ui/FAB';
+import { getBottomTabBarHeight } from '@/constants/layout';
 import { useZenliftTheme } from '@/providers/ThemeProvider';
 import { getDatabase } from '@/storage/database/connection';
 import {
@@ -27,6 +29,9 @@ type RoutineListProps = FlashListProps<RoutineWithCounts> & {
 
 const RoutineFlashList = FlashList as React.ComponentType<RoutineListProps>;
 const CREATE_ROUTINE_ROUTE = '/routine/create';
+const FLOATING_ACTION_SIZE = 60;
+const FLOATING_MESSAGE_MIN_HEIGHT = 52;
+const FLOATING_STACK_GAP = 12;
 
 async function getRoutineRepo() {
   const db = await getDatabase();
@@ -35,6 +40,14 @@ async function getRoutineRepo() {
 
 export default function RoutinesScreen() {
   const { colors, radius, spacing } = useZenliftTheme();
+  const { t } = useTranslation();
+  const insets = useSafeAreaInsets();
+  const bottomTabBarHeight = getBottomTabBarHeight(insets.bottom);
+  const floatingBottomOffset = bottomTabBarHeight + spacing.three;
+  const floatingMessageBottomOffset =
+    floatingBottomOffset + FLOATING_ACTION_SIZE + FLOATING_STACK_GAP;
+  const contentBottomPadding =
+    floatingMessageBottomOffset + FLOATING_MESSAGE_MIN_HEIGHT + spacing.four;
   const [routines, setRoutines] = useState<RoutineWithCounts[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -49,12 +62,12 @@ export default function RoutinesScreen() {
   }, []);
 
   const navigateToCreate = useCallback(() => {
-    router.push(CREATE_ROUTINE_ROUTE as never);
+    router.push(CREATE_ROUTINE_ROUTE);
   }, []);
 
   const handleTemplatePress = useCallback((template: SuggestedRoutineTemplate) => {
     router.push({
-      pathname: CREATE_ROUTINE_ROUTE,
+      pathname: '/routine/create',
       params: { template: template.id },
     } as never);
   }, []);
@@ -76,7 +89,7 @@ export default function RoutinesScreen() {
         } catch (error) {
           if (isActive) {
             console.error('[Routines] Failed to load routines:', error);
-            setErrorMessage('No pudimos cargar tus rutinas.');
+            setErrorMessage(String(t('routines.alerts.loadFailed')));
           }
         } finally {
           if (isActive) {
@@ -90,7 +103,7 @@ export default function RoutinesScreen() {
       return () => {
         isActive = false;
       };
-    }, []),
+    }, [t]),
   );
 
   useEffect(
@@ -115,10 +128,10 @@ export default function RoutinesScreen() {
         }, 5000);
       } catch (error) {
         console.error('[Routines] Failed to archive routine:', error);
-        setErrorMessage('No pudimos archivar la rutina.');
+        setErrorMessage(String(t('routines.alerts.archiveFailed')));
       }
     },
-    [clearUndoTimeout],
+    [clearUndoTimeout, t],
   );
 
   const handleUndoArchive = useCallback(async () => {
@@ -135,9 +148,9 @@ export default function RoutinesScreen() {
       setErrorMessage(null);
     } catch (error) {
       console.error('[Routines] Failed to undo archive:', error);
-      setErrorMessage('No pudimos restaurar la rutina.');
+      setErrorMessage(String(t('routines.alerts.restoreFailed')));
     }
-  }, [archivedRoutine, clearUndoTimeout]);
+  }, [archivedRoutine, clearUndoTimeout, t]);
 
   const handleRoutinePress = useCallback((routine: RoutineWithCounts) => {
     router.push(`/routine/${routine.id}` as never);
@@ -155,10 +168,10 @@ export default function RoutinesScreen() {
       <View style={styles.listHeader}>
         <View style={[styles.header, { paddingHorizontal: spacing.four }]}>
           <ThemedText type="subtitle" style={styles.title}>
-            Mis Rutinas
+            {t('routines.title')}
           </ThemedText>
           <ThemedText themeColor="mutedText">
-            Elige una rutina para revisar sus días y ejercicios.
+            {t('routines.listSubtitle')}
           </ThemedText>
         </View>
 
@@ -167,7 +180,7 @@ export default function RoutinesScreen() {
         ) : null}
       </View>
     ),
-    [handleTemplatePress, routines.length, spacing.four],
+    [handleTemplatePress, routines.length, spacing.four, t],
   );
 
   const keyExtractor = useCallback((item: RoutineWithCounts) => item.id, []);
@@ -178,22 +191,31 @@ export default function RoutinesScreen() {
       <ThemedView style={styles.screen}>
         <SafeAreaView edges={['top']} style={styles.safeArea}>
           {showEmptyState ? (
-            <View style={styles.emptyScroll}>
+            <ScrollView
+              contentContainerStyle={[
+                styles.emptyContent,
+                {
+                  paddingBottom: contentBottomPadding,
+                },
+              ]}
+              keyboardShouldPersistTaps="handled"
+              showsVerticalScrollIndicator={false}
+              style={styles.emptyScroll}>
               <View style={[styles.header, { paddingHorizontal: spacing.four }]}>
                 <ThemedText type="subtitle" style={styles.title}>
-                  Mis Rutinas
+                  {t('routines.title')}
                 </ThemedText>
                 <ThemedText themeColor="mutedText">
-                  Guarda tus plantillas para empezar workouts sin pensar de más.
+                  {t('routines.emptyBody')}
                 </ThemedText>
               </View>
               <EmptyState onCreatePress={navigateToCreate} />
               <SuggestedTemplates onTemplatePress={handleTemplatePress} />
-            </View>
+            </ScrollView>
           ) : (
             <RoutineFlashList
               contentContainerStyle={{
-                paddingBottom: 188,
+                paddingBottom: contentBottomPadding,
                 paddingHorizontal: spacing.four,
               }}
               data={routines}
@@ -202,7 +224,7 @@ export default function RoutinesScreen() {
               ListEmptyComponent={
                 <View style={[styles.loadingState, { paddingTop: spacing.six }]}>
                   <ThemedText themeColor="mutedText">
-                    {isLoading ? 'Cargando rutinas...' : 'No hay rutinas activas.'}
+                    {isLoading ? t('routines.loading') : t('routines.noActive')}
                   </ThemedText>
                 </View>
               }
@@ -220,6 +242,7 @@ export default function RoutinesScreen() {
                 {
                   borderColor: colors.danger,
                   borderRadius: radius.md,
+                  bottom: floatingMessageBottomOffset,
                   marginHorizontal: spacing.four,
                 },
               ]}>
@@ -237,14 +260,15 @@ export default function RoutinesScreen() {
                 {
                   borderColor: colors.border,
                   borderRadius: radius.md,
+                  bottom: floatingMessageBottomOffset,
                   marginHorizontal: spacing.four,
                 },
               ]}>
               <ThemedText type="small" style={styles.undoText}>
-                Rutina archivada
+                {t('routines.archived')}
               </ThemedText>
               <Pressable
-                accessibilityLabel={`Deshacer archivo de ${archivedRoutine.name}`}
+                accessibilityLabel={String(t('routines.undoArchiveA11y', { name: archivedRoutine.name }))}
                 accessibilityRole="button"
                 onPress={handleUndoArchive}
                 style={({ pressed }) => [
@@ -254,13 +278,17 @@ export default function RoutinesScreen() {
                   },
                 ]}>
                 <ThemedText type="smallBold" style={{ color: colors.primary }}>
-                  Deshacer
+                  {t('routines.undo')}
                 </ThemedText>
               </Pressable>
             </ThemedView>
           ) : null}
 
-          <FAB onPress={navigateToCreate} />
+          <FAB
+            accessibilityLabel={String(t('routines.create'))}
+            onPress={navigateToCreate}
+            style={{ bottom: floatingBottomOffset }}
+          />
         </SafeAreaView>
       </ThemedView>
     </GestureHandlerRootView>
@@ -270,8 +298,9 @@ export default function RoutinesScreen() {
 const styles = StyleSheet.create({
   emptyScroll: {
     flex: 1,
+  },
+  emptyContent: {
     gap: 20,
-    paddingBottom: 188,
   },
   header: {
     gap: 4,
@@ -280,7 +309,6 @@ const styles = StyleSheet.create({
   },
   inlineMessage: {
     borderWidth: 1,
-    bottom: 174,
     left: 0,
     paddingHorizontal: 16,
     paddingVertical: 12,
@@ -309,7 +337,6 @@ const styles = StyleSheet.create({
   undoBar: {
     alignItems: 'center',
     borderWidth: 1,
-    bottom: 104,
     flexDirection: 'row',
     gap: 12,
     justifyContent: 'space-between',

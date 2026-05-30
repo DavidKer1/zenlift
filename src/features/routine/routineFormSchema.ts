@@ -10,9 +10,9 @@ const optionalPositiveInt = z.preprocess(
 export const exerciseFormSchema = z.object({
   key: z.string().min(1),
   id: z.string().optional(),
-  exerciseId: z.string().min(1, 'Selecciona un ejercicio'),
+  exerciseId: z.string().min(1, 'routines.validation.selectExercise'),
   exerciseName: z.string().min(1),
-  targetSets: z.coerce.number().int().min(1, 'Mínimo 1 serie'),
+  targetSets: z.coerce.number().int().min(1, 'routines.validation.minSets'),
   targetRepsMin: optionalPositiveInt,
   targetRepsMax: optionalPositiveInt,
 });
@@ -20,15 +20,15 @@ export const exerciseFormSchema = z.object({
 export const dayFormSchema = z.object({
   key: z.string().min(1),
   id: z.string().optional(),
-  name: z.string().trim().min(1, 'El día necesita un nombre'),
-  exercises: z.array(exerciseFormSchema).min(1, 'Cada día necesita al menos 1 ejercicio'),
+  name: z.string().trim().min(1, 'routines.validation.dayNeedsName'),
+  exercises: z.array(exerciseFormSchema).min(1, 'routines.validation.dayNeedsExercise'),
 });
 
 export const routineFormSchema = z.object({
-  name: z.string().trim().min(1, 'El nombre es obligatorio'),
+  name: z.string().trim().min(1, 'routines.validation.nameRequired'),
   description: z.string().optional().default(''),
   goal: z.enum(routineGoalOptions).optional(),
-  days: z.array(dayFormSchema).min(1, 'La rutina necesita al menos 1 día'),
+  days: z.array(dayFormSchema).min(1, 'routines.validation.minDays'),
 });
 
 export type RoutineFormValues = z.infer<typeof routineFormSchema>;

@@ -1,6 +1,7 @@
 import { SymbolView, type SymbolViewProps } from 'expo-symbols';
 import React from 'react';
 import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
+import { useTranslation } from 'react-i18next';
 
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
@@ -9,7 +10,7 @@ import { useZenliftTheme } from '@/providers/ThemeProvider';
 export type SuggestedRoutineTemplate = {
   id: 'ppl' | 'upper-lower' | 'full-body';
   name: string;
-  description: string;
+  descriptionKey: 'routines.templates.ppl' | 'routines.templates.upperLower' | 'routines.templates.fullBody';
   dayCount: number;
 };
 
@@ -17,19 +18,19 @@ const templates: SuggestedRoutineTemplate[] = [
   {
     id: 'ppl',
     name: 'PPL',
-    description: 'Push, pull y piernas para progresar con volumen.',
+    descriptionKey: 'routines.templates.ppl',
     dayCount: 6,
   },
   {
     id: 'upper-lower',
     name: 'Upper/Lower',
-    description: 'Torso y pierna con frecuencia equilibrada.',
+    descriptionKey: 'routines.templates.upperLower',
     dayCount: 4,
   },
   {
     id: 'full-body',
     name: 'Full Body',
-    description: 'Todo el cuerpo en sesiones compactas.',
+    descriptionKey: 'routines.templates.fullBody',
     dayCount: 3,
   },
 ];
@@ -38,21 +39,18 @@ type SuggestedTemplatesProps = {
   onTemplatePress: (template: SuggestedRoutineTemplate) => void;
 };
 
-function formatDays(dayCount: number) {
-  return `${dayCount} ${dayCount === 1 ? 'día' : 'días'}`;
-}
-
 export function SuggestedTemplates({ onTemplatePress }: SuggestedTemplatesProps) {
   const { colors, radius, spacing } = useZenliftTheme();
+  const { t } = useTranslation();
 
   return (
     <View style={styles.section}>
       <View style={[styles.heading, { paddingHorizontal: spacing.four }]}>
         <ThemedText type="smallBold" style={styles.headingTitle}>
-          Plantillas sugeridas
+          {t('routines.templatesTitle')}
         </ThemedText>
         <ThemedText themeColor="mutedText" type="small">
-          Empieza con una estructura probada y ajústala luego.
+          {t('routines.templatesSubtitle')}
         </ThemedText>
       </View>
 
@@ -67,7 +65,9 @@ export function SuggestedTemplates({ onTemplatePress }: SuggestedTemplatesProps)
         showsHorizontalScrollIndicator={false}>
         {templates.map((template) => (
           <Pressable
-            accessibilityLabel={`${template.name}, ${formatDays(template.dayCount)}`}
+            accessibilityLabel={`${template.name}, ${t('routines.day.configured', {
+              count: template.dayCount,
+            })}`}
             accessibilityRole="button"
             testID={`routine-template-${template.id}`}
             key={template.id}
@@ -106,11 +106,11 @@ export function SuggestedTemplates({ onTemplatePress }: SuggestedTemplatesProps)
                   {template.name}
                 </ThemedText>
                 <ThemedText numberOfLines={2} themeColor="mutedText" type="small">
-                  {template.description}
+                  {t(template.descriptionKey)}
                 </ThemedText>
               </View>
               <ThemedText type="smallBold" style={[styles.dayBadge, { color: colors.primary }]}>
-                {formatDays(template.dayCount)}
+                {t('routines.day.configured', { count: template.dayCount })}
               </ThemedText>
             </ThemedView>
           </Pressable>

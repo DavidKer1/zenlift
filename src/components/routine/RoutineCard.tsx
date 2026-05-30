@@ -4,6 +4,7 @@ import { Pressable, StyleSheet, View } from 'react-native';
 import Swipeable, {
   type SwipeableMethods,
 } from 'react-native-gesture-handler/ReanimatedSwipeable';
+import { useTranslation } from 'react-i18next';
 
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
@@ -16,16 +17,13 @@ type RoutineCardProps = {
   onPress?: (routine: RoutineWithCounts) => void;
 };
 
-function formatCount(value: number, singular: string, plural: string) {
-  return `${value} ${value === 1 ? singular : plural}`;
-}
-
 export const RoutineCard = memo(function RoutineCard({
   routine,
   onArchive,
   onPress,
 }: RoutineCardProps) {
   const { colors, radius, shadows, spacing } = useZenliftTheme();
+  const { t } = useTranslation();
 
   const handlePress = useCallback(() => {
     onPress?.(routine);
@@ -42,7 +40,7 @@ export const RoutineCard = memo(function RoutineCard({
   const renderRightActions = useCallback(
     (_progress: unknown, _translation: unknown, swipeable: SwipeableMethods) => (
       <Pressable
-        accessibilityLabel={`Archivar ${routine.name}`}
+        accessibilityLabel={`${t('routines.archive')} ${routine.name}`}
         accessibilityRole="button"
         onPress={() => handleArchive(swipeable)}
         style={({ pressed }) => [
@@ -60,11 +58,11 @@ export const RoutineCard = memo(function RoutineCard({
           tintColor={colors.surface}
         />
         <ThemedText type="smallBold" style={[styles.archiveText, { color: colors.surface }]}>
-          Archivar
+          {t('routines.archive')}
         </ThemedText>
       </Pressable>
     ),
-    [colors.danger, handleArchive, radius.xl, routine.name, spacing.three],
+    [colors.danger, handleArchive, radius.xl, routine.name, spacing.three, t],
   );
 
   return (
@@ -74,12 +72,10 @@ export const RoutineCard = memo(function RoutineCard({
       renderRightActions={renderRightActions}
       rightThreshold={48}>
       <Pressable
-        accessibilityHint="Abre los detalles de la rutina"
-        accessibilityLabel={`${routine.name}, ${formatCount(
-          routine.day_count,
-          'día',
-          'días',
-        )}, ${formatCount(routine.exercise_count, 'ejercicio', 'ejercicios')}`}
+        accessibilityHint={String(t('routines.cardOpenHint'))}
+        accessibilityLabel={`${routine.name}, ${t('routines.day.configured', {
+          count: routine.day_count,
+        })}, ${t('routines.day.exerciseCount', { count: routine.exercise_count })}`}
         accessibilityRole="button"
         onPress={handlePress}
         style={({ pressed }) => [
@@ -122,12 +118,12 @@ export const RoutineCard = memo(function RoutineCard({
           <View style={styles.metaRow}>
             <View style={[styles.metaPill, { backgroundColor: colors.surfaceElevated }]}>
               <ThemedText themeColor="mutedText" type="smallBold" style={styles.metaText}>
-                {formatCount(routine.day_count, 'día', 'días')}
+                {t('routines.day.configured', { count: routine.day_count })}
               </ThemedText>
             </View>
             <View style={[styles.metaPill, { backgroundColor: colors.primarySoft }]}>
               <ThemedText type="smallBold" style={[styles.metaText, { color: colors.primary }]}>
-                {formatCount(routine.exercise_count, 'ejercicio', 'ejercicios')}
+                {t('routines.day.exerciseCount', { count: routine.exercise_count })}
               </ThemedText>
             </View>
           </View>

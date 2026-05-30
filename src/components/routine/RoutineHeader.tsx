@@ -1,18 +1,13 @@
 import { SymbolView, type SymbolViewProps } from 'expo-symbols';
 import React, { useCallback, useRef, useState } from 'react';
 import { Alert, Pressable, StyleSheet, TextInput, View } from 'react-native';
+import { useTranslation } from 'react-i18next';
 
 import { ThemedText } from '@/components/themed-text';
 import type { FullRoutine } from '@/domain/entities';
 import { useZenliftTheme } from '@/providers/ThemeProvider';
 import { getDatabase } from '@/storage/database/connection';
 import { RoutineRepo } from '@/storage/repositories/RoutineRepo';
-
-const goalLabels: Record<string, string> = {
-  hipertrofia: 'Hipertrofia',
-  fuerza: 'Fuerza',
-  resistencia: 'Resistencia',
-};
 
 type RoutineHeaderProps = {
   routine: FullRoutine;
@@ -22,6 +17,7 @@ type RoutineHeaderProps = {
 
 export function RoutineHeader({ routine, onRefresh, onBack }: RoutineHeaderProps) {
   const { colors, radius } = useZenliftTheme();
+  const { t } = useTranslation();
   const [isEditingName, setIsEditingName] = useState(false);
   const [editedName, setEditedName] = useState(routine.name);
   const nameInputRef = useRef<TextInput>(null);
@@ -63,15 +59,18 @@ export function RoutineHeader({ routine, onRefresh, onBack }: RoutineHeaderProps
     try {
       const db = await getDatabase();
       const repo = new RoutineRepo(db);
-      await repo.duplicate(routine.id, `Copia de ${routine.name}`);
+      await repo.duplicate(routine.id, String(t('routines.alerts.duplicatedName', { name: routine.name })));
 
-      Alert.alert('Rutina duplicada', `Se creo "Copia de ${routine.name}".`);
+      Alert.alert(
+        String(t('routines.alerts.duplicatedTitle')),
+        String(t('routines.alerts.duplicatedBody', { name: routine.name })),
+      );
       onRefresh();
     } catch (error) {
       console.error('[RoutineHeader] Failed to duplicate:', error);
-      Alert.alert('Error', 'No se pudo duplicar la rutina.');
+      Alert.alert(String(t('common.error')), String(t('routines.alerts.duplicateFailed')));
     }
-  }, [routine.id, routine.name, onRefresh]);
+  }, [routine.id, routine.name, onRefresh, t]);
 
   const handleArchive = useCallback(async () => {
     try {
@@ -81,18 +80,18 @@ export function RoutineHeader({ routine, onRefresh, onBack }: RoutineHeaderProps
       onBack();
     } catch (error) {
       console.error('[RoutineHeader] Failed to archive:', error);
-      Alert.alert('Error', 'No se pudo archivar la rutina.');
+      Alert.alert(String(t('common.error')), String(t('routines.alerts.archiveFailed')));
     }
-  }, [routine.id, onBack]);
+  }, [routine.id, onBack, t]);
 
   const handleDelete = useCallback(() => {
     Alert.alert(
-      'Eliminar rutina',
-      `¿Seguro que quieres eliminar "${routine.name}"? Esta accion no se puede deshacer.`,
+      String(t('routines.alerts.deleteTitle')),
+      String(t('routines.alerts.deleteBodyNamed', { name: routine.name })),
       [
-        { text: 'Cancelar', style: 'cancel' },
+        { text: String(t('common.cancel')), style: 'cancel' },
         {
-          text: 'Eliminar',
+          text: String(t('common.delete')),
           style: 'destructive',
           onPress: async () => {
             try {
@@ -102,18 +101,18 @@ export function RoutineHeader({ routine, onRefresh, onBack }: RoutineHeaderProps
               onBack();
             } catch (error) {
               console.error('[RoutineHeader] Failed to delete:', error);
-              Alert.alert('Error', 'No se pudo eliminar la rutina.');
+              Alert.alert(String(t('common.error')), String(t('routines.alerts.deleteFailed')));
             }
           },
         },
       ],
     );
-  }, [routine.id, routine.name, onBack]);
+  }, [routine.id, routine.name, onBack, t]);
 
   return (
     <View style={styles.container}>
       <Pressable
-        accessibilityLabel="Volver"
+        accessibilityLabel={String(t('common.back'))}
         onPress={onBack}
         style={({ pressed }) => [
           styles.backButton,
@@ -131,7 +130,7 @@ export function RoutineHeader({ routine, onRefresh, onBack }: RoutineHeaderProps
         {isEditingName ? (
           <TextInput
             ref={nameInputRef}
-            accessibilityLabel="Edit routine name"
+            accessibilityLabel={String(t('routines.editNameA11y'))}
             autoFocus
             onBlur={handleNameBlur}
             onChangeText={setEditedName}
@@ -150,7 +149,7 @@ export function RoutineHeader({ routine, onRefresh, onBack }: RoutineHeaderProps
           />
         ) : (
           <Pressable
-            accessibilityHint="Toca para editar el nombre"
+            accessibilityHint={String(t('routines.editNameHint'))}
             accessibilityLabel={routine.name}
             onPress={handleNamePress}
             style={{ minHeight: 48, justifyContent: 'center' }}>
@@ -176,7 +175,7 @@ export function RoutineHeader({ routine, onRefresh, onBack }: RoutineHeaderProps
               },
             ]}>
             <ThemedText type="smallBold" style={{ color: colors.primary }}>
-              {goalLabels[routine.goal] ?? routine.goal}
+              {t(`routines.goal.${routine.goal}`, { defaultValue: routine.goal })}
             </ThemedText>
           </View>
         ) : null}
@@ -184,7 +183,7 @@ export function RoutineHeader({ routine, onRefresh, onBack }: RoutineHeaderProps
 
       <View style={[styles.actions, { borderColor: colors.border }]}>
         <Pressable
-          accessibilityLabel={`Duplicar ${routine.name}`}
+          accessibilityLabel={`${t('routines.duplicate')} ${routine.name}`}
           onPress={handleDuplicate}
           style={({ pressed }) => [
             styles.actionButton,
@@ -197,12 +196,12 @@ export function RoutineHeader({ routine, onRefresh, onBack }: RoutineHeaderProps
             tintColor={colors.text}
           />
           <ThemedText type="small" style={styles.actionLabel}>
-            Duplicar
+            {t('routines.duplicate')}
           </ThemedText>
         </Pressable>
 
         <Pressable
-          accessibilityLabel={`Archivar ${routine.name}`}
+          accessibilityLabel={`${t('routines.archive')} ${routine.name}`}
           onPress={handleArchive}
           style={({ pressed }) => [
             styles.actionButton,
@@ -215,12 +214,12 @@ export function RoutineHeader({ routine, onRefresh, onBack }: RoutineHeaderProps
             tintColor={colors.text}
           />
           <ThemedText type="small" style={styles.actionLabel}>
-            Archivar
+            {t('routines.archive')}
           </ThemedText>
         </Pressable>
 
         <Pressable
-          accessibilityLabel={`Eliminar ${routine.name}`}
+          accessibilityLabel={`${t('common.delete')} ${routine.name}`}
           onPress={handleDelete}
           style={({ pressed }) => [
             styles.actionButton,
@@ -233,7 +232,7 @@ export function RoutineHeader({ routine, onRefresh, onBack }: RoutineHeaderProps
             tintColor={colors.danger}
           />
           <ThemedText type="small" style={[styles.actionLabel, { color: colors.danger }]}>
-            Eliminar
+            {t('common.delete')}
           </ThemedText>
         </Pressable>
       </View>

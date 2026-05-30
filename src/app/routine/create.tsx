@@ -1,6 +1,7 @@
 import { useRouter } from 'expo-router';
 import React from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { useTranslation } from 'react-i18next';
 
 import { RoutineForm } from '@/components/routine/RoutineForm';
 import { createRoutineFromForm } from '@/features/routine/routineFormPersistence';
@@ -9,6 +10,7 @@ import { getDatabase } from '@/storage/database/connection';
 
 export default function CreateRoutineScreen() {
   const router = useRouter();
+  const { t } = useTranslation();
 
   async function handleSubmit(values: RoutineFormValues) {
     const db = await getDatabase();
@@ -19,7 +21,11 @@ export default function CreateRoutineScreen() {
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
-      <RoutineForm title="Crear rutina" submitLabel="Crear rutina" onSubmit={handleSubmit} />
+      <RoutineForm
+        title={String(t('routines.create'))}
+        submitLabel={String(t('routines.create'))}
+        onSubmit={handleSubmit}
+      />
     </SafeAreaView>
   );
 }

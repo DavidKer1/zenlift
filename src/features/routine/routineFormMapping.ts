@@ -3,10 +3,10 @@ import { generateId } from '@/utils/id';
 
 import type { DayFormValues, ExerciseFormValues, RoutineFormValues } from './routineFormSchema';
 
-export function createDefaultDay(dayNumber: number): DayFormValues {
+export function createDefaultDay(dayNumber: number, name = `Day ${dayNumber}`): DayFormValues {
   return {
     key: generateId(),
-    name: `Dia ${dayNumber}`,
+    name,
     exercises: [],
   };
 }

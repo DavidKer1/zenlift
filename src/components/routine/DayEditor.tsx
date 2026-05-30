@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Controller, useFieldArray, useFormState, useWatch, type Control } from 'react-hook-form';
 import { Pressable, StyleSheet, TextInput, View } from 'react-native';
+import { useTranslation } from 'react-i18next';
 
 import {
   ExerciseConfigurator,
@@ -41,6 +42,7 @@ export function DayEditor({
   onMoveDayUp,
 }: DayEditorProps) {
   const { colors, radius, spacing, typography } = useZenliftTheme();
+  const { t } = useTranslation();
   const [isExpanded, setIsExpanded] = useState(true);
   const [isPickerVisible, setIsPickerVisible] = useState(false);
   const [configurator, setConfigurator] = useState<ConfiguratorState>(null);
@@ -97,7 +99,7 @@ export function DayEditor({
       ]}>
       <View style={styles.cardHeader}>
         <Pressable
-          accessibilityLabel={isExpanded ? 'Contraer dia' : 'Expandir dia'}
+          accessibilityLabel={String(t(isExpanded ? 'routines.day.collapse' : 'routines.day.expand'))}
           onPress={() => setIsExpanded((current) => !current)}
           style={({ pressed }) => [
             styles.expandButton,
@@ -113,11 +115,11 @@ export function DayEditor({
             name={`days.${dayIndex}.name`}
             render={({ field: { onBlur, onChange, value } }) => (
               <TextInput
-                accessibilityLabel={`Nombre del dia ${dayIndex + 1}`}
+                accessibilityLabel={String(t('routines.day.nameA11y', { number: dayIndex + 1 }))}
                 testID={`routine-day-${dayIndex + 1}-name-input`}
                 onBlur={onBlur}
                 onChangeText={onChange}
-                placeholder="Nombre del dia"
+                placeholder={String(t('routines.day.namePlaceholder'))}
                 placeholderTextColor={colors.mutedText}
                 style={[
                   styles.dayNameInput,
@@ -133,7 +135,7 @@ export function DayEditor({
           />
           {dayError?.name?.message ? (
             <ThemedText type="small" style={{ color: colors.danger }}>
-              ! {dayError.name.message}
+              ! {translateRoutineMessage(String(dayError.name.message), t)}
             </ThemedText>
           ) : null}
         </View>
@@ -149,21 +151,21 @@ export function DayEditor({
 
       <View style={styles.dayActions}>
         <SmallActionButton
-          accessibilityLabel={`Mover dia ${dayIndex + 1} arriba`}
+          accessibilityLabel={String(t('routines.day.moveUp'))}
           disabled={dayIndex === 0}
-          label="Subir"
+          label={String(t('routines.day.moveUpShort'))}
           onPress={onMoveDayUp}
         />
         <SmallActionButton
-          accessibilityLabel={`Mover dia ${dayIndex + 1} abajo`}
+          accessibilityLabel={String(t('routines.day.moveDown'))}
           disabled={dayIndex === dayCount - 1}
-          label="Bajar"
+          label={String(t('routines.day.moveDownShort'))}
           onPress={onMoveDayDown}
         />
         <SmallActionButton
-          accessibilityLabel={`Quitar dia ${dayIndex + 1}`}
+          accessibilityLabel={String(t('routines.day.remove'))}
           disabled={dayCount <= 1}
-          label="Quitar"
+          label={String(t('routines.day.removeShort'))}
           onPress={onRemoveDay}
           danger
         />
@@ -176,7 +178,7 @@ export function DayEditor({
               type="primarySoft"
               style={[styles.inlineError, { borderColor: colors.primary, borderRadius: radius.md }]}>
               <ThemedText type="smallBold" style={{ color: colors.danger }}>
-                ! {dayError.exercises.message}
+                ! {translateRoutineMessage(String(dayError.exercises.message), t)}
               </ThemedText>
             </ThemedView>
           ) : null}
@@ -193,11 +195,11 @@ export function DayEditor({
                   <View style={styles.exerciseCopy}>
                     <ThemedText type="smallBold">{exercise.exerciseName}</ThemedText>
                     <ThemedText type="small" themeColor="mutedText">
-                      {formatExerciseSummary(exercise)}
+                      {formatExerciseSummary(exercise, t)}
                     </ThemedText>
                   </View>
                   <Pressable
-                    accessibilityLabel={`Editar configuracion de ${exercise.exerciseName}`}
+                    accessibilityLabel={String(t('routines.day.editExerciseConfigA11y', { name: exercise.exerciseName }))}
                     onPress={() =>
                       setConfigurator({
                         mode: 'edit',
@@ -210,26 +212,26 @@ export function DayEditor({
                       { backgroundColor: colors.surface, borderRadius: radius.md },
                       pressed && styles.pressed,
                     ]}>
-                    <ThemedText type="smallBold">Editar</ThemedText>
+                    <ThemedText type="smallBold">{t('common.edit')}</ThemedText>
                   </Pressable>
                 </View>
 
                 <View style={styles.exerciseActions}>
                   <SmallActionButton
-                    accessibilityLabel={`Mover ${exercise.exerciseName} arriba`}
+                    accessibilityLabel={String(t('routines.day.moveExerciseUpA11y', { name: exercise.exerciseName }))}
                     disabled={exerciseIndex === 0}
-                    label="Subir"
+                    label={String(t('routines.day.moveUpShort'))}
                     onPress={() => moveExercise(exerciseIndex, exerciseIndex - 1)}
                   />
                   <SmallActionButton
-                    accessibilityLabel={`Mover ${exercise.exerciseName} abajo`}
+                    accessibilityLabel={String(t('routines.day.moveExerciseDownA11y', { name: exercise.exerciseName }))}
                     disabled={exerciseIndex === exerciseFields.length - 1}
-                    label="Bajar"
+                    label={String(t('routines.day.moveDownShort'))}
                     onPress={() => moveExercise(exerciseIndex, exerciseIndex + 1)}
                   />
                   <SmallActionButton
-                    accessibilityLabel={`Quitar ${exercise.exerciseName}`}
-                    label="Quitar"
+                    accessibilityLabel={String(t('routines.day.removeExerciseA11y', { name: exercise.exerciseName }))}
+                    label={String(t('routines.day.removeShort'))}
                     onPress={() => removeExercise(exerciseIndex)}
                     danger
                   />
@@ -239,7 +241,11 @@ export function DayEditor({
           })}
 
           <Pressable
-            accessibilityLabel={`Agregar ejercicio al dia ${dayIndex + 1}`}
+            accessibilityLabel={String(
+              t('routines.day.addExerciseA11y', {
+                day: t('routines.day.titleFallback', { number: dayIndex + 1 }),
+              }),
+            )}
             testID={`routine-day-${dayIndex + 1}-add-exercise`}
             onPress={() => setIsPickerVisible(true)}
             style={({ pressed }) => [
@@ -251,7 +257,7 @@ export function DayEditor({
               pressed && styles.pressed,
             ]}>
             <ThemedText type="smallBold" style={{ color: colors.primary }}>
-              + Agregar ejercicio
+              + {t('routines.form.addExercise')}
             </ThemedText>
           </Pressable>
         </View>
@@ -323,21 +329,37 @@ function SmallActionButton({
   );
 }
 
-function formatExerciseSummary(exercise: Partial<ExerciseFormValues>): string {
+function formatExerciseSummary(
+  exercise: Partial<ExerciseFormValues>,
+  t: ReturnType<typeof useTranslation>['t'],
+): string {
   const sets = exercise.targetSets ?? 1;
-  const reps = formatReps(exercise.targetRepsMin, exercise.targetRepsMax);
+  const reps = formatReps(exercise.targetRepsMin, exercise.targetRepsMax, t);
 
   return `${sets}x ${reps}`;
 }
 
-function formatReps(min?: number, max?: number): string {
+function formatReps(
+  min: number | undefined,
+  max: number | undefined,
+  t: ReturnType<typeof useTranslation>['t'],
+): string {
   if (min && max) {
-    return min === max ? `${min} reps` : `${min}-${max} reps`;
+    return min === max
+      ? String(t('routines.exerciseConfig.plusReps', { count: min })).replace('+', '')
+      : `${min}-${max} ${t('common.reps')}`;
   }
 
-  if (min) return `${min}+ reps`;
-  if (max) return `hasta ${max} reps`;
-  return 'reps libres';
+  if (min) return String(t('routines.exerciseConfig.plusReps', { count: min }));
+  if (max) return String(t('routines.exerciseConfig.upToReps', { count: max }));
+  return String(t('routines.exerciseConfig.freeReps'));
+}
+
+function translateRoutineMessage(
+  message: string,
+  t: ReturnType<typeof useTranslation>['t'],
+): string {
+  return message.startsWith('routines.') ? String(t(message)) : message;
 }
 
 const styles = StyleSheet.create({
