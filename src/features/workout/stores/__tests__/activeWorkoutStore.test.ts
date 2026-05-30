@@ -273,6 +273,59 @@ describe('activeWorkoutStore', () => {
       const Haptics = require('expo-haptics');
       expect(Haptics.notificationAsync).toHaveBeenCalledWith('success');
     });
+
+    it('replaces exercise and completed set references when completing a set', async () => {
+      const session = makeSession();
+      const firstSet = makeSetLog({ id: 'sl-1', set_number: 1, is_completed: 0 });
+      const secondSet = makeSetLog({
+        id: 'sl-2',
+        set_number: 2,
+        is_completed: 0,
+        weight: 90,
+        reps: 10,
+      });
+      const exercise = makeWorkoutExerciseWithSets({ id: 'we-1' }, [firstSet, secondSet]);
+
+      const { useActiveWorkoutStore } = require('@/features/workout/stores/activeWorkoutStore');
+      useActiveWorkoutStore.setState({ session, exercises: [exercise] });
+
+      jest.spyOn(WorkoutRepo.prototype, 'completeSet').mockResolvedValue(undefined);
+
+      await useActiveWorkoutStore.getState().completeSet('we-1', 'sl-1');
+
+      const updatedExercise = useActiveWorkoutStore.getState().exercises[0];
+      expect(updatedExercise).not.toBe(exercise);
+      expect(updatedExercise.sets[0]).not.toBe(firstSet);
+      expect(updatedExercise.sets[0].is_completed).toBe(1);
+      expect(updatedExercise.sets[1]).toBe(secondSet);
+    });
+
+    it('uncompletes a completed set when toggled again', async () => {
+      const session = makeSession();
+      const completedAt = '2026-05-30T10:05:00.000Z';
+      const set = makeSetLog({
+        id: 'sl-1',
+        is_completed: 1,
+        completed_at: completedAt,
+      });
+      const exercise = makeWorkoutExerciseWithSets({ id: 'we-1' }, [set]);
+
+      const { useActiveWorkoutStore } = require('@/features/workout/stores/activeWorkoutStore');
+      useActiveWorkoutStore.setState({ session, exercises: [exercise] });
+
+      const completeSpy = jest.spyOn(WorkoutRepo.prototype, 'completeSet');
+      const uncompleteSpy = jest
+        .spyOn(WorkoutRepo.prototype as any, 'uncompleteSet')
+        .mockResolvedValue(undefined);
+
+      await useActiveWorkoutStore.getState().completeSet('we-1', 'sl-1');
+
+      const updated = useActiveWorkoutStore.getState().exercises[0].sets[0];
+      expect(completeSpy).not.toHaveBeenCalled();
+      expect(uncompleteSpy).toHaveBeenCalledWith('sl-1');
+      expect(updated.is_completed).toBe(0);
+      expect(updated.completed_at).toBeNull();
+    });
   });
 
   describe('updateSet', () => {

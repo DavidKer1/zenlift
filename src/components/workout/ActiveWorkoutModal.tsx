@@ -1,19 +1,19 @@
 import { type FlashListRef } from '@shopify/flash-list';
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { Alert, StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { useTranslation } from 'react-i18next';
 
 import { ActiveWorkoutExpandedSurface } from '@/components/workout/ActiveWorkoutExpandedSurface';
 import { ActiveWorkoutMinimizedHeader } from '@/components/workout/ActiveWorkoutMinimizedHeader';
 import { WorkoutExerciseCard } from '@/components/workout/WorkoutExerciseCard';
 import { ThemedText } from '@/components/themed-text';
 import { useActiveWorkoutStore } from '@/features/workout/stores/activeWorkoutStore';
-import { finishWorkoutFlow } from '@/features/workout/FinishWorkoutFlow';
+import { createFinishWorkoutFlowCopy, finishWorkoutFlow } from '@/features/workout/FinishWorkoutFlow';
 import { useSettings } from '@/features/settings/useSettings';
 import { useZenliftTheme } from '@/providers/ThemeProvider';
 import { getDatabase } from '@/storage/database/connection';
 import { WorkoutRepo } from '@/storage/repositories/workoutRepo';
-import { getIncrement } from '@/utils/units';
 import type { WorkoutExerciseWithSets } from '@/domain/entities';
 
 type PrevPerfEntry = { weight: number; reps: number };
@@ -26,6 +26,8 @@ function formatTime(totalSeconds: number): string {
 
 export default function ActiveWorkoutModal() {
   const { colors } = useZenliftTheme();
+  const { t } = useTranslation();
+  const finishWorkoutCopy = createFinishWorkoutFlowCopy(t);
   const { weightUnit } = useSettings();
 
   const session = useActiveWorkoutStore((s) => s.session);
@@ -51,7 +53,6 @@ export default function ActiveWorkoutModal() {
   const activeSessionIdRef = useRef<string | null>(null);
 
   const flashListRef = useRef<FlashListRef<WorkoutExerciseWithSets>>(null);
-  const increment = useMemo(() => getIncrement(weightUnit), [weightUnit]);
 
   // ---- Session recovery ----
   useEffect(() => {
@@ -178,18 +179,18 @@ export default function ActiveWorkoutModal() {
 
   const handleRequestCancel = useCallback(() => {
     Alert.alert(
-      'Cancelar entrenamiento?',
-      'Los datos registrados se conservaran.',
+      String(t('workout.active.cancelTitle')),
+      String(t('workout.active.cancelBody')),
       [
-        { text: 'Seguir entrenando', style: 'cancel' },
-        { text: 'Cancelar', style: 'destructive', onPress: handleCancel },
+        { text: String(t('workout.active.keepTraining')), style: 'cancel' },
+        { text: String(t('common.cancel')), style: 'destructive', onPress: handleCancel },
       ],
     );
-  }, [handleCancel]);
+  }, [handleCancel, t]);
 
   const handleFinish = useCallback(async () => {
-    await finishWorkoutFlow();
-  }, []);
+    await finishWorkoutFlow(finishWorkoutCopy);
+  }, [finishWorkoutCopy]);
 
   const handleAddExercise = useCallback(() => {
     setPickerVisible(true);
@@ -203,14 +204,30 @@ export default function ActiveWorkoutModal() {
     async (selected: { id: string; name: string }) => {
       setPickerVisible(false);
       try {
-        await addExercise(selected.id);
+        const addedExercise = await addExercise(selected.id);
         const updated = useActiveWorkoutStore.getState().exercises;
-        if (updated.length === 1) setExpandedExerciseId(updated[0].id);
+        const addedIndex = updated.findIndex((exercise) => exercise.id === addedExercise.id);
+
+        setExpandedExerciseId(addedExercise.id);
+
+        if (addedIndex >= 0) {
+          requestAnimationFrame(() => {
+            try {
+              flashListRef.current?.scrollToIndex({
+                index: addedIndex,
+                animated: true,
+                viewPosition: 0.1,
+              });
+            } catch {
+              // FlashList may not have measured the new row yet; expansion still makes it actionable.
+            }
+          });
+        }
       } catch {
-        Alert.alert('Error', 'No se pudo agregar el ejercicio.');
+        Alert.alert(String(t('common.error')), String(t('workout.active.addExerciseFailed')));
       }
     },
-    [addExercise],
+    [addExercise, t],
   );
 
   const renderItem = useCallback(
@@ -224,14 +241,13 @@ export default function ActiveWorkoutModal() {
         onWeightChange={handleWeightChange}
         onRepsChange={handleRepsChange}
         unit={weightUnit}
-        increment={increment}
         previousPerformance={prevPerfMap.get(item.id) ?? null}
       />
     ),
     [
       expandedExerciseId, handleToggleExercise, handleAddSet,
       handleCompleteSet, handleWeightChange, handleRepsChange,
-      weightUnit, increment, prevPerfMap,
+      weightUnit, prevPerfMap,
     ],
   );
 
@@ -247,7 +263,7 @@ export default function ActiveWorkoutModal() {
   }, []);
 
   // Compute session name for handle
-  const sessionName = session?.name ?? 'Quick Workout';
+  const sessionName = session?.name ?? String(t('workout.active.titleFallback'));
 
   // ---- Render ----
   if (isRecovering) {
@@ -255,7 +271,7 @@ export default function ActiveWorkoutModal() {
       <View style={[styles.loadingOverlay, { backgroundColor: colors.background }]}>
         <SafeAreaView style={styles.center}>
           <ThemedText type="small" themeColor="mutedText">
-            Cargando sesión...
+            {t('workout.active.loadingSession')}
           </ThemedText>
         </SafeAreaView>
       </View>

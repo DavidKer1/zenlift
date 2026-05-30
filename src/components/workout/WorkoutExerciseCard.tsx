@@ -4,6 +4,7 @@ import {
   StyleSheet,
   View,
 } from 'react-native';
+import { useTranslation } from 'react-i18next';
 
 import { MuscleDot } from '@/components/routine/MuscleDot';
 import { SetRow } from '@/components/workout/SetRow';
@@ -19,16 +20,13 @@ type PreviousPerformance = {
   reps: number;
 } | null;
 
-type WorkoutExerciseCardProps = {
+export type WorkoutExerciseCardProps = {
   exercise: WorkoutExerciseWithSets;
-  isExpanded: boolean;
-  onToggle: (exerciseId: string) => void;
   onAddSet: (workoutExerciseId: string) => void;
   onCompleteSet: (exerciseId: string, setId: string) => void;
   onWeightChange: (setId: string, weight: number) => void;
   onRepsChange: (setId: string, reps: number) => void;
   unit: string;
-  increment: number;
   previousPerformance: PreviousPerformance;
   primaryMuscleName?: string | null;
   primaryMuscleColor?: string | null;
@@ -52,21 +50,58 @@ function getMuscleDotColor(name: string | null | undefined, fallback: string | n
   return fallback ?? defaultColor;
 }
 
+function getSetRenderSignature(exercise: WorkoutExerciseWithSets): string {
+  return exercise.sets
+    .map((set) =>
+      [
+        set.id,
+        set.set_number,
+        set.weight,
+        set.reps,
+        set.set_type,
+        set.is_completed,
+        set.completed_at ?? '',
+        set.notes ?? '',
+      ].join(':'),
+    )
+    .join('|');
+}
+
+export function isWorkoutExerciseComplete(exercise: WorkoutExerciseWithSets): boolean {
+  return exercise.sets.length > 0 && exercise.sets.every((set) => set.is_completed === 1);
+}
+
+export function areWorkoutExerciseCardPropsEqual(
+  prev: WorkoutExerciseCardProps,
+  next: WorkoutExerciseCardProps,
+): boolean {
+  return (
+    prev.exercise.id === next.exercise.id &&
+    prev.exercise.exercise?.id === next.exercise.exercise?.id &&
+    prev.exercise.exercise?.name === next.exercise.exercise?.name &&
+    getSetRenderSignature(prev.exercise) === getSetRenderSignature(next.exercise) &&
+    prev.unit === next.unit &&
+    prev.previousPerformance?.weight === next.previousPerformance?.weight &&
+    prev.previousPerformance?.reps === next.previousPerformance?.reps &&
+    prev.primaryMuscleName === next.primaryMuscleName &&
+    prev.primaryMuscleColor === next.primaryMuscleColor
+  );
+}
+
 function WorkoutExerciseCardComponent({
   exercise,
-  isExpanded,
-  onToggle,
   onAddSet,
   onCompleteSet,
   onWeightChange,
   onRepsChange,
   unit,
-  increment,
   previousPerformance,
   primaryMuscleName,
   primaryMuscleColor,
 }: WorkoutExerciseCardProps) {
   const { colors, radius, spacing } = useZenliftTheme();
+  const { t } = useTranslation();
+  const completionColor = (colors as { success?: string }).success ?? ORANGE;
 
   const sortedSets = useMemo(
     () => [...exercise.sets].sort((a, b) => a.set_number - b.set_number),
@@ -92,9 +127,8 @@ function WorkoutExerciseCardComponent({
     ? `${previousPerformance.weight} ${unit} x ${previousPerformance.reps}`
     : null;
 
-  const handleHeaderPress = useCallback(() => {
-    onToggle(exercise.id);
-  }, [exercise.id, onToggle]);
+  const isExerciseComplete = isWorkoutExerciseComplete(exercise);
+  const completedContentStyle = isExerciseComplete ? styles.completedContent : null;
 
   const handleAddSet = useCallback(() => {
     onAddSet(exercise.id);
@@ -133,27 +167,30 @@ function WorkoutExerciseCardComponent({
         },
       ]}
     >
-      <Pressable
-        accessibilityLabel={`${exercise.exercise?.name ?? 'Ejercicio'}, ${completedCount}/${totalSets} sets completados`}
-        accessibilityRole="button"
+      <View
+        accessibilityLabel={String(
+          t('workout.active.a11y.exerciseProgress', {
+            completed: completedCount,
+            name: exercise.exercise?.name ?? t('workout.active.fallbackExercise'),
+            total: totalSets,
+          }),
+        )}
         testID={`active-workout-exercise-${exercise.id}-header`}
-        onPress={handleHeaderPress}
-        style={({ pressed }) => [
+        style={[
           styles.header,
           {
-            borderBottomColor: isExpanded ? colors.border : 'transparent',
-            opacity: pressed ? 0.72 : 1,
+            borderBottomColor: colors.border,
             padding: spacing.three,
           },
         ]}
       >
-        <View style={styles.headerContent}>
+        <View style={[styles.headerContent, completedContentStyle]}>
           <View style={styles.headerInfo}>
             <ThemedText
               type="smallBold"
               style={{ fontSize: 18, lineHeight: 24 }}
             >
-              {exercise.exercise?.name ?? 'Ejercicio'}
+              {exercise.exercise?.name ?? t('workout.active.fallbackExercise')}
             </ThemedText>
 
             <View style={styles.headerMeta}>
@@ -182,15 +219,16 @@ function WorkoutExerciseCardComponent({
               {completedCount}/{totalSets}
             </ThemedText>
 
-            <ThemedText
-              style={{
-                fontSize: 14,
-                color: colors.mutedText,
-                transform: [{ rotate: isExpanded ? '180deg' : '0deg' }],
-              }}
-            >
-              ▼
-            </ThemedText>
+            {isExerciseComplete ? (
+              <ThemedText
+                style={[
+                  styles.completedBadge,
+                  { color: completionColor },
+                ]}
+              >
+                {String(t('workout.active.completed', { defaultValue: 'Completado' }))}
+              </ThemedText>
+            ) : null}
           </View>
         </View>
 
@@ -203,66 +241,66 @@ function WorkoutExerciseCardComponent({
             {targetText}
           </ThemedText>
         ) : null}
-      </Pressable>
+      </View>
 
-      {isExpanded ? (
-        <View style={styles.expandedContent}>
-          <View
-            style={[
-              styles.setHeaderRow,
-              {
-                borderBottomColor: colors.border,
-                paddingHorizontal: spacing.one,
-                paddingVertical: spacing.two,
-              },
-            ]}
-          >
-            <View style={styles.setNumberCol}>
-              <ThemedText
-                type="small"
-                themeColor="mutedText"
-                style={{ fontSize: 9, fontWeight: '700', letterSpacing: 1, textTransform: 'uppercase' }}
-              >
-                Set
-              </ThemedText>
-            </View>
-            <View style={styles.prevCol}>
-              <ThemedText
-                type="small"
-                themeColor="mutedText"
-                style={{ fontSize: 9, fontWeight: '700', letterSpacing: 1, textTransform: 'uppercase' }}
-              >
-                Prev.
-              </ThemedText>
-            </View>
-            <View style={styles.inputGroup}>
-              <ThemedText
-                type="small"
-                themeColor="mutedText"
-                style={{ fontSize: 9, fontWeight: '700', letterSpacing: 1, textTransform: 'uppercase', textAlign: 'center', flex: 1 }}
-              >
-                Weight
-              </ThemedText>
-            </View>
-            <View style={styles.inputGroup}>
-              <ThemedText
-                type="small"
-                themeColor="mutedText"
-                style={{ fontSize: 9, fontWeight: '700', letterSpacing: 1, textTransform: 'uppercase', textAlign: 'center', flex: 1 }}
-              >
-                Reps
-              </ThemedText>
-            </View>
-            <View style={styles.checkCol} />
+      <View style={styles.expandedContent}>
+        <View
+          style={[
+            styles.setHeaderRow,
+            completedContentStyle,
+            {
+              borderBottomColor: colors.border,
+              paddingHorizontal: spacing.one,
+              paddingVertical: spacing.two,
+            },
+          ]}
+        >
+          <View style={styles.setNumberCol}>
+            <ThemedText
+              type="small"
+              themeColor="mutedText"
+              style={{ fontSize: 9, fontWeight: '700', letterSpacing: 1, textTransform: 'uppercase' }}
+            >
+              {t('workout.active.headers.set')}
+            </ThemedText>
           </View>
+          <View style={styles.prevCol}>
+            <ThemedText
+              type="small"
+              themeColor="mutedText"
+              style={{ fontSize: 9, fontWeight: '700', letterSpacing: 1, textTransform: 'uppercase' }}
+            >
+              {t('workout.active.headers.previous')}
+            </ThemedText>
+          </View>
+          <View style={styles.inputGroup}>
+            <ThemedText
+              type="small"
+              themeColor="mutedText"
+              style={{ fontSize: 9, fontWeight: '700', letterSpacing: 1, textTransform: 'uppercase', textAlign: 'center', flex: 1 }}
+            >
+              {t('workout.active.headers.weight')}
+            </ThemedText>
+          </View>
+          <View style={styles.inputGroup}>
+            <ThemedText
+              type="small"
+              themeColor="mutedText"
+              style={{ fontSize: 9, fontWeight: '700', letterSpacing: 1, textTransform: 'uppercase', textAlign: 'center', flex: 1 }}
+            >
+              {t('workout.active.headers.reps')}
+            </ThemedText>
+          </View>
+          <View style={styles.checkCol} />
+        </View>
 
-          {sortedSets.map((set) => {
-            const prevIdx = sortedSets.indexOf(set) - 1;
-            const prevSet = prevIdx >= 0 ? sortedSets[prevIdx] : null;
+        {sortedSets.map((set) => {
+          const prevIdx = sortedSets.indexOf(set) - 1;
+          const prevSet = prevIdx >= 0 ? sortedSets[prevIdx] : null;
 
-            return (
+          return (
+            <View key={set.id} style={completedContentStyle}>
               <SetRow
-                key={set.id}
                 setId={set.id}
                 setNumber={set.set_number}
                 previousWeight={prevSet?.is_completed ? prevSet.weight : previousPerformance?.weight}
@@ -272,49 +310,43 @@ function WorkoutExerciseCardComponent({
                 setType={set.set_type}
                 isCompleted={set.is_completed === 1}
                 unit={unit}
-                increment={increment}
                 onComplete={handleCompleteSet}
                 onWeightChange={handleWeightChange}
                 onRepsChange={handleRepsChange}
               />
-            );
-          })}
+            </View>
+          );
+        })}
 
-          <Pressable
-            accessibilityLabel="Agregar set"
-            accessibilityRole="button"
-            testID={`active-workout-exercise-${exercise.id}-add-set`}
-            onPress={handleAddSet}
-            style={({ pressed }) => [
-              styles.addSetButton,
-              {
-                borderColor: ORANGE,
-                borderRadius: radius.md,
-                margin: spacing.one,
-                opacity: pressed ? 0.6 : 1,
-              },
-            ]}
+        <Pressable
+          accessibilityLabel={String(t('workout.active.addSet'))}
+          accessibilityRole="button"
+          testID={`active-workout-exercise-${exercise.id}-add-set`}
+          onPress={handleAddSet}
+          style={({ pressed }) => [
+            styles.addSetButton,
+            {
+              borderColor: ORANGE,
+              borderRadius: radius.md,
+              margin: spacing.one,
+              opacity: pressed ? 0.6 : 1,
+            },
+          ]}
+        >
+          <ThemedText
+            style={{ color: ORANGE, fontSize: 14, fontWeight: '700' }}
           >
-            <ThemedText
-              style={{ color: ORANGE, fontSize: 14, fontWeight: '700' }}
-            >
-              + Add Set
-            </ThemedText>
-          </Pressable>
-        </View>
-      ) : null}
+            {t('workout.active.addSet')}
+          </ThemedText>
+        </Pressable>
+      </View>
     </View>
   );
 }
 
 export const WorkoutExerciseCard = memo(
   WorkoutExerciseCardComponent,
-  (prev, next) =>
-    prev.exercise.id === next.exercise.id &&
-    prev.exercise.sets.length === next.exercise.sets.length &&
-    prev.isExpanded === next.isExpanded &&
-    prev.previousPerformance?.weight === next.previousPerformance?.weight &&
-    prev.previousPerformance?.reps === next.previousPerformance?.reps,
+  areWorkoutExerciseCardPropsEqual,
 );
 
 const styles = StyleSheet.create({
@@ -332,6 +364,13 @@ const styles = StyleSheet.create({
   },
   checkCol: {
     width: 40,
+  },
+  completedBadge: {
+    fontSize: 12,
+    fontWeight: '700',
+  },
+  completedContent: {
+    opacity: 0.58,
   },
   expandedContent: {},
   header: {

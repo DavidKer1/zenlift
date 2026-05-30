@@ -1,6 +1,7 @@
 import { FlashList, type FlashListProps, type FlashListRef } from '@shopify/flash-list';
 import React, { useEffect, useMemo } from 'react';
 import { PanResponder, Pressable, StyleSheet, View } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import Animated, {
   ReduceMotion,
   useAnimatedStyle,
@@ -54,6 +55,7 @@ export function ActiveWorkoutExpandedSurface({
   sessionName,
 }: ActiveWorkoutExpandedSurfaceProps) {
   const { colors } = useZenliftTheme();
+  const { t } = useTranslation();
   const appearProgress = useSharedValue(0);
 
   useEffect(() => {
@@ -120,11 +122,11 @@ export function ActiveWorkoutExpandedSurface({
           <Pressable
             onPress={onRequestCancel}
             hitSlop={12}
-            accessibilityLabel="Cancelar entrenamiento"
+            accessibilityLabel={String(t('workout.active.a11y.cancel'))}
             accessibilityRole="button"
           >
             <ThemedText type="small" themeColor="danger">
-              Cancel
+              {t('common.cancel')}
             </ThemedText>
           </Pressable>
         </View>
@@ -138,10 +140,10 @@ export function ActiveWorkoutExpandedSurface({
           ListEmptyComponent={
             <View style={styles.empty}>
               <ThemedText type="small" themeColor="mutedText">
-                No hay ejercicios aún.
+                {t('workout.active.emptyTitle')}
               </ThemedText>
               <ThemedText type="small" themeColor="mutedText">
-                Toca &quot;Add Exercise&quot; para empezar.
+                {t('workout.active.emptyBody')}
               </ThemedText>
             </View>
           }

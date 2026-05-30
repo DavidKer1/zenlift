@@ -192,13 +192,29 @@ export const useActiveWorkoutStore = create<ActiveWorkoutStore>((set, get) => ({
 
   completeSet: async (_exerciseId, setId) => {
     const repo = await getRepo();
-    await repo.completeSet(setId);
+    const currentSet = get()
+      .exercises.flatMap((ex) => ex.sets)
+      .find((setLog) => setLog.id === setId);
+    const shouldUncomplete = currentSet?.is_completed === 1;
+    const completedAt = shouldUncomplete ? null : new Date().toISOString();
+
+    if (shouldUncomplete) {
+      await repo.uncompleteSet(setId);
+    } else {
+      await repo.completeSet(setId);
+    }
 
     set((state) => ({
       exercises: state.exercises.map((ex) => ({
         ...ex,
         sets: ex.sets.map((s) =>
-          s.id === setId ? { ...s, is_completed: 1 as const } : s,
+          s.id === setId
+            ? {
+                ...s,
+                is_completed: shouldUncomplete ? 0 as const : 1 as const,
+                completed_at: completedAt,
+              }
+            : s,
         ),
       })),
     }));

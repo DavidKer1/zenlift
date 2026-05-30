@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import { Pressable, StyleSheet } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import Animated, {
   ReduceMotion,
   useAnimatedStyle,
@@ -31,6 +32,7 @@ export function ActiveWorkoutMinimizedHeader({
   sessionName,
 }: ActiveWorkoutMinimizedHeaderProps) {
   const { colors } = useZenliftTheme();
+  const { t } = useTranslation();
   const insets = useSafeAreaInsets();
   const appearProgress = useSharedValue(0);
   const tabBarHeight = getBottomTabBarHeight(insets.bottom);
@@ -62,7 +64,7 @@ export function ActiveWorkoutMinimizedHeader({
       {...getActiveWorkoutSharedProps(ACTIVE_WORKOUT_SHARED_TAGS.headerContainer)}
     >
       <Pressable
-        accessibilityLabel="Expandir entrenamiento activo"
+        accessibilityLabel={String(t('workout.active.a11y.expandActive'))}
         accessibilityRole="button"
         onPress={onExpand}
         style={({ pressed }) => [

@@ -1,8 +1,9 @@
 import { FlashList, type FlashListRef } from '@shopify/flash-list';
 import { router } from 'expo-router';
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { Alert, StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { useTranslation } from 'react-i18next';
 
 import { BottomBar } from '@/components/workout/BottomBar';
 import { WorkoutExerciseCard } from '@/components/workout/WorkoutExerciseCard';
@@ -10,18 +11,19 @@ import { WorkoutHeader } from '@/components/workout/WorkoutHeader';
 import { ThemedText } from '@/components/themed-text';
 import { ExercisePicker } from '@/components/routine/ExercisePicker';
 import { useActiveWorkoutStore } from '@/features/workout/stores/activeWorkoutStore';
-import { finishWorkoutFlow } from '@/features/workout/FinishWorkoutFlow';
+import { createFinishWorkoutFlowCopy, finishWorkoutFlow } from '@/features/workout/FinishWorkoutFlow';
 import { useSettings } from '@/features/settings/useSettings';
 import { useZenliftTheme } from '@/providers/ThemeProvider';
 import { getDatabase } from '@/storage/database/connection';
 import { WorkoutRepo } from '@/storage/repositories/workoutRepo';
-import { getIncrement } from '@/utils/units';
 import type { WorkoutExerciseWithSets } from '@/domain/entities';
 
 type PrevPerfEntry = { weight: number; reps: number };
 
 export default function ActiveWorkoutScreen() {
   const { colors } = useZenliftTheme();
+  const { t } = useTranslation();
+  const finishWorkoutCopy = createFinishWorkoutFlowCopy(t);
   const { weightUnit } = useSettings();
 
   const session = useActiveWorkoutStore((s) => s.session);
@@ -42,7 +44,6 @@ export default function ActiveWorkoutScreen() {
   const prevExCountRef = useRef(0);
 
   const flashListRef = useRef<FlashListRef<WorkoutExerciseWithSets>>(null);
-  const increment = useMemo(() => getIncrement(weightUnit), [weightUnit]);
 
   useEffect(() => {
     async function init() {
@@ -198,8 +199,8 @@ export default function ActiveWorkoutScreen() {
   }, [cancelWorkout]);
 
   const handleFinish = useCallback(async () => {
-    await finishWorkoutFlow();
-  }, []);
+    await finishWorkoutFlow(finishWorkoutCopy);
+  }, [finishWorkoutCopy]);
 
   const handleAddExercise = useCallback(() => {
     setPickerVisible(true);
@@ -209,16 +210,30 @@ export default function ActiveWorkoutScreen() {
     async (selected: { id: string; name: string }) => {
       setPickerVisible(false);
       try {
-        await addExercise(selected.id);
+        const addedExercise = await addExercise(selected.id);
         const updated = useActiveWorkoutStore.getState().exercises;
-        if (updated.length === 1) {
-          setExpandedExerciseId(updated[0].id);
+        const addedIndex = updated.findIndex((exercise) => exercise.id === addedExercise.id);
+
+        setExpandedExerciseId(addedExercise.id);
+
+        if (addedIndex >= 0) {
+          requestAnimationFrame(() => {
+            try {
+              flashListRef.current?.scrollToIndex({
+                index: addedIndex,
+                animated: true,
+                viewPosition: 0.1,
+              });
+            } catch {
+              // FlashList may not have measured the new row yet; expansion still makes it actionable.
+            }
+          });
         }
       } catch {
-        Alert.alert('Error', 'No se pudo agregar el ejercicio.');
+        Alert.alert(String(t('common.error')), String(t('workout.active.addExerciseFailed')));
       }
     },
-    [addExercise],
+    [addExercise, t],
   );
 
   const renderItem = useCallback(
@@ -232,7 +247,6 @@ export default function ActiveWorkoutScreen() {
         onWeightChange={handleWeightChange}
         onRepsChange={handleRepsChange}
         unit={weightUnit}
-        increment={increment}
         previousPerformance={prevPerfMap.get(item.id) ?? null}
       />
     ),
@@ -244,7 +258,6 @@ export default function ActiveWorkoutScreen() {
       handleWeightChange,
       handleRepsChange,
       weightUnit,
-      increment,
       prevPerfMap,
     ],
   );
@@ -256,7 +269,7 @@ export default function ActiveWorkoutScreen() {
       <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
         <View style={styles.center}>
           <ThemedText type="small" themeColor="mutedText">
-            Cargando sesion...
+            {t('workout.active.loadingSession')}
           </ThemedText>
         </View>
       </SafeAreaView>
@@ -270,7 +283,7 @@ export default function ActiveWorkoutScreen() {
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]} edges={['top']}>
       <WorkoutHeader
-        sessionName={session.name ?? 'Quick Workout'}
+        sessionName={session.name ?? String(t('workout.active.titleFallback'))}
         elapsedSeconds={elapsedSeconds}
         onCancel={handleCancel}
       />
@@ -284,10 +297,10 @@ export default function ActiveWorkoutScreen() {
         ListEmptyComponent={
           <View style={styles.empty}>
             <ThemedText type="small" themeColor="mutedText">
-              No hay ejercicios aun.
+              {t('workout.active.emptyTitle')}
             </ThemedText>
             <ThemedText type="small" themeColor="mutedText">
-              Toca &quot;Add Exercise&quot; para empezar.
+              {t('workout.active.emptyBody')}
             </ThemedText>
           </View>
         }

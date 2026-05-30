@@ -10,6 +10,7 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { SymbolView, type SymbolViewProps } from 'expo-symbols';
 import { createMMKV } from 'react-native-mmkv';
+import { useTranslation } from 'react-i18next';
 
 import { ThemedText } from '@/components/themed-text';
 import { useZenliftTheme } from '@/providers/ThemeProvider';
@@ -21,20 +22,14 @@ import type {
   PersonalRecordType,
 } from '@/domain/entities';
 import { calculateSessionVolume } from '@/domain/calculations/volume';
+import { SETTINGS_KEYS, SETTINGS_MMKV_ID, type WeightUnit } from '@/features/settings/constants';
+import { useI18nFormatters } from '@/i18n/useI18nFormatters';
 
 const ORANGE = '#F97316';
 const GREEN = '#22C55E';
 const PURPLE = '#8B5CF6';
 const BLUE_ACCENT = '#3B82F6';
 const AMBER = '#F59E0B';
-
-const PR_LABELS: Record<PersonalRecordType, string> = {
-  max_weight: 'Peso máximo',
-  max_volume: 'Volumen máximo',
-  max_reps: 'Máx. repeticiones',
-  estimated_1rm: '1RM estimado',
-  max_session_volume: 'Vol. sesión',
-};
 
 const PR_COLORS: Record<PersonalRecordType, string> = {
   max_weight: ORANGE,
@@ -44,41 +39,24 @@ const PR_COLORS: Record<PersonalRecordType, string> = {
   max_session_volume: GREEN,
 };
 
-function formatDuration(seconds: number | null): string {
-  if (seconds === null || seconds <= 0) return '--';
-  if (seconds < 60) return `${seconds}s`;
-  const m = Math.floor(seconds / 60);
-  const s = seconds % 60;
-  if (m < 60) {
-    return s > 0 ? `${m}min ${s}s` : `${m}min`;
-  }
-  const h = Math.floor(m / 60);
-  const rm = m % 60;
-  if (rm === 0) return `${h}h`;
-  return `${h}h ${rm}min`;
-}
-
-function formatVolume(value: number, unit: string): string {
-  return `${value.toLocaleString()} ${unit}`;
-}
-
-function formatImprovement(percent: number): string {
-  return percent > 0 ? `+${percent.toFixed(1)}%` : `${percent.toFixed(1)}%`;
-}
-
-function formatPRValue(type: PersonalRecordType, value: number, weightUnit: string): string {
+function formatPRValue(
+  type: PersonalRecordType,
+  value: number,
+  weightUnit: WeightUnit,
+  formatters: ReturnType<typeof useI18nFormatters>,
+): string {
   switch (type) {
     case 'max_weight':
-      return `${value} ${weightUnit}`;
+      return formatters.formatWeight(value, weightUnit);
     case 'max_volume':
     case 'max_session_volume':
-      return `${value.toLocaleString()} ${weightUnit === 'kg' ? 'kg' : 'lb'}`;
+      return formatters.formatVolume(value, weightUnit);
     case 'max_reps':
-      return `${value}`;
+      return formatters.formatNumber(value);
     case 'estimated_1rm':
-      return `${Math.round(value)} ${weightUnit}`;
+      return formatters.formatWeight(Math.round(value), weightUnit);
     default:
-      return `${value}`;
+      return formatters.formatNumber(value);
   }
 }
 
@@ -92,6 +70,8 @@ interface PreviousComparison {
 }
 
 export default function WorkoutSummaryScreen() {
+  const { t } = useTranslation();
+  const formatters = useI18nFormatters();
   const { colors, radius } = useZenliftTheme();
   const { summary: summaryParam } = useLocalSearchParams<{ summary?: string }>();
 
@@ -110,8 +90,8 @@ export default function WorkoutSummaryScreen() {
   }, [summaryParam]);
 
   const weightUnit = useMemo(() => {
-    const storage = createMMKV({ id: 'zenlift-settings' });
-    const unit = storage.getString('weightUnit');
+    const storage = createMMKV({ id: SETTINGS_MMKV_ID });
+    const unit = storage.getString(SETTINGS_KEYS.weightUnit);
     return unit === 'lb' ? 'lb' : 'kg';
   }, []);
 
@@ -200,9 +180,13 @@ export default function WorkoutSummaryScreen() {
 
   useEffect(() => {
     return () => {
-      if (notesTimerRef.current) clearTimeout(notesTimerRef.current);
+      if (notesTimerRef.current) {
+        clearTimeout(notesTimerRef.current);
+        notesTimerRef.current = null;
+        void saveNotes(notesRef.current);
+      }
     };
-  }, []);
+  }, [saveNotes]);
 
   const handleGoHome = useCallback(() => {
     router.replace('/');
@@ -217,13 +201,13 @@ export default function WorkoutSummaryScreen() {
       <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
         <View style={styles.center}>
           <ThemedText type="title" style={styles.errorTitle}>
-            Datos no disponibles
+            {t('workout.summary.unavailableTitle')}
           </ThemedText>
           <ThemedText type="small" themeColor="mutedText" style={styles.errorText}>
-            No se encontró el resumen del entrenamiento.
+            {t('workout.summary.unavailableBody')}
           </ThemedText>
           <Pressable
-            accessibilityLabel="Volver al inicio"
+            accessibilityLabel={String(t('common.home'))}
             accessibilityRole="button"
             onPress={handleGoHome}
             style={({ pressed }) => [
@@ -235,7 +219,7 @@ export default function WorkoutSummaryScreen() {
               },
             ]}
           >
-            <ThemedText style={styles.buttonLabel}>Inicio</ThemedText>
+            <ThemedText style={styles.buttonLabel}>{t('common.home')}</ThemedText>
           </Pressable>
         </View>
       </SafeAreaView>
@@ -261,10 +245,10 @@ export default function WorkoutSummaryScreen() {
             style={styles.checkmark}
           />
           <ThemedText style={styles.congratsText}>
-            ¡Entrenamiento completado!
+            {t('workout.summary.completedTitle')}
           </ThemedText>
           <ThemedText style={styles.durationText}>
-            {formatDuration(summary.duration_seconds)}
+            {formatters.formatDuration(summary.duration_seconds)}
           </ThemedText>
           {summary.name ? (
             <ThemedText type="small" themeColor="mutedText" style={styles.sessionName}>
@@ -277,22 +261,22 @@ export default function WorkoutSummaryScreen() {
         <View style={styles.statsRow}>
           <View style={[styles.statCard, { backgroundColor: colors.surface }]}>
             <ThemedText style={styles.statValue}>
-              {formatVolume(summary.total_volume, weightUnit)}
+              {formatters.formatVolume(summary.total_volume, weightUnit)}
             </ThemedText>
             <ThemedText type="small" themeColor="mutedText">
-              Volumen total
+              {t('workout.summary.totalVolume')}
             </ThemedText>
           </View>
           <View style={[styles.statCard, { backgroundColor: colors.surface }]}>
             <ThemedText style={styles.statValue}>{summary.exercise_count}</ThemedText>
             <ThemedText type="small" themeColor="mutedText">
-              Ejercicios
+              {t('workout.summary.exercises')}
             </ThemedText>
           </View>
           <View style={[styles.statCard, { backgroundColor: colors.surface }]}>
             <ThemedText style={styles.statValue}>{summary.completed_set_count}</ThemedText>
             <ThemedText type="small" themeColor="mutedText">
-              Sets
+              {t('workout.summary.sets')}
             </ThemedText>
           </View>
         </View>
@@ -301,7 +285,7 @@ export default function WorkoutSummaryScreen() {
         {hasPRs ? (
           <View style={styles.section}>
             <ThemedText style={styles.sectionTitle}>
-              Récords personales
+              {t('workout.summary.personalRecords')}
             </ThemedText>
             {prs.map((pr, index) => (
               <View
@@ -310,7 +294,7 @@ export default function WorkoutSummaryScreen() {
               >
                 <View style={styles.prHeader}>
                   <ThemedText style={styles.prExerciseName}>
-                    {pr.type === 'max_session_volume' ? 'Sesión' : pr.exerciseName}
+                    {pr.type === 'max_session_volume' ? t('workout.summary.session') : pr.exerciseName}
                   </ThemedText>
                   <View
                     style={[
@@ -319,29 +303,29 @@ export default function WorkoutSummaryScreen() {
                     ]}
                   >
                     <ThemedText style={[styles.prBadgeText, { color: PR_COLORS[pr.type] }]}>
-                      {PR_LABELS[pr.type]}
+                      {t(`workout.prTypes.${pr.type}`)}
                     </ThemedText>
                   </View>
                 </View>
                 <View style={styles.prValues}>
                   <ThemedText style={[styles.prValue, { color: PR_COLORS[pr.type] }]}>
-                    {formatPRValue(pr.type, pr.value, weightUnit)}
+                    {formatPRValue(pr.type, pr.value, weightUnit, formatters)}
                   </ThemedText>
                   {pr.previousBest !== null ? (
                     <View style={styles.prImprovement}>
                       <ThemedText type="small" themeColor="mutedText">
-                        Anterior: {formatPRValue(pr.type, pr.previousBest, weightUnit)}
+                        {t('workout.summary.previous')}: {formatPRValue(pr.type, pr.previousBest, weightUnit, formatters)}
                       </ThemedText>
                       <ThemedText
                         style={[styles.prImprovementPercent, { color: GREEN }]}
                       >
-                        {formatImprovement(pr.improvementPercent)}
+                        {formatters.formatPercent(pr.improvementPercent)}
                       </ThemedText>
                     </View>
                   ) : (
                     <View style={styles.prImprovement}>
                       <ThemedText style={[styles.prFirstRecord, { color: AMBER }]}>
-                        ¡Primer récord!
+                        {t('workout.summary.firstRecord')}
                       </ThemedText>
                     </View>
                   )}
@@ -355,7 +339,7 @@ export default function WorkoutSummaryScreen() {
         {comparison ? (
           <View style={styles.section}>
             <ThemedText style={styles.sectionTitle}>
-              vs. sesión anterior
+              {t('workout.summary.versusPrevious')}
             </ThemedText>
             <View style={styles.comparisonRow}>
               <View style={[styles.comparisonCard, { backgroundColor: colors.surface }]}>
@@ -382,7 +366,7 @@ export default function WorkoutSummaryScreen() {
                           ? (Math.abs(comparison.volumeDelta) / comparison.previousVolume) * 100
                           : 0,
                       )}
-                  % volumen
+                  {t('workout.summary.volumePercent')}
                 </ThemedText>
               </View>
               <View style={[styles.comparisonCard, { backgroundColor: colors.surface }]}>
@@ -398,7 +382,7 @@ export default function WorkoutSummaryScreen() {
                   ]}
                 >
                   {comparison.exerciseDelta >= 0 ? '+' : ''}
-                  {comparison.exerciseDelta} ejercicios
+                  {comparison.exerciseDelta} {t('workout.summary.exercises')}
                 </ThemedText>
               </View>
               <View style={[styles.comparisonCard, { backgroundColor: colors.surface }]}>
@@ -412,7 +396,7 @@ export default function WorkoutSummaryScreen() {
                   ]}
                 >
                   {comparison.setDelta >= 0 ? '+' : ''}
-                  {comparison.setDelta} sets
+                  {comparison.setDelta} {t('workout.summary.sets')}
                 </ThemedText>
               </View>
             </View>
@@ -421,7 +405,7 @@ export default function WorkoutSummaryScreen() {
 
         {/* Notes Section */}
         <View style={styles.section}>
-          <ThemedText style={styles.sectionTitle}>Notas</ThemedText>
+          <ThemedText style={styles.sectionTitle}>{t('workout.summary.notes')}</ThemedText>
           <TextInput
             style={[
               styles.notesInput,
@@ -431,7 +415,7 @@ export default function WorkoutSummaryScreen() {
                 color: colors.text,
               },
             ]}
-            placeholder="¿Cómo te sentiste? Notas opcionales..."
+            placeholder={String(t('workout.summary.notesPlaceholder'))}
             placeholderTextColor={colors.mutedText}
             multiline
             textAlignVertical="top"
@@ -444,7 +428,7 @@ export default function WorkoutSummaryScreen() {
         {/* Navigation Buttons */}
         <View style={styles.navButtons}>
           <Pressable
-            accessibilityLabel="Volver al inicio"
+            accessibilityLabel={String(t('common.home'))}
             accessibilityRole="button"
             onPress={handleGoHome}
             style={({ pressed }) => [
@@ -456,10 +440,10 @@ export default function WorkoutSummaryScreen() {
               },
             ]}
           >
-            <ThemedText style={styles.buttonLabel}>Inicio</ThemedText>
+            <ThemedText style={styles.buttonLabel}>{t('common.home')}</ThemedText>
           </Pressable>
           <Pressable
-            accessibilityLabel="Ver historial"
+            accessibilityLabel={String(t('common.history'))}
             accessibilityRole="button"
             onPress={handleGoHistory}
             style={({ pressed }) => [
@@ -473,7 +457,7 @@ export default function WorkoutSummaryScreen() {
             ]}
           >
             <ThemedText style={[styles.buttonLabel, { color: colors.text }]}>
-              Historial
+              {t('common.history')}
             </ThemedText>
           </Pressable>
         </View>

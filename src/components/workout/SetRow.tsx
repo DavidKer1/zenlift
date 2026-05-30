@@ -5,13 +5,14 @@ import {
   TextInput,
   View,
 } from 'react-native';
+import { useTranslation } from 'react-i18next';
 
 import { ThemedText } from '@/components/themed-text';
 import { useZenliftTheme } from '@/providers/ThemeProvider';
 
 const GREEN = '#22C55E';
 
-type SetRowProps = {
+export type SetRowProps = {
   setId: string;
   setNumber: number;
   previousWeight?: number;
@@ -21,7 +22,6 @@ type SetRowProps = {
   setType: string;
   isCompleted: boolean;
   unit: string;
-  increment: number;
   onComplete: (setId: string) => void;
   onWeightChange: (setId: string, weight: number) => void;
   onRepsChange: (setId: string, reps: number) => void;
@@ -37,12 +37,12 @@ function SetRowComponent({
   setType: _setType,
   isCompleted,
   unit,
-  increment,
   onComplete,
   onWeightChange,
   onRepsChange,
 }: SetRowProps) {
   const { colors, radius, spacing } = useZenliftTheme();
+  const { t } = useTranslation();
   const weightInputRef = useRef<TextInput>(null);
   const repsInputRef = useRef<TextInput>(null);
 
@@ -70,27 +70,9 @@ function SetRowComponent({
     [setId, onRepsChange],
   );
 
-  const handleWeightStep = useCallback(
-    (delta: number) => {
-      const next = Math.max(0, weight + delta);
-      onWeightChange(setId, Math.round(next * 100) / 100);
-    },
-    [setId, weight, onWeightChange],
-  );
-
-  const handleRepsStep = useCallback(
-    (delta: number) => {
-      const next = Math.max(0, reps + delta);
-      onRepsChange(setId, next);
-    },
-    [setId, reps, onRepsChange],
-  );
-
   const handleComplete = useCallback(() => {
-    if (!isCompleted) {
-      onComplete(setId);
-    }
-  }, [setId, isCompleted, onComplete]);
+    onComplete(setId);
+  }, [setId, onComplete]);
 
   const previousLabel =
     previousWeight !== undefined && previousReps !== undefined
@@ -103,7 +85,7 @@ function SetRowComponent({
         styles.row,
         {
           borderColor: colors.border,
-          minHeight: 56,
+          minHeight: 64,
           paddingHorizontal: spacing.one,
         },
       ]}
@@ -134,24 +116,9 @@ function SetRowComponent({
       </View>
 
       <View style={styles.inputGroup}>
-        <Pressable
-          accessibilityLabel={`Reducir peso set ${setNumber}`}
-          onPress={() => handleWeightStep(-increment)}
-          style={({ pressed }) => [
-            styles.stepper,
-            {
-              backgroundColor: colors.surfaceElevated,
-              borderRadius: radius.sm,
-              opacity: pressed ? 0.6 : 1,
-            },
-          ]}
-        >
-          <ThemedText style={{ fontSize: 18, fontWeight: '600' }}>-</ThemedText>
-        </Pressable>
-
         <TextInput
           ref={weightInputRef}
-          accessibilityLabel={`Peso set ${setNumber}`}
+          accessibilityLabel={String(t('workout.active.a11y.weightInput', { number: setNumber }))}
           testID={`active-set-${setNumber}-weight-input`}
           keyboardType="numeric"
           returnKeyType="next"
@@ -161,7 +128,7 @@ function SetRowComponent({
           style={[
             styles.input,
             {
-              backgroundColor: colors.surface,
+              backgroundColor: colors.surfaceElevated,
               borderColor: colors.border,
               color: colors.text,
               borderRadius: radius.sm,
@@ -169,42 +136,12 @@ function SetRowComponent({
           ]}
           placeholderTextColor={colors.mutedText}
         />
-
-        <Pressable
-          accessibilityLabel={`Aumentar peso set ${setNumber}`}
-          onPress={() => handleWeightStep(increment)}
-          style={({ pressed }) => [
-            styles.stepper,
-            {
-              backgroundColor: colors.surfaceElevated,
-              borderRadius: radius.sm,
-              opacity: pressed ? 0.6 : 1,
-            },
-          ]}
-        >
-          <ThemedText style={{ fontSize: 18, fontWeight: '600' }}>+</ThemedText>
-        </Pressable>
       </View>
 
       <View style={styles.inputGroup}>
-        <Pressable
-          accessibilityLabel={`Reducir repeticiones set ${setNumber}`}
-          onPress={() => handleRepsStep(-1)}
-          style={({ pressed }) => [
-            styles.stepper,
-            {
-              backgroundColor: colors.surfaceElevated,
-              borderRadius: radius.sm,
-              opacity: pressed ? 0.6 : 1,
-            },
-          ]}
-        >
-          <ThemedText style={{ fontSize: 18, fontWeight: '600' }}>-</ThemedText>
-        </Pressable>
-
         <TextInput
           ref={repsInputRef}
-          accessibilityLabel={`Repeticiones set ${setNumber}`}
+          accessibilityLabel={String(t('workout.active.a11y.repsInput', { number: setNumber }))}
           testID={`active-set-${setNumber}-reps-input`}
           keyboardType="numeric"
           returnKeyType="done"
@@ -213,7 +150,7 @@ function SetRowComponent({
           style={[
             styles.input,
             {
-              backgroundColor: colors.surface,
+              backgroundColor: colors.surfaceElevated,
               borderColor: colors.border,
               color: colors.text,
               borderRadius: radius.sm,
@@ -221,32 +158,16 @@ function SetRowComponent({
           ]}
           placeholderTextColor={colors.mutedText}
         />
-
-        <Pressable
-          accessibilityLabel={`Aumentar repeticiones set ${setNumber}`}
-          onPress={() => handleRepsStep(1)}
-          style={({ pressed }) => [
-            styles.stepper,
-            {
-              backgroundColor: colors.surfaceElevated,
-              borderRadius: radius.sm,
-              opacity: pressed ? 0.6 : 1,
-            },
-          ]}
-        >
-          <ThemedText style={{ fontSize: 18, fontWeight: '600' }}>+</ThemedText>
-        </Pressable>
       </View>
 
       <Pressable
         accessibilityLabel={
           isCompleted
-            ? `Set ${setNumber} completado`
-            : `Completar set ${setNumber}`
+            ? String(t('workout.active.a11y.setComplete', { number: setNumber }))
+            : String(t('workout.active.a11y.setIncomplete', { number: setNumber }))
         }
         accessibilityRole="button"
         testID={`active-set-${setNumber}-complete`}
-        disabled={isCompleted}
         onPress={handleComplete}
         style={({ pressed }) => [
           styles.checkButton,
@@ -272,38 +193,48 @@ function SetRowComponent({
   );
 }
 
-export const SetRow = memo(SetRowComponent, (prev, next) =>
-  prev.setId === next.setId &&
-  prev.weight === next.weight &&
-  prev.reps === next.reps &&
-  prev.isCompleted === next.isCompleted &&
-  prev.setNumber === next.setNumber,
-);
+export function areSetRowPropsEqual(
+  prev: SetRowProps,
+  next: SetRowProps,
+): boolean {
+  return (
+    prev.setId === next.setId &&
+    prev.setNumber === next.setNumber &&
+    prev.previousWeight === next.previousWeight &&
+    prev.previousReps === next.previousReps &&
+    prev.weight === next.weight &&
+    prev.reps === next.reps &&
+    prev.setType === next.setType &&
+    prev.isCompleted === next.isCompleted &&
+    prev.unit === next.unit
+  );
+}
+
+export const SetRow = memo(SetRowComponent, areSetRowPropsEqual);
 
 const styles = StyleSheet.create({
   checkButton: {
     alignItems: 'center',
     borderWidth: 2,
-    height: 40,
+    height: 48,
     justifyContent: 'center',
-    width: 40,
+    width: 48,
   },
   input: {
     borderWidth: 1,
     flex: 1,
-    fontSize: 16,
-    fontWeight: '600',
-    height: 40,
-    minWidth: 48,
-    paddingHorizontal: 4,
+    fontSize: 18,
+    fontWeight: '700',
+    height: 48,
+    minWidth: 64,
+    paddingHorizontal: 8,
     textAlign: 'center',
   },
   inputGroup: {
     alignItems: 'center',
     flex: 1,
     flexDirection: 'row',
-    gap: 2,
-    maxWidth: 130,
+    maxWidth: 112,
   },
   prevCol: {
     alignItems: 'center',
@@ -320,11 +251,5 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     width: 28,
-  },
-  stepper: {
-    alignItems: 'center',
-    height: 40,
-    justifyContent: 'center',
-    width: 32,
   },
 });

@@ -5,6 +5,7 @@ import {
   View,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useTranslation } from 'react-i18next';
 
 import { ThemedText } from '@/components/themed-text';
 import { useZenliftTheme } from '@/providers/ThemeProvider';
@@ -19,6 +20,7 @@ type BottomBarProps = {
 
 function BottomBarComponent({ onAddExercise, onFinish, finishDisabled = false }: BottomBarProps) {
   const { colors, radius, spacing } = useZenliftTheme();
+  const { t } = useTranslation();
   const insets = useSafeAreaInsets();
 
   return (
@@ -35,7 +37,7 @@ function BottomBarComponent({ onAddExercise, onFinish, finishDisabled = false }:
       ]}
     >
       <Pressable
-        accessibilityLabel="Agregar ejercicio"
+        accessibilityLabel={String(t('workout.active.addExercise'))}
         accessibilityRole="button"
         testID="active-workout-add-exercise"
         onPress={onAddExercise}
@@ -48,11 +50,11 @@ function BottomBarComponent({ onAddExercise, onFinish, finishDisabled = false }:
           },
         ]}
       >
-        <ThemedText style={styles.addLabel}>Add Exercise</ThemedText>
+        <ThemedText style={styles.addLabel}>{t('workout.active.addExercise')}</ThemedText>
       </Pressable>
 
       <Pressable
-        accessibilityLabel="Finalizar entrenamiento"
+        accessibilityLabel={String(t('workout.active.finish'))}
         accessibilityRole="button"
         testID="active-workout-finish"
         disabled={finishDisabled}
@@ -60,13 +62,13 @@ function BottomBarComponent({ onAddExercise, onFinish, finishDisabled = false }:
         style={({ pressed }) => [
           styles.finishButton,
           {
-            backgroundColor: finishDisabled ? colors.mutedText : colors.danger,
+            backgroundColor: finishDisabled ? colors.mutedText : colors.success,
             borderRadius: radius.pill,
             opacity: pressed && !finishDisabled ? 0.72 : 1,
           },
         ]}
       >
-        <ThemedText style={styles.finishLabel}>Finish Workout</ThemedText>
+        <ThemedText style={styles.finishLabel}>{t('workout.active.finishShort')}</ThemedText>
       </Pressable>
     </View>
   );

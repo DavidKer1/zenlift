@@ -5,6 +5,7 @@ import {
   StyleSheet,
   View,
 } from 'react-native';
+import { useTranslation } from 'react-i18next';
 
 import { ThemedText } from '@/components/themed-text';
 import { useZenliftTheme } from '@/providers/ThemeProvider';
@@ -29,15 +30,16 @@ function WorkoutHeaderComponent({
   onCancel,
 }: WorkoutHeaderProps) {
   const { colors, radius, spacing } = useZenliftTheme();
+  const { t } = useTranslation();
 
   const handleCancelPress = () => {
     Alert.alert(
-      'Cancelar entrenamiento?',
-      'Los datos registrados se conservaran.',
+      String(t('workout.active.cancelTitle')),
+      String(t('workout.active.cancelBody')),
       [
-        { text: 'Seguir entrenando', style: 'cancel' },
+        { text: String(t('workout.active.keepTraining')), style: 'cancel' },
         {
-          text: 'Cancelar',
+          text: String(t('common.cancel')),
           style: 'destructive',
           onPress: () => onCancel(),
         },
@@ -84,7 +86,7 @@ function WorkoutHeaderComponent({
       </View>
 
       <Pressable
-        accessibilityLabel="Cancelar entrenamiento"
+        accessibilityLabel={String(t('workout.active.a11y.cancel'))}
         accessibilityRole="button"
         onPress={handleCancelPress}
         style={({ pressed }) => [
@@ -100,7 +102,7 @@ function WorkoutHeaderComponent({
           type="smallBold"
           style={{ color: '#FFFFFF', fontSize: 13 }}
         >
-          Finalizar
+          {t('workout.active.finishShort')}
         </ThemedText>
       </Pressable>
     </View>

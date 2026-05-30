@@ -3,6 +3,32 @@ import { useActiveWorkoutStore, type StartWorkoutParams } from './stores/activeW
 import { getDatabase } from '@/storage/database/connection';
 import { WorkoutRepo } from '@/storage/repositories/workoutRepo';
 
+type Translate = (key: string, options?: Record<string, unknown>) => unknown;
+
+export type StartWorkoutFlowCopy = {
+  activeBody: string;
+  activeTitle: string;
+  continueLabel: string;
+  errorTitle: string;
+  newSession: string;
+  recoverFailed: string;
+  startFailed: string;
+  startNewFailed: string;
+};
+
+export function createStartWorkoutFlowCopy(t: Translate): StartWorkoutFlowCopy {
+  return {
+    activeBody: String(t('workout.start.activeBody')),
+    activeTitle: String(t('workout.start.activeTitle')),
+    continueLabel: String(t('workout.start.continue')),
+    errorTitle: String(t('common.error')),
+    newSession: String(t('workout.start.newSession')),
+    recoverFailed: String(t('workout.start.recoverFailed')),
+    startFailed: String(t('workout.start.startFailed')),
+    startNewFailed: String(t('workout.start.startNewFailed')),
+  };
+}
+
 /**
  * Shared workout start flow used by Home Quick Workout, Routine Start, and
  * Exercise Detail quick-start.
@@ -13,6 +39,7 @@ import { WorkoutRepo } from '@/storage/repositories/workoutRepo';
  */
 export async function startWorkoutFlow(
   params: StartWorkoutParams = {},
+  copy: StartWorkoutFlowCopy,
 ): Promise<void> {
   console.log('[StartWorkoutFlow] ENTRY — params:', JSON.stringify(params));
   try {
@@ -24,11 +51,11 @@ export async function startWorkoutFlow(
 
     if (activeSession) {
       Alert.alert(
-        'Sesión activa',
-        'Ya tienes una sesión de workout activa. ¿Quieres continuarla o iniciar una nueva?',
+        copy.activeTitle,
+        copy.activeBody,
         [
           {
-            text: 'Nueva sesión',
+            text: copy.newSession,
             style: 'destructive',
             onPress: async () => {
               try {
@@ -40,12 +67,12 @@ export async function startWorkoutFlow(
                 console.log('[StartWorkoutFlow] New session created — store hydrated');
               } catch (error) {
                 console.error('[StartWorkoutFlow] Failed to start new session:', error);
-                Alert.alert('Error', 'No se pudo iniciar la nueva sesión.');
+                Alert.alert(copy.errorTitle, copy.startNewFailed);
               }
             },
           },
           {
-            text: 'Continuar',
+            text: copy.continueLabel,
             onPress: async () => {
               try {
                 await useActiveWorkoutStore.getState().startWorkout(params);
@@ -55,7 +82,7 @@ export async function startWorkoutFlow(
                 console.log('[StartWorkoutFlow] Session recovered — store hydrated');
               } catch (error) {
                 console.error('[StartWorkoutFlow] Failed to recover session:', error);
-                Alert.alert('Error', 'No se pudo recuperar la sesión activa.');
+                Alert.alert(copy.errorTitle, copy.recoverFailed);
               }
             },
           },
@@ -74,6 +101,6 @@ export async function startWorkoutFlow(
     console.log('[StartWorkoutFlow] Store hydrated — Home screen will render ActiveWorkout');
   } catch (error) {
     console.error('[StartWorkoutFlow] Failed:', error);
-    Alert.alert('Error', 'No se pudo iniciar la sesión de workout.');
+    Alert.alert(copy.errorTitle, copy.startFailed);
   }
 }

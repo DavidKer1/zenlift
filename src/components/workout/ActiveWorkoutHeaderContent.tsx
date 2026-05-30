@@ -2,6 +2,7 @@ import { Ionicons } from '@expo/vector-icons';
 import React from 'react';
 import { Pressable, StyleSheet, View } from 'react-native';
 import Animated from 'react-native-reanimated';
+import { useTranslation } from 'react-i18next';
 
 import { ThemedText } from '@/components/themed-text';
 import {
@@ -31,6 +32,8 @@ export function ActiveWorkoutHeaderContent({
   sessionNameColor,
   textColor,
 }: ActiveWorkoutHeaderContentProps) {
+  const { t } = useTranslation();
+
   return (
     <View style={styles.row}>
       <Animated.View
@@ -58,7 +61,9 @@ export function ActiveWorkoutHeaderContent({
       <Pressable
         onPress={onChevronPress}
         hitSlop={12}
-        accessibilityLabel={isExpanded ? 'Minimizar entrenamiento' : 'Expandir entrenamiento'}
+        accessibilityLabel={String(
+          t(isExpanded ? 'workout.active.a11y.minimize' : 'workout.active.a11y.expand'),
+        )}
         accessibilityRole="button"
         style={styles.chevron}
       >

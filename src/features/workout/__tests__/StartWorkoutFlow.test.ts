@@ -34,6 +34,17 @@ jest.mock('@/storage/repositories/workoutRepo', () => ({
   })),
 }));
 
+const flowCopy = {
+  activeBody: 'You already have an active workout session. Continue it or start a new one?',
+  activeTitle: 'Active session',
+  continueLabel: 'Continue',
+  errorTitle: 'Error',
+  newSession: 'New session',
+  recoverFailed: 'Could not recover the active session.',
+  startFailed: 'Could not start the workout session.',
+  startNewFailed: 'Could not start the new session.',
+};
+
 // Silence console.error during tests
 const originalConsoleError = console.error;
 beforeAll(() => {
@@ -61,7 +72,7 @@ describe('startWorkoutFlow', () => {
     mockStoreState.startWorkout.mockResolvedValue({ id: 'ws-1' });
 
     const { startWorkoutFlow } = require('@/features/workout/StartWorkoutFlow');
-    await startWorkoutFlow({});
+    await startWorkoutFlow({}, flowCopy);
 
     expect(mockStoreState.startWorkout).toHaveBeenCalledWith({});
     expect(mockStoreState.addExercise).not.toHaveBeenCalled();
@@ -73,49 +84,49 @@ describe('startWorkoutFlow', () => {
     mockStoreState.addExercise.mockResolvedValue({ id: 'we-1' });
 
     const { startWorkoutFlow } = require('@/features/workout/StartWorkoutFlow');
-    await startWorkoutFlow({ exerciseId: 'ex-1' });
+    await startWorkoutFlow({ exerciseId: 'ex-1' }, flowCopy);
 
     expect(mockStoreState.startWorkout).toHaveBeenCalledWith({ exerciseId: 'ex-1' });
     expect(mockStoreState.addExercise).toHaveBeenCalledWith('ex-1');
   });
 
-  it('shows dialog when active session exists and "Continuar" recovers and navigates', async () => {
+  it('shows dialog when active session exists and "Continue" recovers and navigates', async () => {
     mockGetActiveSession.mockResolvedValue({ id: 'ws-existing' });
     mockStoreState.startWorkout.mockResolvedValue({ id: 'ws-existing' });
 
     const alertSpy = jest.spyOn(Alert, 'alert');
 
     const { startWorkoutFlow } = require('@/features/workout/StartWorkoutFlow');
-    await startWorkoutFlow({});
+    await startWorkoutFlow({}, flowCopy);
 
     expect(alertSpy).toHaveBeenCalled();
     const alertArgs = alertSpy.mock.calls[0];
-    expect(alertArgs[0]).toBe('Sesión activa');
+    expect(alertArgs[0]).toBe('Active session');
 
-    // Simulate pressing "Continuar" (second button, index 1)
+    // Simulate pressing "Continue" (second button, index 1)
     const continuarButton = alertArgs[2]?.[1];
-    expect(continuarButton?.text).toBe('Continuar');
+    expect(continuarButton?.text).toBe('Continue');
     await continuarButton!.onPress!();
 
     expect(mockStoreState.startWorkout).toHaveBeenCalledWith({});
     expect(mockStoreState.cancelWorkout).not.toHaveBeenCalled();
   });
 
-  it('shows dialog when active session exists and "Nueva sesión" cancels old, creates new, and navigates', async () => {
+  it('shows dialog when active session exists and "New session" cancels old, creates new, and navigates', async () => {
     mockGetActiveSession.mockResolvedValue({ id: 'ws-old' });
     mockStoreState.startWorkout.mockResolvedValue({ id: 'ws-new' });
 
     const alertSpy = jest.spyOn(Alert, 'alert');
 
     const { startWorkoutFlow } = require('@/features/workout/StartWorkoutFlow');
-    await startWorkoutFlow({ name: 'Fresh' });
+    await startWorkoutFlow({ name: 'Fresh' }, flowCopy);
 
     expect(alertSpy).toHaveBeenCalled();
     const alertArgs = alertSpy.mock.calls[0];
 
-    // Simulate pressing "Nueva sesión" (first button, index 0)
+    // Simulate pressing "New session" (first button, index 0)
     const nuevaButton = alertArgs[2]?.[0];
-    expect(nuevaButton?.text).toBe('Nueva sesión');
+    expect(nuevaButton?.text).toBe('New session');
     await nuevaButton!.onPress!();
 
     expect(mockStoreState.cancelWorkout).toHaveBeenCalled();
@@ -130,7 +141,7 @@ describe('startWorkoutFlow', () => {
     const alertSpy = jest.spyOn(Alert, 'alert');
 
     const { startWorkoutFlow } = require('@/features/workout/StartWorkoutFlow');
-    await startWorkoutFlow({ exerciseId: 'ex-squat' });
+    await startWorkoutFlow({ exerciseId: 'ex-squat' }, flowCopy);
 
     const alertArgs = alertSpy.mock.calls[0];
     const continuarButton = alertArgs[2]?.[1];
@@ -147,15 +158,15 @@ describe('startWorkoutFlow', () => {
     const alertSpy = jest.spyOn(Alert, 'alert');
 
     const { startWorkoutFlow } = require('@/features/workout/StartWorkoutFlow');
-    await startWorkoutFlow({});
+    await startWorkoutFlow({}, flowCopy);
 
     expect(alertSpy).toHaveBeenCalledWith(
       'Error',
-      'No se pudo iniciar la sesión de workout.',
+      'Could not start the workout session.',
     );
   });
 
-  it('shows error in "Nueva sesión" path when cancelWorkout or startWorkout fails', async () => {
+  it('shows error in "New session" path when cancelWorkout or startWorkout fails', async () => {
     mockGetActiveSession.mockResolvedValue({ id: 'ws-old' });
     mockStoreState.cancelWorkout.mockResolvedValue(undefined);
     mockStoreState.startWorkout.mockRejectedValue(new Error('Create failed'));
@@ -163,7 +174,7 @@ describe('startWorkoutFlow', () => {
     const alertSpy = jest.spyOn(Alert, 'alert');
 
     const { startWorkoutFlow } = require('@/features/workout/StartWorkoutFlow');
-    await startWorkoutFlow({});
+    await startWorkoutFlow({}, flowCopy);
 
     const alertArgs = alertSpy.mock.calls[0];
     const nuevaButton = alertArgs[2]?.[0];
@@ -172,7 +183,7 @@ describe('startWorkoutFlow', () => {
     // Should show inner error for the failed press
     expect(alertSpy).toHaveBeenCalledWith(
       'Error',
-      'No se pudo iniciar la nueva sesión.',
+      'Could not start the new session.',
     );
   });
 });

@@ -719,6 +719,19 @@ export class WorkoutRepo {
     }
   }
 
+  async uncompleteSet(id: string): Promise<void> {
+    try {
+      await this.db.runAsync(
+        'UPDATE set_logs SET is_completed = 0, completed_at = NULL WHERE id = ?',
+        id,
+      );
+    } catch (error) {
+      throw new Error(
+        `[WorkoutRepo] uncompleteSet(${id}) failed: ${(error as Error).message}`,
+      );
+    }
+  }
+
   async updateSet(
     id: string,
     data: {
