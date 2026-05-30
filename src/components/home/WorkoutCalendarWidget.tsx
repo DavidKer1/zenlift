@@ -1,10 +1,11 @@
 import { SymbolView, type SymbolViewProps } from 'expo-symbols';
 import { ActivityIndicator, Pressable, StyleSheet, Text, View } from 'react-native';
+import { useTranslation } from 'react-i18next';
 
 import { GradientCard } from '@/components/ui/GradientCard';
+import { useI18nFormatters } from '@/i18n/useI18nFormatters';
 import { useZenliftTheme } from '@/providers/ThemeProvider';
 import type {
-  HomeCalendarFrequencyKind,
   HomeCalendarRepeatParams,
   HomeCalendarSummary,
 } from '@/storage/repositories/workoutRepo';
@@ -29,24 +30,45 @@ export function WorkoutCalendarWidget({
   summary,
 }: WorkoutCalendarWidgetProps) {
   const { colors, radius, spacing, typography } = useZenliftTheme();
-  const months = getVisibleMonths(new Date(), VISIBLE_MONTHS);
+  const { t } = useTranslation();
+  const { formatMonth } = useI18nFormatters();
+  const months = getVisibleMonths(new Date(), VISIBLE_MONTHS, formatMonth);
   const activeDateKeys = new Set(summary?.activity_dates.map((item) => item.date) ?? []);
   const latestWorkout = summary?.latest_workout ?? null;
   const repeatParams = latestWorkout?.repeat_params ?? null;
   const canRepeat = Boolean(repeatParams && onRepeatWorkout);
-  const title = latestWorkout?.display_label ?? 'No workouts yet';
+  const title = latestWorkout?.display_label ?? String(t('home.calendar.emptyTitle'));
   const frequencyLabel = latestWorkout
-    ? formatFrequency(latestWorkout.frequency_count, latestWorkout.frequency_kind)
-    : 'Start a workout to see activity';
+    ? latestWorkout.frequency_kind === 'total'
+      ? String(t('home.weeklyActivity.logged', { count: latestWorkout.frequency_count }))
+      : String(
+          t(latestWorkout.frequency_count === 1 ? 'home.calendar.once' : 'home.calendar.many', {
+            count: latestWorkout.frequency_count,
+          }),
+        )
+    : String(t('home.calendar.emptyBody'));
   const accessibilityLabel = latestWorkout
-    ? `Workout calendar. Last workout ${title}. ${frequencyLabel}.`
-    : 'Workout calendar. No workouts completed yet.';
+    ? String(t('home.calendar.a11yWithLatest', { frequency: frequencyLabel, title }))
+    : String(t('home.calendar.a11yEmpty'));
 
   return (
     <GradientCard
       accessibilityLabel={accessibilityLabel}
       borderRadius={radius.xl}
       padding={spacing.paddingCard}>
+      <Text
+        style={[
+          styles.sectionTitle,
+          {
+            color: colors.textPrimary,
+            fontSize: typography.headlineMd.fontSize,
+            fontWeight: typography.headlineMd.fontWeight,
+            lineHeight: typography.headlineMd.lineHeight,
+            marginBottom: spacing.three,
+          },
+        ]}>
+        {t('home.calendar.title')}
+      </Text>
       <View style={[styles.monthHeader, { marginBottom: spacing.three }]}>
         {months.map((month) => (
           <Text
@@ -159,7 +181,7 @@ export function WorkoutCalendarWidget({
             </View>
             {repeatParams ? (
               <Pressable
-                accessibilityLabel={`Start ${title}`}
+                accessibilityLabel={String(t('home.calendar.repeatA11y', { title }))}
                 accessibilityRole="button"
                 accessibilityState={{ disabled: !canRepeat }}
                 disabled={!canRepeat}
@@ -190,7 +212,11 @@ export function WorkoutCalendarWidget({
   );
 }
 
-function getVisibleMonths(anchorDate: Date, count: number): MonthGrid[] {
+function getVisibleMonths(
+  anchorDate: Date,
+  count: number,
+  formatMonth: (value: Date | string) => string,
+): MonthGrid[] {
   return Array.from({ length: count }, (_, index) => {
     const monthDate = new Date(
       anchorDate.getFullYear(),
@@ -203,7 +229,7 @@ function getVisibleMonths(anchorDate: Date, count: number): MonthGrid[] {
 
     return {
       key: `${year}-${String(month + 1).padStart(2, '0')}`,
-      label: new Intl.DateTimeFormat('en', { month: 'short' }).format(monthDate),
+      label: formatMonth(monthDate),
       days: Array.from({ length: daysInMonth }, (_, dayIndex) =>
         formatDateKey(new Date(year, month, dayIndex + 1)),
       ),
@@ -217,13 +243,6 @@ function formatDateKey(date: Date): string {
     `${date.getMonth() + 1}`.padStart(2, '0'),
     `${date.getDate()}`.padStart(2, '0'),
   ].join('-');
-}
-
-function formatFrequency(count: number, kind: HomeCalendarFrequencyKind): string {
-  if (kind === 'total') {
-    return `${count} ${count === 1 ? 'workout' : 'workouts'} logged`;
-  }
-  return `${count} ${count === 1 ? 'time' : 'times'}`;
 }
 
 const styles = StyleSheet.create({
@@ -276,6 +295,9 @@ const styles = StyleSheet.create({
   repeatButton: {
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  sectionTitle: {
+    letterSpacing: 0,
   },
   ring: {
     alignItems: 'center',

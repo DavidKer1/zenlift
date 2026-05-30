@@ -1,21 +1,23 @@
 import { StyleSheet, Text, View } from 'react-native';
+import { useTranslation } from 'react-i18next';
 
 import { GradientCard } from '@/components/ui/GradientCard';
 import { useZenliftTheme } from '@/providers/ThemeProvider';
 
-const WEEKDAYS = ['L', 'M', 'X', 'J', 'V', 'S', 'D'];
-
 type WeeklyActivityCardProps = {
   activeDays: boolean[];
+  workoutCount: number;
 };
 
-export function WeeklyActivityCard({ activeDays }: WeeklyActivityCardProps) {
+export function WeeklyActivityCard({ activeDays, workoutCount }: WeeklyActivityCardProps) {
   const { colors, radius, spacing, typography } = useZenliftTheme();
+  const { t } = useTranslation();
+  const weekdays = t('home.weeklyActivity.weekdays', { returnObjects: true }) as string[];
   const hasActivity = activeDays.some(Boolean);
 
   return (
     <GradientCard
-      accessibilityLabel="Weekly activity card"
+      accessibilityLabel={String(t('home.weeklyActivity.a11y'))}
       borderRadius={radius.xl}
       padding={spacing.paddingCard}>
       <View style={{ gap: spacing.one }}>
@@ -29,29 +31,29 @@ export function WeeklyActivityCard({ activeDays }: WeeklyActivityCardProps) {
               lineHeight: typography.headlineMd.lineHeight,
             },
           ]}>
-          Weekly activity
+          {t('home.weeklyActivity.title')}
         </Text>
-        {!hasActivity ? (
-          <Text
-            style={[
-              styles.subtitle,
-              {
-                color: colors.textSecondary,
-                fontSize: typography.bodyMd.fontSize,
-                lineHeight: typography.bodyMd.lineHeight,
-              },
-            ]}>
-            No activity this week
-          </Text>
-        ) : null}
+        <Text
+          style={[
+            styles.subtitle,
+            {
+              color: colors.textSecondary,
+              fontSize: typography.bodyMd.fontSize,
+              lineHeight: typography.bodyMd.lineHeight,
+            },
+          ]}>
+          {hasActivity
+            ? t('home.weeklyActivity.logged', { count: workoutCount })
+            : t('home.weeklyActivity.emptyTitle')}
+        </Text>
       </View>
 
       <View style={[styles.weekRow, { gap: spacing.two }]}>
-        {WEEKDAYS.map((label, index) => {
+        {weekdays.map((label, index) => {
           const isActive = activeDays[index] ?? false;
 
           return (
-            <View key={label} style={[styles.dayColumn, { gap: spacing.one }]}>
+            <View key={`${label}-${index}`} style={[styles.dayColumn, { gap: spacing.one }]}>
               <View
                 style={[
                   styles.segment,
@@ -89,7 +91,7 @@ export function WeeklyActivityCard({ activeDays }: WeeklyActivityCardProps) {
               lineHeight: typography.bodyMd.lineHeight,
             },
           ]}>
-          Start a workout to see your progress
+          {t('home.weeklyActivity.emptyBody')}
         </Text>
       ) : null}
     </GradientCard>

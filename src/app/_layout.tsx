@@ -1,3 +1,4 @@
+import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import { ThemeProvider as NavigationThemeProvider } from '@react-navigation/native';
 import React, { useState } from 'react';
 import { StyleSheet } from 'react-native';
@@ -9,6 +10,7 @@ import ActiveWorkoutModal from '@/components/workout/ActiveWorkoutModal';
 import AppTabs from '@/components/app-tabs';
 import OnboardingScreen from '@/features/onboarding/OnboardingScreen';
 import { SETTINGS_KEYS, SETTINGS_MMKV_ID } from '@/features/settings/constants';
+import { I18nProvider } from '@/i18n/I18nProvider';
 import {
   ThemeProvider as ZenliftThemeProvider,
   useZenliftTheme,
@@ -25,15 +27,17 @@ function RootNavigation() {
   return (
     <NavigationThemeProvider value={navigationTheme}>
       <GestureHandlerRootView style={styles.root}>
-        <AnimatedSplashOverlay />
-        {needsOnboarding ? (
-          <OnboardingScreen onComplete={() => setNeedsOnboarding(false)} />
-        ) : (
-          <>
-            <AppTabs />
-            <ActiveWorkoutModal />
-          </>
-        )}
+        <BottomSheetModalProvider>
+          <AnimatedSplashOverlay />
+          {needsOnboarding ? (
+            <OnboardingScreen onComplete={() => setNeedsOnboarding(false)} />
+          ) : (
+            <>
+              <AppTabs />
+              <ActiveWorkoutModal />
+            </>
+          )}
+        </BottomSheetModalProvider>
       </GestureHandlerRootView>
     </NavigationThemeProvider>
   );
@@ -41,9 +45,11 @@ function RootNavigation() {
 
 export default function TabLayout() {
   return (
-    <ZenliftThemeProvider>
-      <RootNavigation />
-    </ZenliftThemeProvider>
+    <I18nProvider>
+      <ZenliftThemeProvider>
+        <RootNavigation />
+      </ZenliftThemeProvider>
+    </I18nProvider>
   );
 }
 

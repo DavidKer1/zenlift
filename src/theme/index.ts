@@ -1,4 +1,4 @@
-import { Platform, type TextStyle } from 'react-native';
+import { Platform } from 'react-native';
 
 export type ThemeColorScheme = 'light' | 'dark';
 export type ThemeMode = ThemeColorScheme | 'system';
@@ -66,9 +66,9 @@ export const zenliftColors = {
     primaryPressed: '#D9D9D9',
     primarySoft: '#242329',
     accent: '#FFFFFF',
-    success: '#FFFFFF',
-    warning: '#FFFFFF',
-    danger: '#FFFFFF',
+    success: '#6750A4',
+    warning: '#c9a74d',
+    danger: '#ff4e4e',
     text: '#FFFFFF',
     mutedText: 'rgba(255, 255, 255, 0.50)',
     border: '#49454F',

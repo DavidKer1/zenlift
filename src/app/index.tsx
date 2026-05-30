@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { ScrollView, StyleSheet } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { useTranslation } from 'react-i18next';
 
 import {
   CurrentRoutineCard,
@@ -12,7 +13,7 @@ import { StartWorkoutButton } from '@/components/home/StartWorkoutButton';
 import { WeeklyActivityCard } from '@/components/home/WeeklyActivityCard';
 import { WorkoutCalendarWidget } from '@/components/home/WorkoutCalendarWidget';
 import type { WorkoutSession } from '@/domain/entities';
-import { startWorkoutFlow } from '@/features/workout/StartWorkoutFlow';
+import { createStartWorkoutFlowCopy, startWorkoutFlow } from '@/features/workout/StartWorkoutFlow';
 import { useZenliftTheme } from '@/providers/ThemeProvider';
 import { getDatabase } from '@/storage/database/connection';
 import { RoutineRepo } from '@/storage/repositories/RoutineRepo';
@@ -26,9 +27,12 @@ const EMPTY_WEEK = [false, false, false, false, false, false, false];
 
 export default function HomeScreen() {
   const { colors, spacing } = useZenliftTheme();
+  const { t } = useTranslation();
+  const startWorkoutCopy = createStartWorkoutFlowCopy(t);
   const [calendarSummary, setCalendarSummary] = useState<HomeCalendarSummary | null>(null);
   const [isCalendarLoading, setIsCalendarLoading] = useState(true);
   const [weeklyActivity, setWeeklyActivity] = useState<boolean[]>(EMPTY_WEEK);
+  const [weeklyWorkoutCount, setWeeklyWorkoutCount] = useState(0);
   const [currentRoutine, setCurrentRoutine] = useState<CurrentRoutineCardData | null>(null);
   const [recentPRs, setRecentPRs] = useState<RecentPR[]>([]);
 
@@ -58,11 +62,14 @@ export default function HomeScreen() {
         formatDateOnly(weekStart),
         formatDateOnly(today),
       );
+      const completedSessions = sessions.filter((session) => session.status === 'completed');
 
       setWeeklyActivity(mapWeeklyActivity(sessions));
+      setWeeklyWorkoutCount(completedSessions.length);
     } catch (error) {
       console.error('[HomeScreen] Failed to fetch weekly activity:', error);
       setWeeklyActivity(EMPTY_WEEK);
+      setWeeklyWorkoutCount(0);
     }
   }, []);
 
@@ -106,8 +113,8 @@ export default function HomeScreen() {
       name: params.name,
       routineDayId: params.routineDayId,
       routineId: params.routineId,
-    });
-  }, []);
+    }, startWorkoutCopy);
+  }, [startWorkoutCopy]);
 
   useEffect(() => {
     void fetchCalendarSummary();
@@ -135,10 +142,10 @@ export default function HomeScreen() {
         <Greeting />
         <StartWorkoutButton />
         <StartWorkoutButton
-          label="Quick Workout"
+          label={String(t('home.quickWorkout'))}
           variant="secondary"
           onPress={() => {
-            void startWorkoutFlow({});
+            void startWorkoutFlow({}, startWorkoutCopy);
           }}
         />
         <WorkoutCalendarWidget
@@ -146,7 +153,7 @@ export default function HomeScreen() {
           onRepeatWorkout={handleRepeatWorkout}
           summary={calendarSummary}
         />
-        <WeeklyActivityCard activeDays={weeklyActivity} />
+        <WeeklyActivityCard activeDays={weeklyActivity} workoutCount={weeklyWorkoutCount} />
         <CurrentRoutineCard routine={currentRoutine} />
         <RecentPRsCard prs={recentPRs} />
       </ScrollView>

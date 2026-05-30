@@ -1,5 +1,6 @@
 import { router } from 'expo-router';
 import { Pressable, StyleSheet, Text } from 'react-native';
+import { useTranslation } from 'react-i18next';
 
 import { GradientCard } from '@/components/ui/GradientCard';
 import { useZenliftTheme } from '@/providers/ThemeProvider';
@@ -11,12 +12,14 @@ type StartWorkoutButtonProps = {
 };
 
 export function StartWorkoutButton({
-  label = 'Start Workout',
+  label,
   variant = 'primary',
   onPress,
 }: StartWorkoutButtonProps) {
   const { colors, radius, spacing, typography } = useZenliftTheme();
+  const { t } = useTranslation();
   const isPrimary = variant === 'primary';
+  const buttonLabel = label ?? String(t('home.startWorkout'));
 
   const pressableStyle = ({ pressed }: { pressed: boolean }) => [
     styles.button,
@@ -32,7 +35,7 @@ export function StartWorkoutButton({
 
   const content = (
     <Pressable
-      accessibilityLabel={label}
+      accessibilityLabel={buttonLabel}
       accessibilityRole="button"
       onPress={onPress ?? (() => router.push('/routines'))}
       style={pressableStyle}>
@@ -46,7 +49,7 @@ export function StartWorkoutButton({
             lineHeight: typography.bodyLg.lineHeight,
           },
         ]}>
-        {label}
+        {buttonLabel}
       </Text>
     </Pressable>
   );

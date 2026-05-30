@@ -1,6 +1,7 @@
 import { router } from 'expo-router';
 import { SymbolView, type SymbolViewProps } from 'expo-symbols';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { useTranslation } from 'react-i18next';
 
 import { GradientCard } from '@/components/ui/GradientCard';
 import { useZenliftTheme } from '@/providers/ThemeProvider';
@@ -17,10 +18,11 @@ type CurrentRoutineCardProps = {
 
 export function CurrentRoutineCard({ routine }: CurrentRoutineCardProps) {
   const { colors, radius, spacing, typography } = useZenliftTheme();
+  const { t } = useTranslation();
 
   return (
     <GradientCard
-      accessibilityLabel="Current routine card"
+      accessibilityLabel={String(t('home.currentRoutine.a11y'))}
       borderRadius={radius.xl}
       padding={spacing.paddingCard}>
       <Text
@@ -33,7 +35,7 @@ export function CurrentRoutineCard({ routine }: CurrentRoutineCardProps) {
             lineHeight: typography.headlineMd.lineHeight,
           },
         ]}>
-        Current routine
+        {t('home.currentRoutine.title')}
       </Text>
 
       {routine ? (
@@ -60,12 +62,12 @@ export function CurrentRoutineCard({ routine }: CurrentRoutineCardProps) {
                   lineHeight: typography.bodyMd.lineHeight,
                 },
               ]}>
-              {routine.dayCount} {routine.dayCount === 1 ? 'day' : 'days'}
+              {t('home.currentRoutine.dayCount', { count: routine.dayCount })}
             </Text>
           </View>
 
           <Pressable
-            accessibilityLabel={`Start ${routine.name}`}
+            accessibilityLabel={String(t('home.currentRoutine.startNamed', { name: routine.name }))}
             accessibilityRole="button"
             onPress={() => router.push('/routines')}
             style={({ pressed }) => [
@@ -88,7 +90,7 @@ export function CurrentRoutineCard({ routine }: CurrentRoutineCardProps) {
                   lineHeight: typography.bodyMd.lineHeight,
                 },
               ]}>
-              Start
+              {t('common.start')}
             </Text>
           </Pressable>
         </View>
@@ -110,7 +112,7 @@ export function CurrentRoutineCard({ routine }: CurrentRoutineCardProps) {
                   lineHeight: typography.bodyLg.lineHeight,
                 },
               ]}>
-              No routine set
+              {t('home.currentRoutine.noneTitle')}
             </Text>
             <Text
               style={[
@@ -121,12 +123,12 @@ export function CurrentRoutineCard({ routine }: CurrentRoutineCardProps) {
                   lineHeight: typography.bodyMd.lineHeight,
                 },
               ]}>
-              Create a routine to track your progress
+              {t('home.currentRoutine.noneBody')}
             </Text>
           </View>
 
           <Pressable
-            accessibilityLabel="Create Routine"
+            accessibilityLabel={String(t('home.currentRoutine.create'))}
             accessibilityRole="button"
             onPress={() => router.push('/routines')}
             style={({ pressed }) => [
@@ -149,7 +151,7 @@ export function CurrentRoutineCard({ routine }: CurrentRoutineCardProps) {
                   lineHeight: typography.bodyLg.lineHeight,
                 },
               ]}>
-              Create Routine
+              {t('home.currentRoutine.create')}
             </Text>
           </Pressable>
         </View>

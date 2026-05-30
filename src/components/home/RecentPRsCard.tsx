@@ -1,8 +1,10 @@
 import { SymbolView, type SymbolViewProps } from 'expo-symbols';
 import { StyleSheet, Text, View } from 'react-native';
+import { useTranslation } from 'react-i18next';
 
 import { GradientCard } from '@/components/ui/GradientCard';
-import type { PersonalRecord, PersonalRecordType } from '@/domain/entities';
+import type { PersonalRecord } from '@/domain/entities';
+import { useI18nFormatters } from '@/i18n/useI18nFormatters';
 import { useZenliftTheme } from '@/providers/ThemeProvider';
 
 export type RecentPR = PersonalRecord & {
@@ -13,21 +15,15 @@ type RecentPRsCardProps = {
   prs: RecentPR[];
 };
 
-const PR_TYPE_LABELS: Record<PersonalRecordType, string> = {
-  estimated_1rm: 'Est. 1RM',
-  max_reps: 'Max Reps',
-  max_session_volume: 'Session Volume',
-  max_volume: 'Max Volume',
-  max_weight: 'Max Weight',
-};
-
 export function RecentPRsCard({ prs }: RecentPRsCardProps) {
   const { colors, radius, spacing, typography } = useZenliftTheme();
+  const { t } = useTranslation();
+  const { formatNumber, formatShortDate, formatVolume, formatWeight } = useI18nFormatters();
   const latestPrs = prs.slice(0, 3);
 
   return (
     <GradientCard
-      accessibilityLabel="Recent personal records card"
+      accessibilityLabel={String(t('home.recentPrs.a11y'))}
       borderRadius={radius.xl}
       padding={spacing.paddingCard}>
       <Text
@@ -40,7 +36,7 @@ export function RecentPRsCard({ prs }: RecentPRsCardProps) {
             lineHeight: typography.headlineMd.lineHeight,
           },
         ]}>
-        Recent PRs
+        {t('home.recentPrs.title')}
       </Text>
 
       {latestPrs.length > 0 ? (
@@ -58,7 +54,7 @@ export function RecentPRsCard({ prs }: RecentPRsCardProps) {
                       lineHeight: typography.bodyLg.lineHeight,
                     },
                   ]}>
-                  {pr.exercise_name ?? 'Exercise'}
+                  {pr.exercise_name ?? t('home.recentPrs.exerciseFallback')}
                 </Text>
                 <Text
                   style={[
@@ -69,7 +65,7 @@ export function RecentPRsCard({ prs }: RecentPRsCardProps) {
                       lineHeight: typography.bodyMd.lineHeight,
                     },
                   ]}>
-                  {PR_TYPE_LABELS[pr.type]} · {formatDate(pr.achieved_at)}
+                  {t(`home.recentPrs.types.${pr.type}`)} · {formatShortDate(pr.achieved_at)}
                 </Text>
               </View>
               <Text
@@ -83,7 +79,12 @@ export function RecentPRsCard({ prs }: RecentPRsCardProps) {
                     lineHeight: typography.dataMd.lineHeight,
                   },
                 ]}>
-                {formatPRValue(pr)}
+                {formatPRValue(pr, {
+                  formatNumber,
+                  formatReps: (value) => String(t('common.reps', { count: value })),
+                  formatVolume: (value) => formatVolume(value, 'kg'),
+                  formatWeight: (value) => formatWeight(value, 'kg'),
+                })}
               </Text>
             </View>
           ))}
@@ -107,7 +108,7 @@ export function RecentPRsCard({ prs }: RecentPRsCardProps) {
                   lineHeight: typography.lineHeight.md,
                 },
               ]}>
-              No personal records yet
+              {t('home.recentPrs.emptyTitle')}
             </Text>
             <Text
               style={[
@@ -119,7 +120,7 @@ export function RecentPRsCard({ prs }: RecentPRsCardProps) {
                   lineHeight: typography.lineHeight.sm,
                 },
               ]}>
-              Complete workouts to set new records
+              {t('home.recentPrs.emptyBody')}
             </Text>
           </View>
         </View>
@@ -128,23 +129,22 @@ export function RecentPRsCard({ prs }: RecentPRsCardProps) {
   );
 }
 
-function formatPRValue(pr: RecentPR): string {
-  const value = Number.isInteger(pr.value) ? `${pr.value}` : pr.value.toFixed(1);
-
-  if (pr.type === 'max_reps') return `${value} reps`;
-  if (pr.type === 'max_weight' || pr.type === 'estimated_1rm') return `${value} kg`;
-  return `${value} kg`;
-}
-
-function formatDate(value: string): string {
-  const date = new Date(value);
-
-  if (Number.isNaN(date.getTime())) return value;
-
-  return new Intl.DateTimeFormat('en', {
-    day: 'numeric',
-    month: 'short',
-  }).format(date);
+function formatPRValue(
+  pr: RecentPR,
+  formatters: {
+    formatNumber: (value: number) => string;
+    formatReps: (value: number) => string;
+    formatVolume: (value: number) => string;
+    formatWeight: (value: number) => string;
+  },
+): string {
+  if (pr.type === 'max_reps') {
+    return `${formatters.formatNumber(pr.value)} ${formatters.formatReps(pr.value)}`;
+  }
+  if (pr.type === 'max_weight' || pr.type === 'estimated_1rm') {
+    return formatters.formatWeight(pr.value);
+  }
+  return formatters.formatVolume(pr.value);
 }
 
 const styles = StyleSheet.create({
