@@ -11,6 +11,8 @@ import {
   View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { useTranslation } from 'react-i18next';
+import type { TFunction } from 'i18next';
 
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
@@ -29,33 +31,32 @@ import { useSettings } from '@/features/settings/useSettings';
 import { useZenliftTheme } from '@/providers/ThemeProvider';
 import type { ThemeMode } from '@/theme';
 
-const THEME_OPTIONS: { label: string; value: ThemeMode }[] = [
-  { label: 'Claro', value: 'light' },
-  { label: 'Oscuro', value: 'dark' },
-  { label: 'Sistema', value: 'system' },
-];
-
-const WEIGHT_UNIT_OPTIONS: { label: string; value: WeightUnit }[] = [
-  { label: 'KG', value: 'kg' },
-  { label: 'LB', value: 'lb' },
-];
-
-function getErrorMessage(error: unknown, fallback: string): string {
+function getErrorMessage(error: unknown, fallback: string, t: TFunction): string {
   if (error instanceof Error && error.message) {
-    return error.message;
+    return error.message.startsWith('settings.')
+      ? String(t(error.message))
+      : error.message;
   }
 
   return fallback;
 }
 
-function confirmLargeImport(name: string): Promise<boolean> {
+function confirmLargeImport(
+  name: string,
+  copy: {
+    body: string;
+    cancel: string;
+    import: string;
+    title: string;
+  },
+): Promise<boolean> {
   return new Promise((resolve) => {
     Alert.alert(
-      'Archivo grande',
-      `${name} supera 50 MB. Importarlo puede tardar en dispositivos de gama baja.`,
+      copy.title,
+      copy.body,
       [
-        { text: 'Cancelar', style: 'cancel', onPress: () => resolve(false) },
-        { text: 'Importar', onPress: () => resolve(true) },
+        { text: copy.cancel, style: 'cancel', onPress: () => resolve(false) },
+        { text: copy.import, onPress: () => resolve(true) },
       ],
     );
   });
@@ -64,6 +65,7 @@ function confirmLargeImport(name: string): Promise<boolean> {
 export default function SettingsScreen() {
   const router = useRouter();
   const { colors, spacing, radius, setMode } = useZenliftTheme();
+  const { t } = useTranslation();
   const {
     weightUnit,
     themeMode,
@@ -80,6 +82,22 @@ export default function SettingsScreen() {
   const [deleteConfirmation, setDeleteConfirmation] = useState('');
 
   const isBusy = isExporting || isImporting || isDeleting;
+  const deleteToken = String(t('settings.deleteModal.token'));
+  const themeOptions = useMemo<{ label: string; value: ThemeMode }[]>(
+    () => [
+      { label: String(t('settings.theme.light')), value: 'light' },
+      { label: String(t('settings.theme.dark')), value: 'dark' },
+      { label: String(t('settings.theme.system')), value: 'system' },
+    ],
+    [t],
+  );
+  const weightUnitOptions = useMemo<{ label: string; value: WeightUnit }[]>(
+    () => [
+      { label: String(t('common.unit.kg')).toUpperCase(), value: 'kg' },
+      { label: String(t('common.unit.lb')).toUpperCase(), value: 'lb' },
+    ],
+    [t],
+  );
 
   const handleThemeChange = (nextMode: ThemeMode) => {
     setThemeMode(nextMode);
@@ -92,7 +110,10 @@ export default function SettingsScreen() {
     try {
       await exportZenliftData();
     } catch (error) {
-      Alert.alert('No se pudo exportar', getErrorMessage(error, 'Intenta de nuevo.'));
+      Alert.alert(
+        String(t('settings.alerts.exportFailedTitle')),
+        getErrorMessage(error, String(t('common.retry')), t),
+      );
     } finally {
       setIsExporting(false);
     }
@@ -108,16 +129,27 @@ export default function SettingsScreen() {
         return;
       }
 
-      if (pickedFile.isLargeFile && !(await confirmLargeImport(pickedFile.name))) {
+      if (
+        pickedFile.isLargeFile &&
+        !(await confirmLargeImport(pickedFile.name, {
+          body: String(t('settings.alerts.largeFileBody', { name: pickedFile.name })),
+          cancel: String(t('common.cancel')),
+          import: String(t('settings.actions.importData')),
+          title: String(t('settings.alerts.largeFileTitle')),
+        }))
+      ) {
         return;
       }
 
       const result = await importZenliftData(pickedFile.uri);
-      Alert.alert('Importacion completa', `${result.inserted} registros nuevos agregados.`);
+      Alert.alert(
+        String(t('settings.alerts.importCompleteTitle')),
+        String(t('settings.alerts.importCompleteBody', { count: result.inserted })),
+      );
     } catch (error) {
       Alert.alert(
-        'No se pudo importar',
-        getErrorMessage(error, 'El archivo no tiene un formato .zenlift valido.'),
+        String(t('settings.alerts.importFailedTitle')),
+        getErrorMessage(error, String(t('settings.alerts.importFailedFallback')), t),
       );
     } finally {
       setIsImporting(false);
@@ -126,12 +158,12 @@ export default function SettingsScreen() {
 
   const requestDelete = () => {
     Alert.alert(
-      'Borrar todos los datos',
-      'Esta accion eliminara rutinas, ejercicios, sesiones, records y ajustes locales. No se puede deshacer.',
+      String(t('settings.alerts.deleteTitle')),
+      String(t('settings.alerts.deleteBody')),
       [
-        { text: 'Cancelar', style: 'cancel' },
+        { text: String(t('common.cancel')), style: 'cancel' },
         {
-          text: 'Continuar',
+          text: String(t('common.continue')),
           style: 'destructive',
           onPress: () => {
             setDeleteConfirmation('');
@@ -143,8 +175,11 @@ export default function SettingsScreen() {
   };
 
   const confirmDelete = async () => {
-    if (deleteConfirmation !== 'BORRAR') {
-      Alert.alert('Confirmacion incorrecta', 'Escribe BORRAR exactamente para eliminar los datos.');
+    if (deleteConfirmation !== deleteToken) {
+      Alert.alert(
+        String(t('settings.alerts.incorrectConfirmationTitle')),
+        String(t('settings.alerts.incorrectConfirmationBody')),
+      );
       return;
     }
 
@@ -155,10 +190,16 @@ export default function SettingsScreen() {
       setDeletePromptVisible(false);
       setDeleteConfirmation('');
       setMode('light');
-      Alert.alert('Datos borrados', 'Zenlift quedo reiniciado con los datos base.');
+      Alert.alert(
+        String(t('settings.alerts.deleteCompleteTitle')),
+        String(t('settings.alerts.deleteCompleteBody')),
+      );
       router.replace('/');
     } catch (error) {
-      Alert.alert('No se pudo borrar', getErrorMessage(error, 'Intenta de nuevo.'));
+      Alert.alert(
+        String(t('settings.alerts.deleteFailedTitle')),
+        getErrorMessage(error, String(t('common.retry')), t),
+      );
     } finally {
       setIsDeleting(false);
     }
@@ -178,73 +219,75 @@ export default function SettingsScreen() {
             },
           ]}>
           <View style={styles.header}>
-            <ThemedText type="subtitle">Ajustes</ThemedText>
+            <ThemedText type="subtitle">{t('settings.title')}</ThemedText>
             <ThemedText themeColor="mutedText">
-              Preferencias locales, respaldo y control de datos.
+              {t('settings.subtitle')}
             </ThemedText>
           </View>
 
-          <SettingsSection title="General">
-            <SettingRow label="Unidad de peso">
+          <SettingsSection title={String(t('settings.sections.general'))}>
+            <SettingRow label={String(t('settings.labels.weightUnit'))}>
               <SegmentedControl
-                accessibilityLabel="Seleccionar unidad de peso"
-                options={WEIGHT_UNIT_OPTIONS}
+                accessibilityLabel={String(t('settings.a11y.weightUnit'))}
+                options={weightUnitOptions}
                 value={weightUnit}
                 onChange={setWeightUnit}
               />
             </SettingRow>
 
-            <SettingRow label="Tema">
+            <SettingRow label={String(t('settings.labels.theme'))}>
               <SegmentedControl
-                accessibilityLabel="Seleccionar tema"
-                options={THEME_OPTIONS}
+                accessibilityLabel={String(t('settings.a11y.theme'))}
+                options={themeOptions}
                 value={themeMode}
                 onChange={handleThemeChange}
               />
             </SettingRow>
 
-            <SettingRow label="Meta semanal">
+            <SettingRow label={String(t('settings.labels.weeklyGoal'))}>
               <Stepper
-                accessibilityLabel="Meta semanal de workouts"
+                accessibilityLabel={String(t('settings.a11y.weeklyGoal'))}
+                decrementLabel={String(t('settings.a11y.decreaseWeeklyGoal'))}
+                incrementLabel={String(t('settings.a11y.increaseWeeklyGoal'))}
                 value={weeklyGoal}
                 min={WEEKLY_GOAL_RANGE.min}
                 max={WEEKLY_GOAL_RANGE.max}
-                unit="workouts"
+                unit={String(t('common.workouts'))}
                 onChange={setWeeklyGoal}
               />
             </SettingRow>
           </SettingsSection>
 
-          <SettingsSection title="Datos">
+          <SettingsSection title={String(t('settings.sections.data'))}>
             <ActionButton
-              label="Exportar datos"
+              label={String(t('settings.actions.exportData'))}
               onPress={handleExport}
               disabled={isBusy}
               loading={isExporting}
-              accessibilityLabel="Exportar datos de Zenlift"
+              accessibilityLabel={String(t('settings.a11y.exportData'))}
             />
             <ActionButton
-              label="Importar datos"
+              label={String(t('settings.actions.importData'))}
               onPress={handleImport}
               disabled={isBusy}
               loading={isImporting}
               variant="secondary"
-              accessibilityLabel="Importar archivo de datos Zenlift"
+              accessibilityLabel={String(t('settings.a11y.importData'))}
             />
             <ActionButton
-              label="Borrar todos los datos"
+              label={String(t('settings.actions.deleteAllData'))}
               onPress={requestDelete}
               disabled={isBusy}
               loading={isDeleting}
               variant="danger"
-              accessibilityLabel="Borrar todos los datos de Zenlift"
+              accessibilityLabel={String(t('settings.a11y.deleteAllData'))}
             />
           </SettingsSection>
 
-          <SettingsSection title="Informacion">
-            <InfoRow label="App" value={metadata.appName} />
-            <InfoRow label="Version" value={metadata.appVersion} />
-            <InfoRow label="Build" value={metadata.buildNumber} />
+          <SettingsSection title={String(t('settings.sections.information'))}>
+            <InfoRow label={String(t('settings.labels.app'))} value={metadata.appName} />
+            <InfoRow label={String(t('settings.labels.version'))} value={metadata.appVersion} />
+            <InfoRow label={String(t('settings.labels.build'))} value={metadata.buildNumber} />
           </SettingsSection>
         </ScrollView>
       </SafeAreaView>
@@ -266,17 +309,17 @@ export default function SettingsScreen() {
               },
             ]}>
             <ThemedText type="smallBold" style={{ color: colors.danger }}>
-              Confirmar borrado
+              {t('settings.deleteModal.title')}
             </ThemedText>
             <ThemedText themeColor="mutedText">
-              Escribe BORRAR para eliminar permanentemente todos los datos locales.
+              {t('settings.deleteModal.body')}
             </ThemedText>
             <TextInput
-              accessibilityLabel="Campo de confirmacion para borrar datos"
+              accessibilityLabel={String(t('settings.deleteModal.inputA11y'))}
               autoCapitalize="characters"
               autoCorrect={false}
               editable={!isDeleting}
-              placeholder="BORRAR"
+              placeholder={deleteToken}
               placeholderTextColor={colors.mutedText}
               style={[
                 styles.deleteInput,
@@ -290,7 +333,7 @@ export default function SettingsScreen() {
             />
             <View style={styles.modalActions}>
               <Pressable
-                accessibilityLabel="Cancelar borrado de datos"
+                accessibilityLabel={String(t('settings.deleteModal.cancelA11y'))}
                 disabled={isDeleting}
                 style={[
                   styles.modalButton,
@@ -300,16 +343,16 @@ export default function SettingsScreen() {
                   },
                 ]}
                 onPress={() => setDeletePromptVisible(false)}>
-                <ThemedText type="smallBold">Cancelar</ThemedText>
+                <ThemedText type="smallBold">{t('common.cancel')}</ThemedText>
               </Pressable>
               <Pressable
-                accessibilityLabel="Confirmar borrado de datos"
-                disabled={isDeleting || deleteConfirmation !== 'BORRAR'}
+                accessibilityLabel={String(t('settings.deleteModal.confirmA11y'))}
+                disabled={isDeleting || deleteConfirmation !== deleteToken}
                 style={[
                   styles.modalButton,
                   {
                     backgroundColor: colors.danger,
-                    opacity: isDeleting || deleteConfirmation !== 'BORRAR' ? 0.5 : 1,
+                    opacity: isDeleting || deleteConfirmation !== deleteToken ? 0.5 : 1,
                   },
                 ]}
                 onPress={confirmDelete}>
@@ -317,7 +360,7 @@ export default function SettingsScreen() {
                   <ActivityIndicator color={colors.surface} />
                 ) : (
                   <ThemedText type="smallBold" style={[styles.dangerButtonText, { color: colors.surface }]}>
-                    Borrar
+                    {t('common.delete')}
                   </ThemedText>
                 )}
               </Pressable>
@@ -435,6 +478,8 @@ function SegmentedControl<T extends string>({
 
 type StepperProps = {
   accessibilityLabel: string;
+  decrementLabel: string;
+  incrementLabel: string;
   max: number;
   min: number;
   onChange: (value: number) => void;
@@ -442,7 +487,16 @@ type StepperProps = {
   value: number;
 };
 
-function Stepper({ accessibilityLabel, max, min, onChange, unit, value }: StepperProps) {
+function Stepper({
+  accessibilityLabel,
+  decrementLabel,
+  incrementLabel,
+  max,
+  min,
+  onChange,
+  unit,
+  value,
+}: StepperProps) {
   const { colors, radius } = useZenliftTheme();
   const canDecrement = value > min;
   const canIncrement = value < max;
@@ -460,7 +514,7 @@ function Stepper({ accessibilityLabel, max, min, onChange, unit, value }: Steppe
       ]}>
       <StepperButton
         label="-"
-        accessibilityLabel={`${accessibilityLabel}: disminuir`}
+        accessibilityLabel={decrementLabel}
         disabled={!canDecrement}
         onPress={() => onChange(value - 1)}
       />
@@ -469,7 +523,7 @@ function Stepper({ accessibilityLabel, max, min, onChange, unit, value }: Steppe
       </ThemedText>
       <StepperButton
         label="+"
-        accessibilityLabel={`${accessibilityLabel}: aumentar`}
+        accessibilityLabel={incrementLabel}
         disabled={!canIncrement}
         onPress={() => onChange(value + 1)}
       />

@@ -196,7 +196,7 @@ export async function exportZenliftData(): Promise<string> {
   const sharingAvailable = await Sharing.isAvailableAsync();
 
   if (!sharingAvailable) {
-    throw new Error('La hoja para compartir no esta disponible en este dispositivo.');
+    throw new Error('settings.alerts.shareUnavailable');
   }
 
   const metadata = getAppMetadata();

@@ -1,5 +1,6 @@
 import { LineChart } from 'react-native-gifted-charts';
 import { StyleSheet, View } from 'react-native';
+import { useTranslation } from 'react-i18next';
 
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
@@ -11,8 +12,9 @@ type ProgressChartProps = {
   title?: string;
 };
 
-export function ProgressChart({ data, title = 'Progreso' }: ProgressChartProps) {
+export function ProgressChart({ data, title }: ProgressChartProps) {
   const { colors, spacing } = useZenliftTheme();
+  const { t } = useTranslation();
 
   const chartData = data.map((point) => ({
     value: point.y,
@@ -22,17 +24,17 @@ export function ProgressChart({ data, title = 'Progreso' }: ProgressChartProps) 
 
   return (
     <ThemedView
-      accessibilityLabel="Grafica de progreso"
+      accessibilityLabel={String(t('exercises.stats.progressA11y'))}
       accessibilityRole="summary"
       style={[styles.container, { padding: spacing.three }]}>
       <ThemedText type="headlineMd" themeColor="textSecondary" style={styles.title}>
-        {title}
+        {title ?? t('exercises.stats.progress')}
       </ThemedText>
 
       {chartData.length === 0 ? (
         <View style={styles.emptyState}>
           <ThemedText type="bodyMd" themeColor="textSecondary">
-            Sin datos para mostrar
+            {t('exercises.stats.noData')}
           </ThemedText>
         </View>
       ) : (

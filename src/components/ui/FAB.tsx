@@ -1,6 +1,7 @@
 import { SymbolView, type SymbolViewProps } from 'expo-symbols';
 import React from 'react';
 import { Pressable, StyleSheet, type ViewStyle } from 'react-native';
+import { useTranslation } from 'react-i18next';
 
 import { useZenliftTheme } from '@/providers/ThemeProvider';
 
@@ -11,15 +12,17 @@ type FABProps = {
 };
 
 export function FAB({
-  accessibilityLabel = 'Crear rutina',
+  accessibilityLabel,
   onPress,
   style,
 }: FABProps) {
   const { colors, radius } = useZenliftTheme();
+  const { t } = useTranslation();
+  const buttonAccessibilityLabel = accessibilityLabel ?? String(t('routines.create'));
 
   return (
     <Pressable
-      accessibilityLabel={accessibilityLabel}
+      accessibilityLabel={buttonAccessibilityLabel}
       accessibilityRole="button"
       testID="routine-create-fab"
       onPress={onPress}

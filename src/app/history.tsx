@@ -1,23 +1,25 @@
 import { StyleSheet } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { useTranslation } from 'react-i18next';
 
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { useZenliftTheme } from '@/providers/ThemeProvider';
 
 export default function HistoryScreen() {
+  const { t } = useTranslation();
   const { colors, spacing } = useZenliftTheme();
 
   return (
     <ThemedView style={styles.screen}>
       <SafeAreaView style={[styles.content, { padding: spacing.four }]}>
-        <ThemedText type="subtitle">Historial</ThemedText>
+        <ThemedText type="subtitle">{t('history.title')}</ThemedText>
         <ThemedView
           type="surface"
           style={[styles.panel, { borderColor: colors.border, padding: spacing.three }]}>
-          <ThemedText type="smallBold">Sesiones completadas</ThemedText>
+          <ThemedText type="smallBold">{t('history.completedSessions')}</ThemedText>
           <ThemedText themeColor="mutedText">
-            Aqui se consultaran workouts anteriores, volumen y resumen por sesion.
+            {t('history.placeholder')}
           </ThemedText>
         </ThemedView>
       </SafeAreaView>

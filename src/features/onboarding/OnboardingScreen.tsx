@@ -9,6 +9,7 @@ import {
   View,
   type ListRenderItem,
 } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { SETTINGS_KEYS, SETTINGS_MMKV_ID, WEEKLY_GOAL_RANGE, type WeightUnit } from '@/features/settings/constants';
@@ -25,6 +26,7 @@ type OnboardingScreenProps = {
 
 function WelcomeStep({ onEmpezar }: { onEmpezar: () => void }) {
   const { colors, spacing, radius, typography } = useZenliftTheme();
+  const { t } = useTranslation();
 
   return (
     <View style={[styles.stepContainer, { paddingHorizontal: spacing.four }]}>
@@ -54,7 +56,7 @@ function WelcomeStep({ onEmpezar }: { onEmpezar: () => void }) {
               fontSize: typography.size.xxl,
             },
           ]}>
-          Bienvenido a tu entrenamiento
+          {t('onboarding.welcome.title')}
         </Text>
 
         <Text
@@ -68,7 +70,7 @@ function WelcomeStep({ onEmpezar }: { onEmpezar: () => void }) {
               lineHeight: typography.lineHeight.md,
             },
           ]}>
-          Registra, progresa y supera tus propios límites
+          {t('onboarding.welcome.subtitle')}
         </Text>
       </View>
 
@@ -84,7 +86,7 @@ function WelcomeStep({ onEmpezar }: { onEmpezar: () => void }) {
             minHeight: 56,
           },
         ]}
-        accessibilityLabel="Empezar configuración"
+        accessibilityLabel={String(t('onboarding.welcome.startA11y'))}
         accessibilityRole="button">
         <Text
           style={[
@@ -96,7 +98,7 @@ function WelcomeStep({ onEmpezar }: { onEmpezar: () => void }) {
               fontSize: typography.size.lg,
             },
           ]}>
-          Empezar
+          {t('onboarding.welcome.start')}
         </Text>
       </Pressable>
     </View>
@@ -111,6 +113,7 @@ function UnitStep({
   onSelect: (unit: WeightUnit) => void;
 }) {
   const { colors, spacing, radius, typography } = useZenliftTheme();
+  const { t } = useTranslation();
 
   return (
     <View style={[styles.stepContainer, { paddingHorizontal: spacing.four }]}>
@@ -125,7 +128,7 @@ function UnitStep({
               fontSize: typography.size.xxl,
             },
           ]}>
-          ¿Qué unidad prefieres?
+          {t('onboarding.unit.title')}
         </Text>
 
         <Text
@@ -138,7 +141,7 @@ function UnitStep({
               fontSize: typography.size.md,
             },
           ]}>
-          Puedes cambiarlo después en ajustes
+          {t('onboarding.unit.subtitle')}
         </Text>
       </View>
 
@@ -158,7 +161,7 @@ function UnitStep({
                 selected === 'kg' ? colors.primary : colors.border,
             },
           ]}
-          accessibilityLabel="Seleccionar kilogramos"
+          accessibilityLabel={String(t('onboarding.unit.kgA11y'))}
           accessibilityRole="button"
           accessibilityState={{ selected: selected === 'kg' }}>
           <Text
@@ -194,7 +197,7 @@ function UnitStep({
                 selected === 'lb' ? colors.primary : colors.border,
             },
           ]}
-          accessibilityLabel="Seleccionar libras"
+          accessibilityLabel={String(t('onboarding.unit.lbA11y'))}
           accessibilityRole="button"
           accessibilityState={{ selected: selected === 'lb' }}>
           <Text
@@ -229,6 +232,7 @@ function GoalStep({
   onFinish: () => void;
 }) {
   const { colors, spacing, radius, typography } = useZenliftTheme();
+  const { t } = useTranslation();
 
   const decrement = useCallback(() => {
     onChange(Math.max(WEEKLY_GOAL_RANGE.min, value - 1));
@@ -251,7 +255,7 @@ function GoalStep({
               fontSize: typography.size.xxl,
             },
           ]}>
-          ¿Cuántos días por semana?
+          {t('onboarding.goal.title')}
         </Text>
 
         <Text
@@ -264,7 +268,7 @@ function GoalStep({
               fontSize: typography.size.md,
             },
           ]}>
-          Define tu objetivo semanal de entrenamiento
+          {t('onboarding.goal.subtitle')}
         </Text>
       </View>
 
@@ -282,7 +286,7 @@ function GoalStep({
               height: 56,
             },
           ]}
-          accessibilityLabel="Reducir objetivo semanal"
+          accessibilityLabel={String(t('onboarding.goal.decreaseA11y'))}
           accessibilityRole="button">
           <Text
             style={[
@@ -308,7 +312,7 @@ function GoalStep({
               fontSize: typography.size.display,
             },
           ]}
-          accessibilityLabel={`Objetivo semanal: ${value} días`}>
+          accessibilityLabel={String(t('onboarding.goal.valueA11y', { count: value }))}>
           {value}
         </Text>
 
@@ -325,7 +329,7 @@ function GoalStep({
               height: 56,
             },
           ]}
-          accessibilityLabel="Aumentar objetivo semanal"
+          accessibilityLabel={String(t('onboarding.goal.increaseA11y'))}
           accessibilityRole="button">
           <Text
             style={[
@@ -354,7 +358,7 @@ function GoalStep({
             minHeight: 56,
           },
         ]}
-        accessibilityLabel="Comenzar a entrenar"
+        accessibilityLabel={String(t('onboarding.goal.finishA11y'))}
         accessibilityRole="button">
         <Text
           style={[
@@ -366,7 +370,7 @@ function GoalStep({
               fontSize: typography.size.lg,
             },
           ]}>
-          Comenzar
+          {t('onboarding.goal.finish')}
         </Text>
       </Pressable>
     </View>
@@ -375,6 +379,7 @@ function GoalStep({
 
 export default function OnboardingScreen({ onComplete }: OnboardingScreenProps) {
   const { colors, radius, typography } = useZenliftTheme();
+  const { t } = useTranslation();
   const flatListRef = useRef<FlatList<string>>(null);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [weightUnit, setWeightUnit] = useState<WeightUnit>('kg');
@@ -433,7 +438,7 @@ export default function OnboardingScreen({ onComplete }: OnboardingScreenProps) 
           styles.skipButton,
           { opacity: pressed ? 0.6 : 1 },
         ]}
-        accessibilityLabel="Saltar onboarding"
+        accessibilityLabel={String(t('onboarding.skip'))}
         accessibilityRole="button"
         testID="onboarding-skip">
         <Text
@@ -446,7 +451,7 @@ export default function OnboardingScreen({ onComplete }: OnboardingScreenProps) 
               fontSize: typography.size.md,
             },
           ]}>
-          Saltar
+          {t('onboarding.skip')}
         </Text>
       </Pressable>
 
@@ -474,7 +479,7 @@ export default function OnboardingScreen({ onComplete }: OnboardingScreenProps) 
             key={index}
             onPress={() => goToStep(index)}
             style={styles.dotTouchTarget}
-            accessibilityLabel={`Ir al paso ${index + 1}`}
+            accessibilityLabel={String(t('onboarding.stepLabel', { step: index + 1 }))}
             accessibilityRole="button">
             <View
               style={[
