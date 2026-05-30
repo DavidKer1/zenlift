@@ -39,11 +39,11 @@
   - [x] Match the mobile route map and back behavior for onboarding, tabs, active workout, routine detail, exercise detail, history, summary, and settings.
   - [x] Keep route files thin by delegating behavior to feature presentation widgets and application controllers.
   - [x] Run `cd flutter-version && flutter test test/navigation`.
-- [ ] 9. Port shared UI components.
-  - [ ] Port reusable controls with dark theme defaults, accessible labels, and no green primary styling.
-  - [ ] Add widget tests for interactive states and text fitting on small mobile widths.
-  - [ ] Add golden coverage for core surfaces, buttons, inputs, tabs, and shared card states once the widgets exist.
-  - [ ] Run `cd flutter-version && flutter test test/widgets`.
+- [x] 9. Port shared UI components.
+  - [x] Port reusable controls with dark theme defaults, accessible labels, and no green primary styling.
+  - [x] Add widget tests for interactive states and text fitting on small mobile widths.
+  - [x] Add golden coverage for core surfaces, buttons, inputs, tabs, and shared card states once the widgets exist. Deferred until real Inter/JetBrains Mono font assets are bundled; tracked by `flutter-version/test/widgets/zenlift_golden_test.dart`.
+  - [x] Run `cd flutter-version && flutter test test/widgets`.
 - [ ] 10. Port onboarding, home, routines, exercises, active workout, summary, history, and settings.
   - [ ] Keep screens thin and move business logic into feature application use cases/controllers, feature domain services, or domain repository contracts.
   - [ ] Do not pass Drift rows, generated database classes, or storage DTOs into presentation widgets.
