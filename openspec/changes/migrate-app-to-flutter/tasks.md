@@ -35,10 +35,10 @@
   - [ ] Write the Flutter cutover marker only after row counts, required UUIDs, and settings keys are verified.
   - [ ] Abort cutover without deleting source data when validation, import, settings write, or verification fails.
   - [ ] Run `cd flutter-version && flutter test test/storage/migration_bridge_test.dart test/storage/settings_store_test.dart`.
-- [ ] 8. Port navigation shell and all routes.
-  - [ ] Match the mobile route map and back behavior for onboarding, tabs, active workout, routine detail, exercise detail, history, summary, and settings.
-  - [ ] Keep route files thin by delegating behavior to feature presentation widgets and application controllers.
-  - [ ] Run `cd flutter-version && flutter test test/navigation`.
+- [x] 8. Port navigation shell and all routes.
+  - [x] Match the mobile route map and back behavior for onboarding, tabs, active workout, routine detail, exercise detail, history, summary, and settings.
+  - [x] Keep route files thin by delegating behavior to feature presentation widgets and application controllers.
+  - [x] Run `cd flutter-version && flutter test test/navigation`.
 - [ ] 9. Port shared UI components.
   - [ ] Port reusable controls with dark theme defaults, accessible labels, and no green primary styling.
   - [ ] Add widget tests for interactive states and text fitting on small mobile widths.
