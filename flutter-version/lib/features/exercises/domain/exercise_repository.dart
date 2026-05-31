@@ -1,3 +1,4 @@
+import '../../../core/optional_field.dart';
 import 'exercise.dart';
 
 class CreateExerciseData {
@@ -44,12 +45,6 @@ class UpdateExerciseData {
       isCustom == null &&
       isFavorite == null &&
       notes == null;
-}
-
-class OptionalField<T> {
-  const OptionalField(this.value);
-
-  final T value;
 }
 
 class MuscleEntry {

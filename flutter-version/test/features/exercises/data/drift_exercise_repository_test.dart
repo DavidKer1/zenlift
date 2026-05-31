@@ -2,6 +2,7 @@ import 'package:drift/drift.dart' hide isNull;
 import 'package:drift/native.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:zenlift/core/date/zenlift_clock.dart';
+import 'package:zenlift/core/optional_field.dart';
 import 'package:zenlift/core/uuid/id_generator.dart';
 import 'package:zenlift/features/exercises/data/drift_exercise_repository.dart';
 import 'package:zenlift/features/exercises/domain/exercise.dart';

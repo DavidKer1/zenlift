@@ -29,6 +29,7 @@
   - [ ] Enable foreign keys and WAL on connection open.
   - [ ] Place repository contracts in feature domain layers and Drift implementations plus row/domain mappers in feature data layers.
   - [x] Port exercise and muscle group repository contracts, Drift implementations, row/domain mappers, seed import, seed fallback, and exercise seed idempotency tests.
+  - [x] Port routine repository contracts, Drift implementations, nested routine mappers, duplicate/reorder transactions, cascade behavior, and SQLite-backed tests.
   - [ ] Add repository tests for routines, exercises, workouts, set logs, PRs, migrations, and seed idempotency.
   - [ ] Run `cd flutter-version && flutter test test/storage`.
 - [ ] 7. Port settings, onboarding completion, and data bridge.
