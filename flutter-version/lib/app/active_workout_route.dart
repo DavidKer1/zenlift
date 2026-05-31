@@ -65,7 +65,13 @@ class _ActiveWorkoutRouteState extends State<ActiveWorkoutRoute> {
         return _controller.state;
       },
       getLatestState: () => _controller.state,
-      onFinish: _controller.finishWorkout,
+      onFinish: () async {
+        final summary = await _controller.finishWorkout();
+        if (context.mounted) {
+          context.go('/workout/summary', extra: summary);
+        }
+        return summary;
+      },
       onCancel: _controller.cancelWorkout,
     );
   }

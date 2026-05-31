@@ -62,6 +62,9 @@
   - [x] Replace the Active Workout placeholder with an injected Flutter UI slice for header timer, exercise cards, previous performance, editable set rows, set type, set notes, pending-save warning, add-set, complete toggle, finish/cancel, loading, and empty recovery states.
   - [x] Wire `/workout/active` to recover persisted sessions through the Drift repository and active-session id store before showing the empty state or returning Home.
   - [x] Add controller and widget tests for Active Workout recovery, quick-start, set logging, autosave callbacks, type/notes editing, completion toggle, finish validation, PR summary, route harnessing, and summary message.
+  - [x] Replace the Workout Summary placeholder with an injected Flutter UI slice for completion state, duration, volume, exercises, sets, PRs, notes, unavailable summary fallback, Home navigation, and History navigation.
+  - [x] Wire Active Workout finish to navigate to `/workout/summary` with the generated summary and wire the summary route to persist notes through the workout repository.
+  - [x] Add widget tests for Workout Summary stats, PR display, notes persistence callback, navigation callbacks, unavailable state, and route harnessing.
   - [ ] Verify a set can be logged in under 3 seconds on Android hardware.
   - [ ] Test Active Workout recovery after app restart with completed sets present.
   - [ ] Run `cd flutter-version && flutter test integration_test/core_loop_test.dart`.

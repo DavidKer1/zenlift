@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'active_workout_route.dart';
 import 'history_route.dart';
 import 'home_route.dart';
+import 'workout_summary_route.dart';
 import '../features/exercises/presentation/exercise_detail_screen.dart';
 import '../features/exercises/presentation/exercise_library_screen.dart';
 import '../features/home/presentation/zenlift_tab_shell.dart';
@@ -12,7 +13,7 @@ import '../features/routines/presentation/routine_detail_screen.dart';
 import '../features/routines/presentation/routine_editor_screen.dart';
 import '../features/routines/presentation/routines_screen.dart';
 import '../features/settings/presentation/settings_screen.dart';
-import '../features/workout/presentation/workout_summary_screen.dart';
+import '../features/workout/application/active_workout_controller.dart';
 
 final zenliftRouter = buildZenliftRouter();
 
@@ -79,6 +80,7 @@ GoRouter buildZenliftRouter({
   WidgetBuilder? homeBuilder,
   WidgetBuilder? historyBuilder,
   WidgetBuilder? activeWorkoutBuilder,
+  WidgetBuilder? workoutSummaryBuilder,
 }) {
   return GoRouter(
     initialLocation: initialLocation,
@@ -162,9 +164,14 @@ GoRouter buildZenliftRouter({
       ),
       GoRoute(
         path: ZenliftRoutes.workoutSummary,
-        builder: (context, state) => const WorkoutSummaryScreen(
-          key: ZenliftRouteKeys.workoutSummaryScreen,
-        ),
+        builder: (context, state) =>
+            workoutSummaryBuilder?.call(context) ??
+            WorkoutSummaryRoute(
+              key: ZenliftRouteKeys.workoutSummaryScreen,
+              summary: state.extra is WorkoutSummary
+                  ? state.extra! as WorkoutSummary
+                  : null,
+            ),
       ),
     ],
   );
