@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:file_picker/file_picker.dart';
+import 'package:share_plus/share_plus.dart';
 
 import '../features/data_portability/application/data_portability_controller.dart';
 import '../features/data_portability/data/drift_data_portability_repository.dart';
@@ -82,8 +84,28 @@ class _SettingsRouteState extends State<SettingsRoute> {
           setState(() => _preferences = preferences);
         }
       },
-      onExportData: _dataPortabilityController.exportToFile,
+      onExportData: _exportData,
+      onImportData: _importData,
       onDeleteData: _dataPortabilityController.deleteAllDataAfterFreshBackup,
     );
+  }
+
+  Future<void> _exportData() async {
+    final path = await _dataPortabilityController.exportToFile();
+    await SharePlus.instance.share(
+      ShareParams(files: [XFile(path)], text: 'Zenlift backup export'),
+    );
+  }
+
+  Future<void> _importData() async {
+    final result = await FilePicker.platform.pickFiles(
+      type: FileType.custom,
+      allowedExtensions: const ['zenlift'],
+    );
+    final path = result?.files.single.path;
+    if (path == null) {
+      return;
+    }
+    await _dataPortabilityController.importFromFile(path);
   }
 }

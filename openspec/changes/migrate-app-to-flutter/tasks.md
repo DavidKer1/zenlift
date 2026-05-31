@@ -106,7 +106,7 @@
   - [x] Block delete-all-data unless a structurally valid `.zenlift` backup is supplied.
   - [x] Add a path-provider backed file store that writes validated exports to a temporary `.zenlift` cache file and can parse local import files.
   - [x] Add a data portability controller for export-to-file, import-from-file, and delete-all-data-after-fresh-backup orchestration.
-  - [x] Wire the Settings tab to real settings persistence plus export and backup-gated delete callbacks.
+  - [x] Wire the Settings tab to real settings persistence, `.zenlift` export sharing, `.zenlift` import file picking, and backup-gated delete callbacks.
   - [x] Add SQLite-backed tests for export metadata/tables, import skip/insert behavior, rollback on dependent failure, and backup-gated deletion.
   - [ ] Run `cd flutter-version && flutter test test/storage/data_export_test.dart test/storage/data_import_test.dart test/storage/data_delete_test.dart`.
 - [ ] 12. Add golden, widget, repository, domain, and integration smoke coverage.
