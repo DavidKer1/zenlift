@@ -220,6 +220,8 @@ GoRouter buildTestRouter({String initialLocation = ZenliftRoutes.home}) {
         const _RoutinesRouteStub(key: ZenliftRouteKeys.routinesScreen),
     historyBuilder: (context) =>
         const _HistoryRouteStub(key: ZenliftRouteKeys.historyScreen),
+    settingsBuilder: (context) =>
+        const _SettingsRouteStub(key: ZenliftRouteKeys.settingsScreen),
     exerciseLibraryBuilder: (context) => const _ExerciseLibraryRouteStub(
       key: ZenliftRouteKeys.exerciseLibraryScreen,
     ),
@@ -323,6 +325,15 @@ class _HistoryRouteStub extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const Scaffold(body: Center(child: Text('History')));
+  }
+}
+
+class _SettingsRouteStub extends StatelessWidget {
+  const _SettingsRouteStub({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const Scaffold(body: Center(child: Text('Settings')));
   }
 }
 

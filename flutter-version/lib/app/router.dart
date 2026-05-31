@@ -10,10 +10,10 @@ import 'home_route.dart';
 import 'routine_detail_route.dart';
 import 'routine_editor_route.dart';
 import 'routines_route.dart';
+import 'settings_route.dart';
 import 'workout_summary_route.dart';
 import '../features/home/presentation/zenlift_tab_shell.dart';
 import '../features/onboarding/presentation/onboarding_screen.dart';
-import '../features/settings/presentation/settings_screen.dart';
 import '../features/workout/application/active_workout_controller.dart';
 
 final zenliftRouter = buildZenliftRouter();
@@ -89,6 +89,7 @@ GoRouter buildZenliftRouter({
   WidgetBuilder? routinesBuilder,
   WidgetBuilder? historyBuilder,
   WidgetBuilder? exerciseLibraryBuilder,
+  WidgetBuilder? settingsBuilder,
   WidgetBuilder? activeWorkoutBuilder,
   WidgetBuilder? workoutSummaryBuilder,
   Widget Function(BuildContext context, String routineId)? routineDetailBuilder,
@@ -140,7 +141,8 @@ GoRouter buildZenliftRouter({
           GoRoute(
             path: ZenliftRoutes.settings,
             builder: (context, state) =>
-                const SettingsScreen(key: ZenliftRouteKeys.settingsScreen),
+                settingsBuilder?.call(context) ??
+                const SettingsRoute(key: ZenliftRouteKeys.settingsScreen),
           ),
         ],
       ),

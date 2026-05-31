@@ -35,3 +35,18 @@ abstract interface class DataPortabilityRepository {
 
   Future<void> deleteAllData({required ZenliftExportData verifiedBackup});
 }
+
+class ZenliftImportFile {
+  const ZenliftImportFile({
+    required this.decodedJson,
+    required this.fileSizeBytes,
+  });
+
+  final Map<String, Object?> decodedJson;
+  final int fileSizeBytes;
+}
+
+abstract interface class DataPortabilityFileStore {
+  Future<String> writeExportFile(ZenliftExportData export);
+  Future<ZenliftImportFile> readImportFile(String path);
+}
