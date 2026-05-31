@@ -64,6 +64,17 @@ void main() {
 
     expect(preferences.isOnboardingCompleted, isTrue);
   });
+
+  test('clears persisted settings through the repository contract', () async {
+    await controller.setWeightUnit(WeightUnit.lb);
+    await controller.setThemeMode(ZenliftThemeMode.system);
+    await controller.setWeeklyGoal(5);
+    await controller.markOnboardingCompleted();
+
+    final preferences = await controller.clearPreferences();
+
+    expect(preferences, SettingsPreferences.defaults());
+  });
 }
 
 class InMemorySettingsRepository implements SettingsRepository {
@@ -100,6 +111,14 @@ class InMemorySettingsRepository implements SettingsRepository {
   @override
   Future<void> setWeightUnit(WeightUnit weightUnit) async {
     _weightUnit = weightUnit.value;
+  }
+
+  @override
+  Future<void> clearPreferences() async {
+    _weightUnit = null;
+    _themeMode = null;
+    _weeklyGoal = null;
+    _isOnboardingCompleted = null;
   }
 
   void seedRaw({String? weightUnit, String? themeMode, String? weeklyGoal}) {

@@ -21,6 +21,7 @@ class SettingsRoute extends StatefulWidget {
 class _SettingsRouteState extends State<SettingsRoute> {
   late final AppDatabase _database;
   late final SettingsController _settingsController;
+  late final SharedPreferencesSettingsRepository _settingsRepository;
   late final DataPortabilityController _dataPortabilityController;
   SettingsPreferences? _preferences;
   var _isLoading = true;
@@ -29,9 +30,10 @@ class _SettingsRouteState extends State<SettingsRoute> {
   void initState() {
     super.initState();
     _database = AppDatabase();
-    _settingsController = SettingsController(
-      SharedPreferencesSettingsRepository(),
+    _settingsRepository = SharedPreferencesSettingsRepository.withDatabase(
+      database: _database,
     );
+    _settingsController = SettingsController(_settingsRepository);
     _dataPortabilityController = DataPortabilityController(
       repository: DriftDataPortabilityRepository(_database),
       fileStore: PathProviderDataPortabilityFileStore(),
@@ -86,7 +88,7 @@ class _SettingsRouteState extends State<SettingsRoute> {
       },
       onExportData: _exportData,
       onImportData: _importData,
-      onDeleteData: _dataPortabilityController.deleteAllDataAfterFreshBackup,
+      onDeleteData: _deleteData,
     );
   }
 
@@ -107,5 +109,14 @@ class _SettingsRouteState extends State<SettingsRoute> {
       return;
     }
     await _dataPortabilityController.importFromFile(path);
+    await _load();
+  }
+
+  Future<void> _deleteData() async {
+    await _dataPortabilityController.deleteAllDataAfterFreshBackup();
+    final preferences = await _settingsController.clearPreferences();
+    if (mounted) {
+      setState(() => _preferences = preferences);
+    }
   }
 }

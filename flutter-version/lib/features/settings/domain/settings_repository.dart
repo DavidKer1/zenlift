@@ -11,4 +11,6 @@ abstract interface class SettingsRepository {
   Future<void> setWeeklyGoal(int weeklyGoal);
 
   Future<void> setOnboardingCompleted(bool isCompleted);
+
+  Future<void> clearPreferences();
 }

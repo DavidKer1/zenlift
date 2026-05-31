@@ -17,11 +17,14 @@ void main() {
     expect(await controller.isCompleted(), isFalse);
   });
 
-  test('marks onboarding completed without exposing settings internals', () async {
-    await controller.complete();
+  test(
+    'marks onboarding completed without exposing settings internals',
+    () async {
+      await controller.complete();
 
-    expect(await controller.isCompleted(), isTrue);
-  });
+      expect(await controller.isCompleted(), isTrue);
+    },
+  );
 }
 
 class InMemorySettingsRepository implements SettingsRepository {
@@ -48,5 +51,10 @@ class InMemorySettingsRepository implements SettingsRepository {
   @override
   Future<void> setWeightUnit(WeightUnit weightUnit) async {
     _preferences = _preferences.copyWith(weightUnit: weightUnit);
+  }
+
+  @override
+  Future<void> clearPreferences() async {
+    _preferences = SettingsPreferences.defaults();
   }
 }

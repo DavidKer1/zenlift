@@ -94,12 +94,12 @@
   - [ ] Verify a set can be logged in under 3 seconds on Android hardware.
   - [ ] Test Active Workout recovery after app restart with completed sets present.
   - [ ] Run `cd flutter-version && flutter test integration_test/core_loop_test.dart`.
-- [ ] 11. Port export, import, and delete data.
-  - [ ] Export a `.zenlift` file containing all required tables, metadata, settings, and text UUIDs.
-  - [ ] Import valid files by merge-by-UUID with no overwrite of existing records.
-  - [ ] Reject invalid or unsupported files before any SQLite/settings write.
-  - [ ] Roll back inserted rows when import fails mid-transaction and preserve Expo SQLite/MMKV source data.
-  - [ ] Require a verified fresh export before destructive migration cleanup or delete-all-data can proceed.
+- [x] 11. Port export, import, and delete data.
+  - [x] Export a `.zenlift` file containing all required tables, metadata, settings, and text UUIDs.
+  - [x] Import valid files by merge-by-UUID with no overwrite of existing records.
+  - [x] Reject invalid or unsupported files before any SQLite/settings write.
+  - [x] Roll back inserted rows when import fails mid-transaction and preserve Expo SQLite/MMKV source data.
+  - [x] Require a verified fresh export before destructive migration cleanup or delete-all-data can proceed.
   - [x] Add Drift data portability repository contract and implementation for exporting all required tables with metadata and text UUIDs.
   - [x] Execute validated import plans against Drift in parent-before-child order, skipping existing UUIDs without overwriting local rows.
   - [x] Wrap import and delete operations in Drift transactions so failed dependent writes roll back inserted rows.
@@ -108,7 +108,8 @@
   - [x] Add a data portability controller for export-to-file, import-from-file, and delete-all-data-after-fresh-backup orchestration.
   - [x] Wire the Settings tab to real settings persistence, `.zenlift` export sharing, `.zenlift` import file picking, and backup-gated delete callbacks.
   - [x] Add SQLite-backed tests for export metadata/tables, import skip/insert behavior, rollback on dependent failure, and backup-gated deletion.
-  - [ ] Run `cd flutter-version && flutter test test/storage/data_export_test.dart test/storage/data_import_test.dart test/storage/data_delete_test.dart`.
+  - [x] Mirror active SharedPreferences settings into Drift `app_settings`, reload imported settings fallback values, and clear settings from both stores after backup-gated delete.
+  - [x] Run `cd flutter-version && flutter test test/features/data_portability test/features/settings/data/shared_preferences_settings_repository_test.dart`.
 - [ ] 12. Add golden, widget, repository, domain, and integration smoke coverage.
   - [ ] Ensure the migrated areas have matching Dart tests before each screen is marked complete.
   - [ ] Run Clean Architecture boundary scans: `rg -n "package:flutter|package:flutter_riverpod|package:drift|sqlite3|drift_database" flutter-version/lib/features/*/domain flutter-version/lib/core` and `rg -n "package:drift|drift_database|\\.g\\.dart" flutter-version/lib/features/*/presentation flutter-version/lib/features/*/application`; both should return no matches except documented false positives.

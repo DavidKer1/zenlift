@@ -36,4 +36,9 @@ class SettingsController {
     await _repository.setOnboardingCompleted(true);
     return load();
   }
+
+  Future<SettingsPreferences> clearPreferences() async {
+    await _repository.clearPreferences();
+    return load();
+  }
 }
