@@ -94,6 +94,54 @@ class UpdateRoutineExerciseData {
       sortOrder == null;
 }
 
+class RoutineDraft {
+  const RoutineDraft({
+    this.id,
+    required this.name,
+    this.description,
+    this.goal,
+    required this.days,
+  });
+
+  final String? id;
+  final String name;
+  final String? description;
+  final String? goal;
+  final List<RoutineDayDraft> days;
+}
+
+class RoutineDayDraft {
+  const RoutineDayDraft({
+    this.id,
+    required this.name,
+    this.dayOfWeek,
+    required this.exercises,
+  });
+
+  final String? id;
+  final String name;
+  final int? dayOfWeek;
+  final List<RoutineExerciseDraft> exercises;
+}
+
+class RoutineExerciseDraft {
+  const RoutineExerciseDraft({
+    this.id,
+    required this.exerciseId,
+    this.targetSets,
+    this.targetRepsMin,
+    this.targetRepsMax,
+    this.notes,
+  });
+
+  final String? id;
+  final String exerciseId;
+  final int? targetSets;
+  final int? targetRepsMin;
+  final int? targetRepsMax;
+  final String? notes;
+}
+
 abstract interface class RoutineRepository {
   Future<List<RoutineEntity>> getAll({bool includeArchived = false});
   Future<List<RoutineWithCounts>> getAllWithDayCount({
@@ -123,4 +171,5 @@ abstract interface class RoutineRepository {
   Future<void> updateExercise(String id, UpdateRoutineExerciseData updates);
   Future<void> deleteExercise(String id);
   Future<void> reorderExercises(String dayId, List<String> exerciseIds);
+  Future<FullRoutine> saveDraft(RoutineDraft draft);
 }

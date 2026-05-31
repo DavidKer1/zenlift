@@ -215,6 +215,13 @@ GoRouter buildTestRouter({String initialLocation = ZenliftRoutes.home}) {
       key: ZenliftRouteKeys.routineDetailScreen,
       routineId: routineId,
     ),
+    routineCreateBuilder: (context) => const _RoutineCreateRouteStub(
+      key: ZenliftRouteKeys.routineCreateScreen,
+    ),
+    routineEditBuilder: (context, routineId) => _RoutineEditRouteStub(
+      key: ZenliftRouteKeys.routineEditScreen,
+      routineId: routineId,
+    ),
     exerciseDetailBuilder: (context, exerciseId) => _ExerciseDetailRouteStub(
       key: ZenliftRouteKeys.exerciseDetailScreen,
       exerciseId: exerciseId,
@@ -258,6 +265,33 @@ class _RoutineDetailRouteStub extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [const Text('Routine detail'), Text(routineId)],
+        ),
+      ),
+    );
+  }
+}
+
+class _RoutineCreateRouteStub extends StatelessWidget {
+  const _RoutineCreateRouteStub({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const Scaffold(body: Center(child: Text('Create routine')));
+  }
+}
+
+class _RoutineEditRouteStub extends StatelessWidget {
+  const _RoutineEditRouteStub({required this.routineId, super.key});
+
+  final String routineId;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Center(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [const Text('Edit routine'), Text(routineId)],
         ),
       ),
     );

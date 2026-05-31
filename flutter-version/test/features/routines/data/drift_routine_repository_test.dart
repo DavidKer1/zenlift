@@ -317,4 +317,73 @@ void main() {
 
     expect(await repository.getById('routine-copy'), isNull);
   });
+
+  test(
+    'saveDraft creates and updates nested routine templates atomically',
+    () async {
+      final created = await repository.saveDraft(
+        const RoutineDraft(
+          id: 'routine-draft',
+          name: 'Full Body',
+          days: [
+            RoutineDayDraft(
+              id: 'day-draft',
+              name: 'Día 1',
+              exercises: [
+                RoutineExerciseDraft(
+                  id: 'routine-exercise-draft',
+                  exerciseId: 'exercise-bench',
+                  targetSets: 3,
+                  targetRepsMin: 8,
+                  targetRepsMax: 10,
+                ),
+              ],
+            ),
+          ],
+        ),
+      );
+
+      expect(created.routine.name, 'Full Body');
+      expect(created.days.single.day.id, 'day-draft');
+      expect(
+        created.days.single.exercises.single.routineExercise.targetSets,
+        3,
+      );
+
+      final updated = await repository.saveDraft(
+        const RoutineDraft(
+          id: 'routine-draft',
+          name: 'Full Body A',
+          description: 'Updated template',
+          days: [
+            RoutineDayDraft(
+              id: 'day-draft',
+              name: 'Día único',
+              exercises: [
+                RoutineExerciseDraft(
+                  id: 'routine-exercise-draft',
+                  exerciseId: 'exercise-row',
+                  targetSets: 4,
+                ),
+              ],
+            ),
+          ],
+        ),
+      );
+
+      expect(updated.routine.id, 'routine-draft');
+      expect(updated.routine.name, 'Full Body A');
+      expect(updated.routine.description, 'Updated template');
+      expect(updated.days.single.day.name, 'Día único');
+      expect(
+        updated.days.single.exercises.single.routineExercise.id,
+        'routine-exercise-draft',
+      );
+      expect(updated.days.single.exercises.single.exercise.id, 'exercise-row');
+      expect(
+        updated.days.single.exercises.single.routineExercise.targetSets,
+        4,
+      );
+    },
+  );
 }

@@ -432,6 +432,153 @@ ORDER BY r.sort_order ASC
     });
   }
 
+  @override
+  Future<FullRoutine> saveDraft(RoutineDraft draft) async {
+    final routineId = draft.id ?? _idGenerator.generate();
+    final now = dateToStorage(_clock.now());
+
+    await _database.transaction(() async {
+      final existingRoutine = await (_database.select(
+        _database.routines,
+      )..where((table) => table.id.equals(routineId))).getSingleOrNull();
+
+      if (existingRoutine == null) {
+        await _database
+            .into(_database.routines)
+            .insert(
+              drift_db.RoutinesCompanion.insert(
+                id: routineId,
+                name: draft.name,
+                description: Value(draft.description),
+                goal: Value(draft.goal),
+                isArchived: const Value(false),
+                sortOrder: const Value(0),
+                createdAt: Value(now),
+                updatedAt: Value(now),
+              ),
+            );
+      } else {
+        await (_database.update(
+          _database.routines,
+        )..where((table) => table.id.equals(routineId))).write(
+          drift_db.RoutinesCompanion(
+            name: Value(draft.name),
+            description: Value(draft.description),
+            goal: Value(draft.goal),
+            updatedAt: Value(now),
+          ),
+        );
+      }
+
+      final existingDays = await (_database.select(
+        _database.routineDays,
+      )..where((table) => table.routineId.equals(routineId))).get();
+      final draftDayIds = draft.days
+          .map((day) => day.id)
+          .whereType<String>()
+          .toSet();
+      for (final day in existingDays) {
+        if (!draftDayIds.contains(day.id)) {
+          await (_database.delete(
+            _database.routineDays,
+          )..where((table) => table.id.equals(day.id))).go();
+        }
+      }
+
+      for (var dayIndex = 0; dayIndex < draft.days.length; dayIndex += 1) {
+        final dayDraft = draft.days[dayIndex];
+        final dayId = dayDraft.id ?? _idGenerator.generate();
+        final existingDay = existingDays
+            .where((day) => day.id == dayId)
+            .firstOrNull;
+        if (existingDay == null) {
+          await _database
+              .into(_database.routineDays)
+              .insert(
+                drift_db.RoutineDaysCompanion.insert(
+                  id: dayId,
+                  routineId: routineId,
+                  name: dayDraft.name,
+                  dayOfWeek: Value(dayDraft.dayOfWeek),
+                  sortOrder: Value(dayIndex),
+                ),
+              );
+        } else {
+          await (_database.update(
+            _database.routineDays,
+          )..where((table) => table.id.equals(dayId))).write(
+            drift_db.RoutineDaysCompanion(
+              name: Value(dayDraft.name),
+              dayOfWeek: Value(dayDraft.dayOfWeek),
+              sortOrder: Value(dayIndex),
+            ),
+          );
+        }
+
+        final existingExercises = await (_database.select(
+          _database.routineExercises,
+        )..where((table) => table.routineDayId.equals(dayId))).get();
+        final draftExerciseIds = dayDraft.exercises
+            .map((exercise) => exercise.id)
+            .whereType<String>()
+            .toSet();
+        for (final exercise in existingExercises) {
+          if (!draftExerciseIds.contains(exercise.id)) {
+            await (_database.delete(
+              _database.routineExercises,
+            )..where((table) => table.id.equals(exercise.id))).go();
+          }
+        }
+
+        for (
+          var exerciseIndex = 0;
+          exerciseIndex < dayDraft.exercises.length;
+          exerciseIndex += 1
+        ) {
+          final exerciseDraft = dayDraft.exercises[exerciseIndex];
+          final routineExerciseId = exerciseDraft.id ?? _idGenerator.generate();
+          final existingExercise = existingExercises
+              .where((exercise) => exercise.id == routineExerciseId)
+              .firstOrNull;
+          final companion = drift_db.RoutineExercisesCompanion(
+            exerciseId: Value(exerciseDraft.exerciseId),
+            targetSets: Value(exerciseDraft.targetSets),
+            targetRepsMin: Value(exerciseDraft.targetRepsMin),
+            targetRepsMax: Value(exerciseDraft.targetRepsMax),
+            notes: Value(exerciseDraft.notes),
+            sortOrder: Value(exerciseIndex),
+          );
+          if (existingExercise == null) {
+            await _database
+                .into(_database.routineExercises)
+                .insert(
+                  drift_db.RoutineExercisesCompanion.insert(
+                    id: routineExerciseId,
+                    routineDayId: dayId,
+                    exerciseId: exerciseDraft.exerciseId,
+                    targetSets: Value(exerciseDraft.targetSets),
+                    targetRepsMin: Value(exerciseDraft.targetRepsMin),
+                    targetRepsMax: Value(exerciseDraft.targetRepsMax),
+                    notes: Value(exerciseDraft.notes),
+                    sortOrder: Value(exerciseIndex),
+                  ),
+                );
+          } else {
+            await (_database.update(_database.routineExercises)
+                  ..where((table) => table.id.equals(routineExerciseId)))
+                .write(companion);
+          }
+        }
+      }
+    });
+
+    final saved = await getFullRoutine(routineId);
+    if (saved == null) {
+      throw StateError('Saved routine $routineId could not be read back.');
+    }
+    return saved;
+  }
+
   Future<void> _setArchived(String id, {required bool archived}) async {
     await (_database.update(
       _database.routines,

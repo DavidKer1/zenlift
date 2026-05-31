@@ -7,11 +7,11 @@ import 'exercise_library_route.dart';
 import 'history_route.dart';
 import 'home_route.dart';
 import 'routine_detail_route.dart';
+import 'routine_editor_route.dart';
 import 'routines_route.dart';
 import 'workout_summary_route.dart';
 import '../features/home/presentation/zenlift_tab_shell.dart';
 import '../features/onboarding/presentation/onboarding_screen.dart';
-import '../features/routines/presentation/routine_editor_screen.dart';
 import '../features/settings/presentation/settings_screen.dart';
 import '../features/workout/application/active_workout_controller.dart';
 
@@ -86,6 +86,8 @@ GoRouter buildZenliftRouter({
   Widget Function(BuildContext context, String routineId)? routineDetailBuilder,
   Widget Function(BuildContext context, String exerciseId)?
   exerciseDetailBuilder,
+  WidgetBuilder? routineCreateBuilder,
+  Widget Function(BuildContext context, String routineId)? routineEditBuilder,
 }) {
   return GoRouter(
     initialLocation: initialLocation,
@@ -139,16 +141,22 @@ GoRouter buildZenliftRouter({
       ),
       GoRoute(
         path: ZenliftRoutes.routineCreate,
-        builder: (context, state) => const RoutineEditorScreen.create(
-          key: ZenliftRouteKeys.routineCreateScreen,
-        ),
+        builder: (context, state) =>
+            routineCreateBuilder?.call(context) ??
+            const RoutineEditorRoute.create(
+              key: ZenliftRouteKeys.routineCreateScreen,
+            ),
       ),
       GoRoute(
         path: ZenliftRoutes.routineEdit,
-        builder: (context, state) => RoutineEditorScreen.edit(
-          key: ZenliftRouteKeys.routineEditScreen,
-          routineId: state.pathParameters['id'] ?? '',
-        ),
+        builder: (context, state) {
+          final routineId = state.pathParameters['id'] ?? '';
+          return routineEditBuilder?.call(context, routineId) ??
+              RoutineEditorRoute.edit(
+                key: ZenliftRouteKeys.routineEditScreen,
+                routineId: routineId,
+              );
+        },
       ),
       GoRoute(
         path: ZenliftRoutes.routineDetail,

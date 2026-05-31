@@ -425,6 +425,11 @@ class _FakeRoutineRepository implements RoutineRepository {
   }
 
   @override
+  Future<FullRoutine> saveDraft(RoutineDraft draft) {
+    throw UnimplementedError();
+  }
+
+  @override
   Future<void> unarchive(String id) {
     throw UnimplementedError();
   }
