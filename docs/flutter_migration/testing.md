@@ -106,3 +106,10 @@ If a command cannot run because of missing Flutter, missing Android tooling, no 
 - Clean Architecture import scans have no matches for Flutter/Riverpod/Drift leakage into feature domain/application or generated storage rows into presentation/application.
 - `file_picker` currently emits an iOS Swift Package Manager support warning and CocoaPods deprecation warnings during simulator builds; this is not blocking current tests but should be revisited before iOS release hardening.
 - Font binaries for Inter and JetBrains Mono are not present in this repo yet; real font assets must be added before declaring final typography pixel parity complete.
+
+## Expo Baseline Results
+
+- `pnpm test` passes: 23 suites, 237 tests.
+- `pnpm typecheck` fails in the current Expo source because `src/app/workout/active.tsx` and `src/components/workout/ActiveWorkoutModal.tsx` pass `isExpanded` to `WorkoutExerciseCard`, but `WorkoutExerciseCardProps` no longer declares that prop.
+- `pnpm test:agent:ios` is blocked because Maestro is not installed: `maestro is required`.
+- `pnpm test:agent:web` started Expo/Playwright on port 8081 but produced no test progress after roughly one minute, so it was terminated to avoid leaving local server processes running.

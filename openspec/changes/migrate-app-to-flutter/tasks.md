@@ -1,9 +1,9 @@
 # Tasks
 
-- [ ] 1. Freeze current Expo baseline and document parity gates.
-  - [ ] Capture the current Expo core loop behavior with screenshots or notes for create routine, start workout, log completed sets, finish session, history, progress, settings export/import, and delete data.
-  - [ ] Run the current Expo verification commands listed in `package.json` for typecheck, unit tests, and agent mobile smoke where the environment supports them.
-  - [ ] Record any environment-limited failures with command, error text, URL/device, and whether the blocker is external to the code.
+- [x] 1. Freeze current Expo baseline and document parity gates.
+  - [x] Capture the current Expo core loop behavior with screenshots or notes for create routine, start workout, log completed sets, finish session, history, progress, settings export/import, and delete data.
+  - [x] Run the current Expo verification commands listed in `package.json` for typecheck, unit tests, and agent mobile smoke where the environment supports them.
+  - [x] Record any environment-limited failures with command, error text, URL/device, and whether the blocker is external to the code.
 - [x] 2. Create OpenSpec migration proposal, design, task checklist, and Flutter deltas.
   - [x] Update `proposal.md` with migration scope, non-goals, parity gate, and data-safety contract.
   - [x] Update `design.md` with Flutter architecture, state, storage, first-launch cutover, import rollback, backup verification, and completed-set pending-write behavior.
