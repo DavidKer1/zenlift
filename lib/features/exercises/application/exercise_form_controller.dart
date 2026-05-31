@@ -19,10 +19,14 @@ class ExerciseFormController {
 
   Future<ExerciseFormState> loadCreate() async {
     try {
+      final muscleGroups = await muscleGroupRepository.getAll();
       return ExerciseFormState(
         mode: ExerciseFormMode.create,
         draft: ExerciseFormState.createEmpty.draft,
-        muscleGroups: await muscleGroupRepository.getAll(),
+        muscleGroups: muscleGroups,
+        errorMessage: muscleGroups.isEmpty
+            ? 'No se pudieron cargar los músculos.'
+            : null,
       );
     } catch (error) {
       return ExerciseFormState(
@@ -69,8 +73,8 @@ class ExerciseFormController {
           id: exercise.id,
           name: exercise.name,
           primaryMuscleGroupId: primary ?? '',
-          equipment: exercise.equipment,
-          category: exercise.category,
+          equipment: normalizeExerciseEquipment(exercise.equipment),
+          category: normalizeExerciseCategory(exercise.category),
           secondaryMuscleGroupIds: secondary,
           notes: exercise.notes,
         ),
@@ -145,8 +149,8 @@ class ExerciseFormController {
       id: draft.id,
       name: draft.name.trim(),
       primaryMuscleGroupId: draft.primaryMuscleGroupId,
-      equipment: draft.equipment,
-      category: draft.category,
+      equipment: normalizeExerciseEquipment(draft.equipment),
+      category: normalizeExerciseCategory(draft.category),
       secondaryMuscleGroupIds: secondary,
       notes: notes.isEmpty ? null : notes,
     );

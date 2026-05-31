@@ -209,6 +209,8 @@ class _ExerciseFormScreenState extends State<ExerciseFormScreen> {
   Widget build(BuildContext context) {
     final missingEdit = _isEditing && (_state?.hasError ?? false);
     final state = _state ?? ExerciseFormState.createEmpty;
+    final missingMuscleOptions =
+        !_isEditing && state.muscleGroups.isEmpty && state.hasError;
 
     return Scaffold(
       appBar: AppBar(
@@ -224,6 +226,11 @@ class _ExerciseFormScreenState extends State<ExerciseFormScreen> {
             ? const Center(child: CircularProgressIndicator())
             : missingEdit
             ? _MissingExercise(onBackToExercises: widget.onBackToExercises)
+            : missingMuscleOptions
+            ? _ExerciseFormUnavailable(
+                message: state.errorMessage!,
+                onBackToExercises: widget.onBackToExercises,
+              )
             : ListView(
                 padding: const EdgeInsets.fromLTRB(
                   ZenliftSpacing.lateral,
@@ -437,6 +444,40 @@ class _ValidationSummary extends StatelessWidget {
               ],
             ),
         ],
+      ),
+    );
+  }
+}
+
+class _ExerciseFormUnavailable extends StatelessWidget {
+  const _ExerciseFormUnavailable({
+    required this.message,
+    required this.onBackToExercises,
+  });
+
+  final String message;
+  final Future<void> Function() onBackToExercises;
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = Theme.of(context).colorScheme;
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(ZenliftSpacing.lateral),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(Icons.error_outline, size: 40, color: colors.onSurfaceVariant),
+            const SizedBox(height: ZenliftSpacing.stackMd),
+            Text(message, style: Theme.of(context).textTheme.titleMedium),
+            const SizedBox(height: ZenliftSpacing.stackMd),
+            FilledButton(
+              key: const Key('exercise-form-back-to-exercises'),
+              onPressed: onBackToExercises,
+              child: const Text('Volver a ejercicios'),
+            ),
+          ],
+        ),
       ),
     );
   }

@@ -195,6 +195,32 @@ void main() {
     );
   });
 
+  test(
+    'getByEquipment matches legacy and canonical equipment values',
+    () async {
+      await insertExercise(
+        id: 'exercise-legacy-press',
+        name: 'Legacy Press',
+        equipment: 'Barbell',
+        category: 'Chest',
+      );
+      await insertExerciseMuscle(
+        id: 'em-legacy-press-chest',
+        exerciseId: 'exercise-legacy-press',
+        muscleGroupId: 'muscle-chest',
+        role: MuscleRole.primary,
+      );
+
+      final exercises = await repository.getByEquipment('barbell');
+
+      expect(exercises.map((exercise) => exercise.name), <String>[
+        'Barbell Row',
+        'Bench Press',
+        'Legacy Press',
+      ]);
+    },
+  );
+
   test('getMuscles and MuscleGroupRepository return domain entities', () async {
     final muscles = await repository.getMuscles('exercise-bench');
     final allGroups = await muscleGroupRepository.getAll();

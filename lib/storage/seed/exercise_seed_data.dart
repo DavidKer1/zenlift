@@ -192,6 +192,38 @@ Future<void> seedIfEmpty(AppDatabase database) async {
   }
 }
 
+Future<void> ensureExerciseCatalogSeeded(
+  AppDatabase database, {
+  ExerciseSeedData? seedData,
+  DateTime? now,
+}) async {
+  final data = seedData ?? await loadExerciseSeedData();
+  final requiredExerciseMuscles = data.exercises.fold<int>(
+    0,
+    (total, exercise) => total + exercise.muscles.length,
+  );
+
+  final muscleGroupCount = await _countRows(database, 'muscle_groups');
+  final exerciseCount = await _countRows(database, 'exercises');
+  final exerciseMuscleCount = await _countRows(database, 'exercise_muscles');
+
+  final catalogLooksComplete =
+      muscleGroupCount >= data.muscleGroups.length &&
+      exerciseCount >= data.exercises.length &&
+      exerciseMuscleCount >= requiredExerciseMuscles;
+
+  if (!catalogLooksComplete) {
+    await seedDatabase(database, seedData: data, now: now);
+  }
+}
+
+Future<int> _countRows(AppDatabase database, String tableName) async {
+  final row = await database
+      .customSelect('SELECT COUNT(*) AS count FROM $tableName')
+      .getSingle();
+  return row.read<int>('count');
+}
+
 String generateSeedId(String prefix, String name) {
   final h1 = _simpleHash('$prefix:$name');
   final h2 = _simpleHash('$prefix:$name:h2');

@@ -71,12 +71,20 @@ class DriftExerciseRepository implements ExerciseRepository {
 
   @override
   Future<List<ExerciseEntity>> getByEquipment(String equipment) async {
-    final rows =
-        await (_database.select(_database.exercises)
-              ..where((table) => table.equipment.equals(equipment))
-              ..orderBy([(row) => OrderingTerm.asc(row.name)]))
-            .get();
-    return rows.map(exerciseFromRow).toList();
+    final normalized = normalizeExerciseEquipment(equipment);
+    final rows = await _database
+        .customSelect(
+          '''
+SELECT *
+FROM exercises
+WHERE lower(replace(equipment, ' ', '_')) = ?
+ORDER BY name
+''',
+          variables: [Variable<String>(normalized)],
+          readsFrom: {_database.exercises},
+        )
+        .get();
+    return rows.map(_exerciseFromQueryRow).toList();
   }
 
   @override

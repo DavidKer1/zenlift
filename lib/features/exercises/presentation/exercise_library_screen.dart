@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import '../../../theme/zenlift_radii.dart';
 import '../../../theme/zenlift_spacing.dart';
 import '../domain/exercise.dart';
+import '../domain/exercise_form.dart';
 import '../domain/exercise_library.dart';
 
 typedef ExerciseLibraryLoader =
@@ -161,7 +162,8 @@ class _ExerciseLibraryScreenState extends State<ExerciseLibraryScreen> {
   Widget build(BuildContext context) {
     final state = _state ?? ExerciseLibraryState.empty;
     final equipmentOptions = {
-      for (final item in state.exercises) item.exercise.equipment,
+      for (final item in state.exercises)
+        normalizeExerciseEquipment(item.exercise.equipment),
     }.toList()..sort();
 
     return Scaffold(
@@ -340,7 +342,7 @@ class _EquipmentFilters extends StatelessWidget {
               padding: const EdgeInsets.only(right: ZenliftSpacing.stackSm),
               child: FilterChip(
                 key: Key('exercise-library-equipment-$option'),
-                label: Text(option),
+                label: Text(exerciseEquipmentLabel(option)),
                 selected: selected == option,
                 onSelected: (_) => onChanged(option),
               ),
@@ -398,7 +400,7 @@ class _ExerciseCard extends StatelessWidget {
                     Text(
                       [
                         item.primaryMuscle?.displayNameEs,
-                        item.exercise.equipment,
+                        exerciseEquipmentLabel(item.exercise.equipment),
                       ].whereType<String>().join(' · '),
                       style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                         color: colors.onSurfaceVariant,

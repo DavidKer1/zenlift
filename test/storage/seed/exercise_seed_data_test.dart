@@ -89,6 +89,39 @@ GROUP BY e.id
     expect(await countRows('exercises'), 0);
   });
 
+  test('ensureExerciseCatalogSeeded seeds an empty catalog', () async {
+    await ensureExerciseCatalogSeeded(
+      database,
+      now: DateTime.utc(2026, 5, 30, 12),
+    );
+
+    expect(await countRows('muscle_groups'), 13);
+    expect(await countRows('exercises'), 25);
+    expect(await countRows('exercise_muscles'), 37);
+  });
+
+  test('ensureExerciseCatalogSeeded repairs missing exercises', () async {
+    await database
+        .into(database.muscleGroups)
+        .insert(
+          MuscleGroupsCompanion.insert(
+            id: 'a1b2c3d4-0001-4000-8000-000000000001',
+            name: 'Chest',
+            displayNameEs: 'Pecho',
+            color: '#EF4444',
+          ),
+        );
+
+    await ensureExerciseCatalogSeeded(
+      database,
+      now: DateTime.utc(2026, 5, 30, 12),
+    );
+
+    expect(await countRows('muscle_groups'), 13);
+    expect(await countRows('exercises'), 25);
+    expect(await countRows('exercise_muscles'), 37);
+  });
+
   test(
     'seedDatabase rolls back all seed rows when a relation is invalid',
     () async {
@@ -122,10 +155,16 @@ GROUP BY e.id
     },
   );
 
-  test('generateSeedId is deterministic and matches seeded relationship IDs', () {
-    expect(
-      generateSeedId('em', 'Bench Press:a1b2c3d4-0001-4000-8000-000000000001'),
-      'cfae574e-c0e2-40e3-80e4-000008cec0e5',
-    );
-  });
+  test(
+    'generateSeedId is deterministic and matches seeded relationship IDs',
+    () {
+      expect(
+        generateSeedId(
+          'em',
+          'Bench Press:a1b2c3d4-0001-4000-8000-000000000001',
+        ),
+        'cfae574e-c0e2-40e3-80e4-000008cec0e5',
+      );
+    },
+  );
 }

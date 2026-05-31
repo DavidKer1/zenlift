@@ -113,3 +113,64 @@ class ExerciseFormValidationResult {
   final List<String> messages;
   bool get isValid => messages.isEmpty;
 }
+
+String normalizeExerciseEquipment(String value) {
+  final normalized = value.trim().toLowerCase().replaceAll(' ', '_');
+  return switch (normalized) {
+    'barbell' => 'barbell',
+    'dumbbell' => 'dumbbell',
+    'machine' => 'machine',
+    'cable' => 'cable',
+    'bodyweight' => 'bodyweight',
+    'kettlebell' => 'kettlebell',
+    'smith' || 'smith_machine' => 'smith_machine',
+    'ez_bar' || 'barraz' || 'barra_z' => 'ez_bar',
+    'cardio' || 'cardio_machine' => 'cardio_machine',
+    _ => normalized,
+  };
+}
+
+String normalizeExerciseCategory(String value) {
+  final normalized = value.trim().toLowerCase().replaceAll(' ', '_');
+  return switch (normalized) {
+    'cardio' => 'cardio',
+    'mobility' || 'movilidad' => 'mobility',
+    'core' || 'abs' || 'abdominales' => 'core',
+    'strength' ||
+    'chest' ||
+    'back' ||
+    'shoulders' ||
+    'biceps' ||
+    'triceps' ||
+    'forearms' ||
+    'quads' ||
+    'hamstrings' ||
+    'glutes' ||
+    'calves' ||
+    'full_body' => 'strength',
+    _ => normalized,
+  };
+}
+
+String exerciseEquipmentLabel(String value) {
+  return _optionLabel(
+    exerciseEquipmentOptions,
+    normalizeExerciseEquipment(value),
+  );
+}
+
+String exerciseCategoryLabel(String value) {
+  return _optionLabel(
+    exerciseCategoryOptions,
+    normalizeExerciseCategory(value),
+  );
+}
+
+String _optionLabel(List<ExerciseOption> options, String value) {
+  for (final option in options) {
+    if (option.value == value) {
+      return option.label;
+    }
+  }
+  return value;
+}

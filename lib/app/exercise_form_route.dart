@@ -9,15 +9,19 @@ import '../features/exercises/presentation/exercise_form_screen.dart';
 import '../storage/drift/app_database.dart';
 
 class ExerciseFormRoute extends StatefulWidget {
-  const ExerciseFormRoute.create({super.key})
+  const ExerciseFormRoute.create({super.key, this.database})
     : mode = ExerciseFormMode.create,
       exerciseId = null;
 
-  const ExerciseFormRoute.edit({required this.exerciseId, super.key})
-    : mode = ExerciseFormMode.edit;
+  const ExerciseFormRoute.edit({
+    required this.exerciseId,
+    super.key,
+    this.database,
+  }) : mode = ExerciseFormMode.edit;
 
   final ExerciseFormMode mode;
   final String? exerciseId;
+  final AppDatabase? database;
 
   @override
   State<ExerciseFormRoute> createState() => _ExerciseFormRouteState();
@@ -25,12 +29,14 @@ class ExerciseFormRoute extends StatefulWidget {
 
 class _ExerciseFormRouteState extends State<ExerciseFormRoute> {
   late final AppDatabase _database;
+  late final bool _ownsDatabase;
   late final ExerciseFormController _controller;
 
   @override
   void initState() {
     super.initState();
-    _database = AppDatabase();
+    _ownsDatabase = widget.database == null;
+    _database = widget.database ?? AppDatabase();
     final exerciseRepository = DriftExerciseRepository(
       _database,
       const UuidIdGenerator(),
@@ -43,7 +49,9 @@ class _ExerciseFormRouteState extends State<ExerciseFormRoute> {
 
   @override
   void dispose() {
-    _database.close();
+    if (_ownsDatabase) {
+      _database.close();
+    }
     super.dispose();
   }
 

@@ -101,6 +101,35 @@ void main() {
     expect(find.byKey(const Key('exercise-form-secondary-back')), findsNothing);
   });
 
+  testWidgets('create mode shows unavailable state when muscles are missing', (
+    tester,
+  ) async {
+    var wentBack = false;
+
+    await tester.pumpExerciseForm(
+      initialState: const ExerciseFormState(
+        mode: ExerciseFormMode.create,
+        draft: ExerciseDraft(
+          name: '',
+          primaryMuscleGroupId: '',
+          equipment: '',
+          category: '',
+        ),
+        muscleGroups: <MuscleGroupEntity>[],
+        errorMessage: 'No se pudieron cargar los músculos.',
+      ),
+      onBackToExercises: () async => wentBack = true,
+    );
+
+    expect(find.text('No se pudieron cargar los músculos.'), findsOneWidget);
+    expect(find.byKey(const Key('exercise-form-submit')), findsNothing);
+
+    await tester.tap(find.byKey(const Key('exercise-form-back-to-exercises')));
+    await tester.pump();
+
+    expect(wentBack, isTrue);
+  });
+
   testWidgets('missing edit exercise shows back action', (tester) async {
     var wentBack = false;
 

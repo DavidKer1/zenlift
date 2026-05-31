@@ -35,7 +35,7 @@ void main() {
 
       expect(find.text('Exercise library'), findsOneWidget);
       expect(find.text('Bench Press'), findsOneWidget);
-      expect(find.text('Chest · barbell'), findsOneWidget);
+      expect(find.text('Chest · Barra'), findsOneWidget);
       expect(find.byIcon(Icons.star), findsOneWidget);
       expect(
         find.byKey(const Key('exercise-library-muscle-chest')),
@@ -154,7 +154,7 @@ ExerciseEntity _exercise(String id, {required bool isFavorite}) {
   return ExerciseEntity(
     id: id,
     name: 'Bench Press',
-    equipment: 'barbell',
+    equipment: 'Barbell',
     category: 'strength',
     isCustom: false,
     isFavorite: isFavorite,

@@ -8,7 +8,9 @@ import '../features/exercises/presentation/exercise_library_screen.dart';
 import '../storage/drift/app_database.dart';
 
 class ExerciseLibraryRoute extends StatefulWidget {
-  const ExerciseLibraryRoute({super.key});
+  const ExerciseLibraryRoute({super.key, this.database});
+
+  final AppDatabase? database;
 
   @override
   State<ExerciseLibraryRoute> createState() => _ExerciseLibraryRouteState();
@@ -16,12 +18,14 @@ class ExerciseLibraryRoute extends StatefulWidget {
 
 class _ExerciseLibraryRouteState extends State<ExerciseLibraryRoute> {
   late final AppDatabase _database;
+  late final bool _ownsDatabase;
   late final ExerciseLibraryController _controller;
 
   @override
   void initState() {
     super.initState();
-    _database = AppDatabase();
+    _ownsDatabase = widget.database == null;
+    _database = widget.database ?? AppDatabase();
     _controller = ExerciseLibraryController(
       exerciseRepository: DriftExerciseRepository(
         _database,
@@ -33,7 +37,9 @@ class _ExerciseLibraryRouteState extends State<ExerciseLibraryRoute> {
 
   @override
   void dispose() {
-    _database.close();
+    if (_ownsDatabase) {
+      _database.close();
+    }
     super.dispose();
   }
 
