@@ -9,6 +9,15 @@
 - El historial es conceptualmente inmutable, pero editable por el usuario.
 - Si una sesión pasada cambia, las estadísticas se recalculan.
 
+## Flutter migration notes
+
+La implementación Flutter temporal en `flutter-version/` conserva este modelo con Drift/SQLite:
+
+- Tablas en snake_case con IDs de texto y foreign keys con cascade donde aplica.
+- Repositorios por feature en `features/<feature>/data`, contratos en `features/<feature>/domain`.
+- `app_settings` se exporta junto al backup `.zenlift`; las preferencias activas también se espejan desde SharedPreferences para que export/import/delete sean consistentes.
+- El puente de migración de primer arranque conserva el contrato no destructivo: no debe borrar SQLite/MMKV de Expo y solo marca cutover cuando importación y verificación pasan.
+
 ## Entidades principales
 
 | Entidad | Rol |

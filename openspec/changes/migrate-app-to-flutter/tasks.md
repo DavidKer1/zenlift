@@ -117,14 +117,14 @@
   - [x] Run `cd flutter-version && flutter test`.
   - [ ] Run `cd flutter-version && flutter test integration_test/core_loop_test.dart` on an Android emulator or device.
   - [x] Run `cd flutter-version && flutter test integration_test/core_loop_test.dart` on the available local iOS simulator target.
-  - [ ] Run Maestro native smoke when installed and record skipped status when unavailable.
+  - [x] Run Maestro native smoke when installed and record skipped status when unavailable.
 - [ ] 13. Run parity gate and manual Android verification.
   - [x] Run `cd flutter-version && flutter analyze`.
   - [x] Run `cd flutter-version && flutter test`.
   - [ ] Run the Android manual core loop: create routine, start workout, log sets, finish session, inspect history/progress, export data, import data, and cancel/delete paths.
   - [ ] Record device model, OS version, commands, screenshots, failures, and unresolved parity gaps.
 - [ ] 14. Update docs and archive Expo-specific specs.
-  - [ ] Update compact docs and README entries for Flutter setup, commands, artifact paths, data migration, and known limits.
+  - [x] Update compact docs and README entries for Flutter setup, commands, artifact paths, data migration, and known limits.
   - [ ] Archive or supersede Expo-only requirements only after Flutter parity is verified.
   - [ ] Run `openspec validate migrate-app-to-flutter --strict`.
 - [ ] 15. Cut over to Flutter and remove Expo only after parity passes.

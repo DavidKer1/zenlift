@@ -118,6 +118,27 @@ Objetivo: validar que el usuario puede crear rutinas, iniciar workouts, registra
 
 ## Testing
 
+### Flutter migration testing
+
+Durante la migración, la app Flutter vive temporalmente en `flutter-version/`. Los comandos canónicos para esa implementación son:
+
+```bash
+cd flutter-version
+flutter analyze
+flutter test
+flutter test integration_test/core_loop_test.dart
+```
+
+Estado actual:
+
+- `flutter analyze` pasa.
+- `flutter test` pasa para la suite Flutter completa.
+- `flutter test integration_test/core_loop_test.dart` pasa en el simulador iOS local disponible.
+- Android real/emulador sigue siendo obligatorio antes de declarar paridad final, especialmente para teclado, rendimiento, recuperación de sesión activa y set logging < 3 s.
+- Maestro smoke está registrado como bloqueado si la CLI no está instalada.
+
+Detalles y bloqueos vivos: [flutter_migration/testing.md](flutter_migration/testing.md).
+
 ### Pirámide de testing
 
 ```text

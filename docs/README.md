@@ -18,6 +18,7 @@ Esta carpeta resume el blueprint largo en documentos pequenos y cargables por ta
 | Crear o modificar schema SQLite, entidades, repositorios o seeds | [data_model.md](data_model.md) |
 | Planificar MVP, priorizar features, testing, release o riesgos | [roadmap_testing.md](roadmap_testing.md) |
 | Trabajar con agentes IA o dividir tareas para agentes | [ai_development_strategy.md](ai_development_strategy.md) |
+| Continuar la migración Flutter, validar paridad o revisar cutover | [flutter_migration/README.md](flutter_migration/README.md) y [flutter_migration/testing.md](flutter_migration/testing.md) |
 
 ## Reglas de carga de contexto
 
@@ -25,4 +26,3 @@ Esta carpeta resume el blueprint largo en documentos pequenos y cargables por ta
 2. Abre solo el documento relacionado con la tarea.
 3. Abre el blueprint completo solo cuando falte detalle, haya ambigüedad o la tarea sea actualizar documentación estratégica.
 4. Para cambios de código con librerías, SDKs, frameworks, CLI o cloud services, usa Context7 antes de implementar, como indica `AGENTS.md`.
-
