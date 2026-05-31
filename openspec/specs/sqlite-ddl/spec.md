@@ -3,12 +3,12 @@
 ## Purpose
 TBD - created by archiving change sqlite-schema. Update Purpose after archive.
 ## Requirements
-### Requirement: DDL constants are exported
-The schema module SHALL export `CREATE_TABLES_SQL` and `CREATE_INDICES_SQL` as read-only TypeScript string constants.
+### Requirement: DDL definitions are available
+The Drift schema SHALL define the tables and indices needed by the local SQLite database.
 
 #### Scenario: Constants are importable
-- **WHEN** any module imports from `src/storage/database/schema`
-- **THEN** `CREATE_TABLES_SQL` is a non-empty string and `CREATE_INDICES_SQL` is a non-empty string
+- **WHEN** any module imports the Drift database schema
+- **THEN** table and index definitions are available for database initialization
 
 ### Requirement: All 12 tables are defined
 `CREATE_TABLES_SQL` SHALL contain `CREATE TABLE IF NOT EXISTS` statements for all 12 tables: `muscle_groups`, `exercise_muscles`, `exercises`, `routines`, `routine_days`, `routine_exercises`, `workout_sessions`, `workout_exercises`, `set_logs`, `personal_records`, `app_settings`, `_migrations`.
@@ -18,11 +18,11 @@ The schema module SHALL export `CREATE_TABLES_SQL` and `CREATE_INDICES_SQL` as r
 - **THEN** it contains a `CREATE TABLE IF NOT EXISTS` statement for each of the 12 tables
 
 ### Requirement: Snake_case column names match domain entities
-Every column name in `CREATE_TABLES_SQL` SHALL use snake_case matching the field names in `src/domain/entities/index.ts` exactly.
+Every SQLite column name SHALL use snake_case and map cleanly to the corresponding Dart storage row and domain model fields.
 
-#### Scenario: Column names match TypeScript entities
-- **WHEN** a SQL column name is compared to its corresponding TypeScript entity field name
-- **THEN** they are identical (e.g., `display_name_es` in SQL matches `display_name_es` in the entity interface)
+#### Scenario: Column names match Dart models
+- **WHEN** a SQL column name is compared to its corresponding Dart model field
+- **THEN** it has a deterministic mapper to the corresponding Dart model field
 
 ### Requirement: TEXT primary keys for entity tables
 All entity tables SHALL use `TEXT PRIMARY KEY` for their `id` column, except `app_settings` which uses `key TEXT PRIMARY KEY`, and `_migrations` which uses `version INTEGER PRIMARY KEY`.
@@ -39,7 +39,7 @@ All foreign key columns SHALL include `REFERENCES <parent_table>(<parent_column>
 - **THEN** the column definition includes `REFERENCES ... ON DELETE CASCADE`
 
 ### Requirement: CHECK constraints on enum columns
-The schema SHALL include CHECK constraints on `status`, `role`, `set_type`, and `type` columns matching their respective TypeScript union types.
+The schema SHALL include CHECK constraints on `status`, `role`, `set_type`, and `type` columns matching their respective Dart enum values.
 
 #### Scenario: Status CHECK constraint
 - **WHEN** the `workout_sessions` table DDL is inspected
@@ -72,10 +72,10 @@ Columns representing booleans (e.g., `is_custom`, `is_favorite`, `is_archived`, 
 - **THEN** boolean columns default to 0, sort_order columns default to 0, and set_type defaults to 'normal'
 
 ### Requirement: SQL syntax is valid SQLite
-The concatenation of `CREATE_TABLES_SQL` and `CREATE_INDICES_SQL` SHALL be syntactically valid SQLite DDL that can be executed by `expo-sqlite` without errors.
+The generated Drift schema SHALL be syntactically valid SQLite DDL that can be executed by SQLite without errors.
 
 #### Scenario: Schema executes without errors
-- **WHEN** `CREATE_TABLES_SQL` and `CREATE_INDICES_SQL` are executed against a fresh SQLite database
+- **WHEN** the Drift database opens against a fresh SQLite database
 - **THEN** all 12 tables and 6 indices exist with no syntax errors
 
 ### Requirement: Routine exercises schema excludes rest seconds

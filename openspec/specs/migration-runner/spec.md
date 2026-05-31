@@ -11,7 +11,7 @@ The system SHALL define a `Migration` interface with `version: number`, `descrip
 - **THEN** it MUST have a numeric `version`, a human-readable `description`, and a `sql` string containing one or more SQL statements
 
 ### Requirement: MIGRATIONS array contains all migrations in version order
-The system SHALL export a `MIGRATIONS` constant array with all migrations sorted by `version` ascending.
+The system SHALL provide a `MIGRATIONS` constant array with all migrations sorted by `version` ascending.
 
 #### Scenario: v1 migration present
 - **WHEN** the `MIGRATIONS` array is inspected
@@ -38,7 +38,7 @@ The system SHALL provide `runMigrations(db)` that reads the `_migrations` table,
 
 #### Scenario: Migration v1 applies full schema
 - **WHEN** migration v1 is applied
-- **THEN** it SHALL execute `CREATE_TABLES_SQL` followed by `CREATE_INDICES_SQL` from `src/storage/database/schema.ts`
+- **THEN** it SHALL execute the table definitions followed by the index definitions from the Drift schema
 
 ### Requirement: Each migration runs in its own transaction
 The system SHALL wrap each migration's SQL execution in `db.transaction()` so that a single migration either fully succeeds or fully rolls back.
@@ -72,4 +72,3 @@ The system SHALL handle the case where the `_migrations` table does not yet exis
 #### Scenario: Database exists but _migrations table missing
 - **WHEN** `getCurrentVersion()` is called and the `_migrations` table does not exist
 - **THEN** it SHALL return `0` without throwing an error
-

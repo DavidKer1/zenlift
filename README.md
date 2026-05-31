@@ -10,16 +10,6 @@ Create a routine -> Start a workout -> Log sets -> Finish the session -> Review 
 
 It is not a coach dashboard, gym management system, social network, marketplace, or nutrition platform. The goal is a personal training log that feels quick enough to use mid-set and dependable enough to trust with months of workout history.
 
-## Preview
-
-<p align="center">
-  <img
-    src="assets/images/readme-preview.png"
-    alt="Zenlift app preview"
-    width="360"
-  />
-</p>
-
 ## What Zenlift Does
 
 - Create routines, training days, and exercise plans.
@@ -40,75 +30,59 @@ It is not a coach dashboard, gym management system, social network, marketplace,
 
 ## Tech Stack
 
-- [Expo](https://expo.dev/) SDK 55
-- React Native 0.83
-- React 19
-- TypeScript with strict mode
-- Expo Router for file-based navigation
-- SQLite for structured workout data
-- MMKV for lightweight persisted state and settings
-- Zustand for minimal app state
-- React Hook Form and Zod for forms and validation
-- FlashList for large or input-heavy lists
-- Jest with `jest-expo` for unit and repository tests
-- Playwright and Maestro for agent-friendly smoke testing
+- Flutter and Dart 3.
+- go_router for route configuration.
+- flutter_riverpod for app state where shared state is needed.
+- Drift with SQLite for structured workout data.
+- shared_preferences for lightweight persisted state and settings.
+- fl_chart for progress visualization.
+- file_picker and share_plus for local data portability.
+- flutter_test and integration_test for unit, widget, repository, and core-loop verification.
 
 ## Project Structure
 
 ```text
-src/
-  app/                    Expo Router routes
-  components/             Shared UI and workout components
-  domain/                 Pure entities, calculations, and services
-  features/               Feature-specific flows and state
-  providers/              App-level providers
-  storage/                SQLite connection, schema, migrations, repositories
-  theme/                  Design tokens and theme helpers
-  utils/                  IDs, units, dates, and formatters
+lib/
+  app/                    App bootstrap, router, and route composition
+  core/                   Shared date, ID, and small utility primitives
+  features/               Feature-first application, domain, data, and presentation code
+  storage/                Drift database, connection, schema, and seed data
+  theme/                  Design tokens and Flutter theme helpers
+  widgets/                Shared reusable UI widgets
 
-e2e/                      Playwright and Maestro smoke tests
-docs/                     Product, architecture, data, and testing notes
-assets/                   App icons, images, and exercise assets
-scripts/                  Project utilities
+test/                     Unit, widget, controller, repository, and theme tests
+integration_test/         End-to-end Flutter core-loop tests
+assets/                   Exercise data and exercise images
+docs/                     Product, architecture, data, testing, and AI workflow notes
 ```
 
-The app keeps screens thin. Business rules, PR detection, volume calculations, unit conversion, and persistence logic live outside route files so they can be tested without rendering the UI.
+Screens stay thin. Business rules, PR detection, volume calculations, unit conversion, and persistence logic live outside route widgets so they can be tested without rendering full app flows.
 
 ## Getting Started
 
 ### Requirements
 
-- Node.js
-- pnpm
-- Expo CLI through `pnpm`
-- Android Studio or Xcode if you want to run native builds locally
-- Maestro CLI for native iOS smoke tests
+- Flutter stable with Dart 3.
+- Xcode for iOS builds on macOS.
+- Android Studio or Android command-line tools for Android builds.
 
 ### Install
 
 ```bash
-pnpm install
+flutter pub get
 ```
 
 ### Run The App
 
 ```bash
-pnpm start
+flutter run
 ```
 
-From the Expo terminal, choose the target you need:
-
-- Android emulator or physical Android device
-- iOS simulator
-- Development build
-- Web preview
-
-For platform-specific commands:
+For a specific target:
 
 ```bash
-pnpm android
-pnpm ios
-pnpm web
+flutter devices
+flutter run -d <device-id>
 ```
 
 ## Quality Checks
@@ -116,67 +90,25 @@ pnpm web
 Run the core local checks:
 
 ```bash
-pnpm typecheck
-pnpm test
-pnpm lint
+flutter analyze
+flutter test
+flutter test integration_test/core_loop_test.dart
 ```
 
 The most important areas to keep covered are:
 
-- Workout volume and 1RM calculations
-- Personal record detection
-- Unit conversion
-- SQLite repositories and migrations
-- Active workout persistence and recovery
-
-## Agent Mobile Testing
-
-Codex, Copilot, and Opencode share the same script surface for mobile-focused smoke testing. Use these commands instead of agent-specific one-off steps:
-
-```bash
-pnpm test:agent:web
-pnpm test:agent:ios
-pnpm test:agent:smoke
-```
-
-The web smoke path runs Playwright against Expo web with a mobile browser profile. It is fast, agent-friendly, and can be inspected at `http://127.0.0.1:8081` when a failure needs manual reproduction.
-
-Before the first web smoke run, install the Playwright Chromium binary:
-
-```bash
-pnpm exec playwright install chromium
-```
-
-The iOS smoke path runs Maestro against the native iOS app bundle id `com.zenlift.workout`. Requirements:
-
-- macOS with Xcode Command Line Tools installed.
-- A booted iOS Simulator.
-- The Zenlift iOS app installed in that simulator, usually via `pnpm ios`.
-- Maestro CLI installed.
-
-Run the native smoke test with:
-
-```bash
-open -a Simulator
-pnpm ios
-pnpm test:agent:ios
-```
-
-Agent smoke tests cover the Zenlift core loop: create routine, start workout, log two sets, finish the session, and confirm the summary/history result.
-
-Generated artifacts are ignored by git:
-
-- `test-results/agent-web/`
-- `playwright-report/agent-web/`
-- `e2e/artifacts/maestro/`
-
-These smoke tests complement Jest, typecheck, SQLite repository tests, and real-device manual testing. They do not replace Android hardware validation for keyboard ergonomics, haptics, offline behavior, performance, active-session recovery, or gym-use feel.
+- Workout volume and 1RM calculations.
+- Personal record detection.
+- Unit conversion.
+- Drift repositories and schema behavior.
+- Active workout persistence and recovery.
+- Core-loop navigation from routine creation through workout completion.
 
 ## Local-First Data
 
-Zenlift stores core workout data on-device. SQLite is used for routines, exercises, sessions, sets, and history. MMKV is reserved for small, high-frequency state such as settings and active workout recovery helpers.
+Zenlift stores core workout data on-device. Drift and SQLite are used for routines, exercises, sessions, sets, settings snapshots, and history. shared_preferences is reserved for small, high-frequency state such as settings and active workout recovery helpers.
 
-This keeps the MVP simple, fast, and usable in the gym even with poor connectivity.
+This keeps the app simple, fast, and usable in the gym even with poor connectivity.
 
 ## Design Direction
 
@@ -196,24 +128,14 @@ Useful entry points:
 - [Data model](docs/data_model.md)
 - [Roadmap and testing](docs/roadmap_testing.md)
 
-## Knowledge Graph
-
-This repository includes a Graphify knowledge graph for navigating the codebase.
-
-- Interactive graph: `.graphify/graph.html`
-- Audit report: `.graphify/GRAPH_REPORT.md`
-- Rebuild: `graphify src`
-
-Generated Graphify working files such as `.graphify/branch.json`, `.graphify/worktree.json`, `.graphify/needs_update`, and `.graphify/cache/` should not be committed.
-
 ## Development Notes
 
 - Keep the core workout loop small and fast.
 - Prefer local-first behavior until a backend is explicitly required.
-- Put domain calculations in pure functions under `src/domain`.
-- Keep SQLite access inside repositories.
+- Put domain calculations in pure Dart under feature domain layers.
+- Keep SQLite access inside Drift repositories.
 - Use UUID text IDs for records.
-- Add focused tests when touching calculations, repositories, migrations, or active-session recovery.
+- Add focused tests when touching calculations, repositories, schema behavior, or active-session recovery.
 
 ## License
 

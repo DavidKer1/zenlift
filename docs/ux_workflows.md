@@ -10,7 +10,7 @@ La app se usa en el gimnasio, entre series, con cansancio y prisa. El flujo más
 
 ```text
 Onboarding -> Crear rutina -> Agregar día -> Agregar ejercicios
-  -> Configurar sets/reps/rest -> Guardar -> Iniciar workout
+  -> Configurar sets/reps -> Guardar -> Iniciar workout
 ```
 
 Reglas:
@@ -31,7 +31,7 @@ Rutinas -> Rutina -> Día -> Start Workout
 
 ```text
 Ver ejercicio -> Mostrar peso/reps anteriores -> Ajustar peso/reps
-  -> Completar set -> Guardar set -> Iniciar timer -> Continuar
+  -> Completar set -> Guardar set -> Continuar
 ```
 
 ### Finalizar workout
@@ -71,7 +71,7 @@ Progress -> Elegir vista general o ejercicio -> Consultar historial local
 - Crear, editar, duplicar, archivar/eliminar.
 - Días de rutina.
 - Ejercicios por día.
-- Sets/reps/rest objetivo.
+- Sets/reps objetivo.
 - Reordenar ejercicios.
 
 ### Biblioteca de ejercicios
@@ -92,13 +92,11 @@ Componentes críticos:
 - Previous performance.
 - Add set.
 - Add exercise.
-- Rest timer.
 - Finish button.
 
 Reglas:
 
 - Mostrar peso/reps anteriores automáticamente.
-- Completar set inicia timer opcional.
 - Editar sets anteriores sin fricción.
 - Guardar automáticamente.
 - Recuperar workout si se cierra la app.
@@ -133,9 +131,8 @@ Reglas:
 
 - kg/lb.
 - Tema oscuro por defecto; claro/sistema como opción futura.
-- Timer por defecto.
 - Objetivo semanal.
-- Exportar/importar datos.
+- Backup/importar datos.
 - Borrar datos.
 - About.
 
@@ -175,7 +172,7 @@ Set | Previous  | kg [-] [input] [+] | reps [-] [input] [+] | check
 
 - Contraste mínimo 4.5:1 en texto.
 - Touch targets mínimos de 48 px.
-- `accessibilityLabel` en inputs y botones.
+- Usar `Semantics` y etiquetas semanticas en inputs y botones.
 - El botón de completar anuncia el resultado del set.
 - Tamaño de fuente mínimo 16 dp en inputs.
 - La UI no debe depender solo de color para indicar estado.

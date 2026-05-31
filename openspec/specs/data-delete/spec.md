@@ -2,7 +2,7 @@
 
 ## Purpose
 
-Defines the behavior for permanently deleting all user data (SQLite tables and MMKV storage) from the app, including the double-confirmation flow and re-seeding of muscle group data.
+Defines the behavior for permanently deleting all user data (SQLite tables and SharedPreferences storage) from the app, including the double-confirmation flow and re-seeding of muscle group data.
 
 ## Requirements
 
@@ -35,19 +35,19 @@ The system SHALL require two confirmation steps to delete all data: first a warn
 - **WHEN** the user types "BORRAR" (exact, case-sensitive)
 - **THEN** all data is deleted
 
-### Requirement: Delete removes all SQLite and MMKV data
+### Requirement: Delete removes all SQLite and SharedPreferences data
 
-The system SHALL delete all rows from all SQLite tables (routines, exercises, workout sessions, set logs, personal records, exercise muscles, routine days, routine exercises, workout exercises, muscle groups seed data) and clear all MMKV keys.
+The system SHALL delete all rows from all SQLite tables (routines, exercises, workout sessions, set logs, personal records, exercise muscles, routine days, routine exercises, workout exercises, muscle groups seed data) and clear all SharedPreferences keys used by Zenlift.
 
 #### Scenario: SQLite tables are empty after delete
 
 - **WHEN** delete completes
 - **THEN** all SQLite tables contain zero rows
 
-#### Scenario: MMKV is cleared after delete
+#### Scenario: SharedPreferences are cleared after delete
 
 - **WHEN** delete completes
-- **THEN** all MMKV keys are removed
+- **THEN** all Zenlift SharedPreferences keys are removed
 
 #### Scenario: App re-seeds muscle groups after delete
 
@@ -56,7 +56,7 @@ The system SHALL delete all rows from all SQLite tables (routines, exercises, wo
 
 ### Requirement: Delete confirmation buttons use danger styling
 
-The system SHALL style the delete button and confirmation prompts using the danger color (red), not primary orange or green.
+The system SHALL style the delete button and confirmation prompts using the danger color, not primary or success colors.
 
 #### Scenario: Delete button is red
 

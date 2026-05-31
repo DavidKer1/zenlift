@@ -20,8 +20,8 @@ The ExerciseFormModal component SHALL render a form with the following fields: n
 - **THEN** the notes field is pre-filled if the exercise has notes
 - **THEN** the submit button displays "Guardar cambios"
 
-### Requirement: Name validation with Zod schema
-The form SHALL use a Zod schema that validates the name field with a minimum length of 2 characters and SHALL NOT be empty.
+### Requirement: Name validation
+The form SHALL validate the name field with a minimum length of 2 characters and SHALL NOT be empty.
 
 #### Scenario: Empty name validation
 - **WHEN** the user submits the form with an empty name
@@ -37,14 +37,14 @@ The form SHALL use a Zod schema that validates the name field with a minimum len
 - **THEN** if the trimmed name is empty or shorter than 2 characters, the validation error is shown
 
 ### Requirement: Primary muscle is required
-The Zod schema SHALL require the primary muscle field to be selected.
+The validation rules SHALL require the primary muscle field to be selected.
 
 #### Scenario: Primary muscle not selected
 - **WHEN** the user submits the form without selecting a primary muscle
 - **THEN** the form displays a validation error "Selecciona un músculo principal"
 
 ### Requirement: Equipment is required
-The Zod schema SHALL require the equipment field to be selected.
+The validation rules SHALL require the equipment field to be selected.
 
 #### Scenario: Equipment not selected
 - **WHEN** the user submits the form without selecting an equipment type
@@ -164,15 +164,14 @@ The equipment select SHALL offer the 9 equipment types defined in the `Equipment
 - **THEN** the selected value is stored using the corresponding English enum value (barbell, dumbbell, machine, cable, bodyweight, kettlebell, smith_machine, ez_bar, cardio_machine)
 
 ### Requirement: Exercise form uses tonal surfaces
-The system SHALL render the exercise creation/edit form with `#0C0B10` background, form inputs in `#28272F` containers with 12px radius, and action buttons using monochromatic variants.
+The system SHALL render the exercise creation/edit form with `#141218` background, form inputs in `#211F24` or `#2B292F` containers with 12px radius, and action buttons using the app color scheme.
 
 #### Scenario: Form renders
 - **WHEN** the exercise form screen renders
-- **THEN** text inputs SHALL use `#28272F` background with 12px radius
+- **THEN** text inputs SHALL use a surface container background with 12px radius
 - **AND** placeholder text SHALL be white at 30% opacity
 - **AND** labels SHALL be white at 85% opacity
 
-#### Scenario: Submit button uses white background
+#### Scenario: Submit button uses primary styling
 - **WHEN** the form submit/save button renders
-- **THEN** it SHALL use white (`#FFFFFF`) background with black (`#0C0B10`) text and 12px radius
-
+- **THEN** it SHALL use primary background `#CFBCFF` with on-primary text and 12px radius

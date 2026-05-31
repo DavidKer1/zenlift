@@ -38,8 +38,8 @@ Objetivo: validar que el usuario puede crear rutinas, iniciar workouts, registra
 - Estimated 1RM.
 - Distribución por músculo.
 - Calendario de consistencia.
-- Exportar datos.
-- Backup opcional.
+- Exportación manual de datos.
+- Backup en nube opcional.
 - Importación futura.
 
 ### Fuera del MVP
@@ -108,48 +108,41 @@ Objetivo: validar que el usuario puede crear rutinas, iniciar workouts, registra
 |---|---|---|
 | Mercado competido | Alta | Android pulido, español nativo, diseño premium, insights claros. |
 | Fricción al registrar sets | Crítica | Active Workout prioridad #1, set en < 3 s, previous values, +/- y haptics. |
-| Pérdida de datos | Crítica | Autosave por set, recuperación de sesión activa, retry queue en MMKV. |
+| Pérdida de datos | Crítica | Autosave por set, recuperación de sesión activa, reintentos de persistencia y estado ligero en shared_preferences. |
 | Sobrecarga de features | Alta | Proteger el loop core; evitar social, pagos, coaching y web en MVP. |
-| Rendimiento Android bajo | Alta | FlashList, WAL, índices, medir en dispositivo real. |
+| Rendimiento Android bajo | Alta | Listas perezosas, WAL, índices, medir en dispositivo real. |
 | Onboarding complejo | Alta | Máximo 3 pantallas, skipeable, templates y Quick Workout. |
-| Errores silenciosos SQLite | Crítica | Repositories con try/catch, DatabaseError, tests de integridad. |
-| Fatiga del teclado | Media | returnKeyType, +/- buttons y teclado numérico. |
+| Errores silenciosos SQLite | Crítica | Repositories con try/catch, errores con contexto, tests de integridad. |
+| Fatiga del teclado | Media | Acciones next/done, +/- buttons y teclado numérico. |
 | IDs no aptos para sync futuro | Crítica futura | UUIDs desde el día 1. |
 
 ## Testing
 
-### Flutter migration testing
+### Flutter testing
 
-Durante la migración, la app Flutter vive temporalmente en `flutter-version/`. Los comandos canónicos para esa implementación son:
+Los comandos canónicos del proyecto son:
 
 ```bash
-cd flutter-version
 flutter analyze
 flutter test
 flutter test integration_test/core_loop_test.dart
 ```
 
-Estado actual:
+Usar `flutter analyze` para análisis estático, `flutter test` para unit/widget/controller/repository/theme tests y `flutter test integration_test/core_loop_test.dart` para navegación, persistencia y core loop cuando aplique.
 
-- `flutter analyze` pasa.
-- `flutter test` pasa para la suite Flutter completa.
-- `flutter test integration_test/core_loop_test.dart` pasa en el simulador iOS local disponible.
-- Android real/emulador sigue siendo obligatorio antes de declarar paridad final, especialmente para teclado, rendimiento, recuperación de sesión activa y set logging < 3 s.
-- Maestro smoke está registrado como bloqueado si la CLI no está instalada.
-
-Detalles y bloqueos vivos: [flutter_migration/testing.md](flutter_migration/testing.md).
+Android real/emulador sigue siendo obligatorio antes de declarar una experiencia lista para release, especialmente para teclado, rendimiento, recuperación de sesión activa y set logging < 3 s.
 
 ### Pirámide de testing
 
 ```text
 Manual en dispositivo real
-Maestro iOS Simulator smoke
-Playwright Expo web mobile smoke
-Integration tests SQLite
+Flutter integration_test core loop
+Repository and storage tests
+Widget and controller tests
 Unit tests dominio/utils
 ```
 
-La pirámide mantiene los tests rápidos abajo y usa smoke móvil solo para validar flujos de usuario. Playwright y Maestro ayudan a agentes IA, pero no sustituyen las pruebas unitarias, de repositorios o de dispositivo físico.
+La pirámide mantiene los tests rápidos abajo y usa pruebas de integración solo para validar flujos de usuario y contratos entre capas.
 
 ### Unit tests P0
 
@@ -175,29 +168,15 @@ Cubrir repositorios SQLite:
 - Aplicar migraciones una sola vez.
 - Validar cascades.
 
-### Agent smoke tests P1
+### Flutter integration tests P1
 
-Usar los scripts compartidos para Codex, Copilot y Opencode:
+Cubrir el core loop con `integration_test`:
 
-- `pnpm test:agent:web`: Playwright + Expo web en viewport móvil. Debe cubrir crear rutina, iniciar workout, registrar al menos 2 sets, finalizar sesión y confirmar resumen/historial.
-- `pnpm test:agent:ios`: Maestro + iOS Simulator contra `com.zenlift.workout`. Debe cubrir el mismo core loop con launch nativo y estado limpio.
-- `pnpm test:agent:smoke`: typecheck, Jest, Playwright web smoke y Maestro iOS smoke en orden.
-
-Prerequisitos:
-
-- Playwright browsers instalados con `pnpm exec playwright install chromium`.
-- Para iOS: macOS, Xcode Command Line Tools, un iOS Simulator iniciado, app instalada con `pnpm ios`, y Maestro CLI.
-
-Artefactos:
-
-- Playwright: `test-results/agent-web/`, `playwright-report/agent-web/`.
-- Maestro: `e2e/artifacts/maestro/`.
-
-Límites:
-
-- Expo web valida navegación y layout móvil rápido, no haptics ni APIs nativas.
-- iOS Simulator valida interacción nativa, pero no reemplaza Android físico.
-- Real-device testing sigue siendo obligatorio para teclado, haptics, modo avión, performance, uso con una mano y recuperación tras matar la app.
+- Crear rutina.
+- Iniciar workout.
+- Registrar al menos 1 ejercicio con 2 sets.
+- Finalizar sesión.
+- Confirmar resumen, historial o progreso básico.
 
 ### Manual tests críticos
 
@@ -214,17 +193,17 @@ Límites:
 
 Recomendado:
 
-- GitHub Actions para typecheck y tests.
-- Smoke agent web como verificación opcional para cambios de UI cuando Expo web esté estable.
+- GitHub Actions para `flutter analyze` y `flutter test`.
+- Core-loop integration test para cambios de navegación, almacenamiento o finalización de workout.
 - Conventional commits.
 - `main` protegida.
-- EAS Build para Android development, preview y production.
+- Builds Android development, preview y production.
 - SemVer.
 
 Release checklist:
 
-- Typecheck pasa.
-- Jest pasa.
+- `flutter analyze` pasa.
+- `flutter test` pasa.
 - Build production compila.
 - Prueba manual en Android físico.
 - Upgrade desde versión anterior si aplica.

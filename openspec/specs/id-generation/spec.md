@@ -7,10 +7,10 @@ Provide a shared UUID-first ID generation utility for all domain entities, with 
 ## Requirements
 
 ### Requirement: Shared ID generator
-The app SHALL expose a shared `generateId()` utility for creating entity IDs.
+The app SHALL provide a shared ID generation utility for creating entity IDs.
 
 #### Scenario: ID utility is available
-- **WHEN** domain or storage code imports from `src/utils/id`
+- **WHEN** domain or storage code imports the shared ID generator
 - **THEN** it can call `generateId()` and receive a string
 
 ### Requirement: UUID-first behavior

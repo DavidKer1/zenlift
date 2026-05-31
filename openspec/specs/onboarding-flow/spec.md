@@ -1,6 +1,8 @@
 # Onboarding Flow
 
-Purpose: Specification for the Onboarding Flow, a 3-step swipable onboarding: Welcome, Unit Selection, and Weekly Goal.
+## Purpose
+
+Specification for the Onboarding Flow, a 3-step swipable onboarding: Welcome, Unit Selection, and Weekly Goal.
 
 ## Requirements
 
@@ -10,7 +12,7 @@ The system SHALL present three screens in sequence: Welcome, Unit Selection, and
 
 #### Scenario: User sees welcome screen first
 
-- **WHEN** the onboarding flow starts and `onboarding_completed` is not `"true"` in MMKV
+- **WHEN** the onboarding flow starts and `onboarding_completed` is not `"true"` in SharedPreferences
 - **THEN** the Welcome screen is displayed with the Zenlift logo, welcome message, and "Empezar" CTA
 - **AND** progress dots show step 1 as active
 
@@ -32,8 +34,8 @@ The system SHALL present three screens in sequence: Welcome, Unit Selection, and
 
 - **WHEN** the user taps "Saltar" on any of the three onboarding screens
 - **THEN** the onboarding completes immediately
-- **AND** defaults `weight_unit = "kg"` and `weekly_goal = "3"` are written to MMKV
-- **AND** `onboarding_completed` is set to `"true"` in MMKV
+- **AND** defaults `weight_unit = "kg"` and `weekly_goal = "3"` are written to SharedPreferences
+- **AND** `onboarding_completed` is set to `"true"` in SharedPreferences
 - **AND** the app navigates to Home
 
 ### Requirement: User selects weight unit on unit screen
@@ -43,19 +45,19 @@ The system SHALL display a toggle between "kg" (kilograms) and "lb" (pounds) on 
 #### Scenario: User selects kilograms
 
 - **WHEN** the user taps "kg" on the Unit Selection screen
-- **THEN** the kg option is highlighted with the primary color (`#F97316`)
+- **THEN** the kg option is highlighted with the primary container color (`#6750A4`)
 - **AND** the lb option is displayed in a neutral style
 
 #### Scenario: User selects pounds
 
 - **WHEN** the user taps "lb" on the Unit Selection screen
-- **THEN** the lb option is highlighted with the primary color (`#F97316`)
+- **THEN** the lb option is highlighted with the primary container color (`#6750A4`)
 - **AND** the kg option is displayed in a neutral style
 
 #### Scenario: Unit persists on completion
 
 - **WHEN** the user selects "lb" and completes the onboarding (via skip or finish)
-- **THEN** the MMKV key `weight_unit` is set to `"lb"`
+- **THEN** the SharedPreferences key `weight_unit` is set to `"lb"`
 
 ### Requirement: User selects weekly workout goal
 
@@ -81,35 +83,35 @@ The system SHALL display a stepper control for selecting 1 to 7 workouts per wee
 #### Scenario: Goal persists on completion
 
 - **WHEN** the user selects 5 workouts/week and completes the onboarding
-- **THEN** the MMKV key `weekly_goal` is set to `"5"`
+- **THEN** the SharedPreferences key `weekly_goal` is set to `"5"`
 
-### Requirement: Onboarding completion persists to MMKV
+### Requirement: Onboarding completion persists to SharedPreferences
 
-On finishing the onboarding (via the final screen or skip), the system SHALL persist `weight_unit`, `weekly_goal`, and `onboarding_completed` to MMKV.
+On finishing the onboarding (via the final screen or skip), the system SHALL persist `weight_unit`, `weekly_goal`, and `onboarding_completed` to SharedPreferences.
 
 #### Scenario: All preferences saved on finish
 
 - **WHEN** the onboarding completes with unit "kg" and goal "4"
-- **THEN** MMKV contains `weight_unit = "kg"`, `weekly_goal = "4"`, `onboarding_completed = "true"`
+- **THEN** SharedPreferences contains `weight_unit = "kg"`, `weekly_goal = "4"`, `onboarding_completed = "true"`
 
 #### Scenario: Defaults saved on skip
 
 - **WHEN** the user taps "Saltar" without interacting with unit or goal controls
-- **THEN** MMKV contains `weight_unit = "kg"`, `weekly_goal = "3"`, `onboarding_completed = "true"`
+- **THEN** SharedPreferences contains `weight_unit = "kg"`, `weekly_goal = "3"`, `onboarding_completed = "true"`
 
 ### Requirement: Layout guard prevents onboarding re-display
 
-The root layout (`_layout.tsx`) SHALL check the `onboarding_completed` flag on mount. If `true`, the app SHALL render the normal navigation (Home/tabs). If not `true`, the app SHALL render the onboarding flow.
+The root app shell SHALL check the `onboarding_completed` flag on startup. If `true`, the app SHALL render the normal navigation (Home/tabs). If not `true`, the app SHALL render the onboarding flow.
 
 #### Scenario: Returning user skips onboarding
 
-- **WHEN** the app mounts and `onboarding_completed` is `"true"` in MMKV
+- **WHEN** the app starts and `onboarding_completed` is `"true"` in SharedPreferences
 - **THEN** the onboarding flow is not shown
 - **AND** the Home screen or tab navigator is displayed
 
 #### Scenario: New user sees onboarding
 
-- **WHEN** the app mounts and `onboarding_completed` is not `"true"` in MMKV
+- **WHEN** the app starts and `onboarding_completed` is not `"true"` in SharedPreferences
 - **THEN** the onboarding flow is displayed
 
 #### Scenario: Onboarding cannot be re-entered after completion

@@ -160,9 +160,9 @@ The layout is governed by a **fixed-width container** on desktop and a **fluid s
 
 Depth is created strictly through **Tonal Layering**. Shadows and outlines are forbidden to ensure the interface feels flat and integrated into the hardware.
 
-1.  **Level 0 (Background):** #0C0B10. The canvas.
-2.  **Level 1 (Primary Cards):** #18191D. For main information modules.
-3.  **Level 2 (Elevated Surfaces):** #242329. For hover states, active selections, or floating navigation elements.
+1.  **Level 0 (Background):** #141218. The canvas.
+2.  **Level 1 (Primary Cards):** #211F24. For main information modules.
+3.  **Level 2 (Elevated Surfaces):** #2B292F. For hover states, active selections, or floating navigation elements.
 4.  **Interaction:** When an element is pressed, it should subtly shift in tone (either slightly lighter or darker depending on context) to provide tactile feedback without relying on traditional "glow" or "lift" effects.
 
 ## Shapes
@@ -175,12 +175,12 @@ The design system utilizes a **Rounded** shape language to soften the intensity 
 
 ## Components
 
-*   **Cards:** The fundamental building block. Must use #18191D with 12px corner radius. No borders. Content inside should have 20px padding.
+*   **Cards:** The fundamental building block. Must use #211F24 with 12px corner radius. No borders. Content inside should have 20px padding.
 *   **Buttons:**
-    *   *Primary:* Solid white background with black text (high contrast action).
-    *   *Secondary:* #28272F surface with 85% white text.
+    *   *Primary:* #CFBCFF background with #381E72 text.
+    *   *Secondary:* #2B292F surface with 85% white text.
     *   *Ghost:* No background, 50% white text, 100% white on hover.
 *   **Data Visualizations:** Use pure white lines and dots. For charts, use varying opacities of white or subtle greyscales to differentiate data sets.
-*   **Input Fields:** #28272F background, 12px radius, 85% white text. Placeholders at 30% opacity. Focus state is indicated by a subtle shift to #242329 or a 1px solid white stroke if high accessibility is required (though tonal shift is preferred).
-*   **Chips:** Small #28272F containers with 50% white JetBrains Mono text.
-*   **Lists:** Items are separated by space, not lines. Active items should use the #242329 background shift.
+*   **Input Fields:** #211F24 or #2B292F background, 12px radius, 85% white text. Placeholders at 30% opacity. Focus state is indicated by a subtle shift to #36343A or a 1px solid outline if high accessibility is required (though tonal shift is preferred).
+*   **Chips:** Small #2B292F containers with 50% white JetBrains Mono text; selected chips use #6750A4 with #E0D2FF text.
+*   **Lists:** Items are separated by space, not lines. Active items should use the #2B292F or #36343A background shift.

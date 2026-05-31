@@ -4,7 +4,7 @@
 
 ## 1. Resumen ejecutivo
 
-**Zenlift** es una aplicación móvil de seguimiento de entrenamientos construida con **React Native**, enfocada en el usuario final que descarga la app desde la Play Store para llevar control de sus rutinas, ejercicios, cargas, series, repeticiones, progreso y consistencia en el gimnasio.
+**Zenlift** es una aplicación móvil de seguimiento de entrenamientos construida con **Flutter y Dart**, enfocada en el usuario final que descarga la app desde la Play Store para llevar control de sus rutinas, ejercicios, cargas, series, repeticiones, progreso y consistencia en el gimnasio.
 
 Zenlift no es un CRM, no es una plataforma web administrativa, no es un SaaS para gimnasios y no está diseñada para operar negocios fitness. Su enfoque es **B2C mobile-first**: una app personal para que cualquier usuario pueda planificar, registrar y analizar su entrenamiento de manera simple, rápida y visual.
 
@@ -26,7 +26,7 @@ Zenlift es:
 - Una app para crear rutinas, ejecutar sesiones y analizar resultados.
 - Un producto enfocado en el cliente final.
 - Una app distribuible en Play Store.
-- Una experiencia mobile-first construida con React Native.
+- Una experiencia mobile-first construida con Flutter.
 
 ### 2.2 Qué no es Zenlift
 
@@ -266,7 +266,6 @@ La paleta es monocromática con jerarquía por capas tonales (surface hierarchy)
 
 | Entidad | Descripción |
 |---|---|
-| UserProfile | Perfil local del usuario de la app. |
 | Exercise | Ejercicio disponible o creado por el usuario. |
 | MuscleGroup | Grupo muscular (entidad propia con ID, nombre). |
 | ExerciseMuscle | Relación many-to-many entre Exercise y MuscleGroup (con rol: primary/secondary). |
@@ -279,7 +278,7 @@ La paleta es monocromática con jerarquía por capas tonales (surface hierarchy)
 | PersonalRecord | Mejor marca detectada por ejercicio. |
 | ProgressMetric | Métrica calculada de progreso. |
 | Note | Nota asociada a ejercicio, set o sesión. |
-| AppSettings | Preferencias locales del usuario (key-value en SQLite o MMKV). |
+| AppSettings | Preferencias locales del usuario (key-value en SQLite o shared_preferences). |
 | Migration | Registro de migraciones de base de datos aplicadas. |
 
 ### 8.2 Relaciones principales
@@ -288,16 +287,14 @@ La paleta es monocromática con jerarquía por capas tonales (surface hierarchy)
 MuscleGroup ←→ ExerciseMuscle ←→ Exercise
      (many-to-many con role: 'primary' | 'secondary')
 
-UserProfile
-  └── Routine[]
-        └── RoutineDay[]
-              └── RoutineExercise[]
-                    └── Exercise (referencia)
+Routine
+  └── RoutineDay[]
+        └── RoutineExercise[]
+              └── Exercise (referencia)
 
-UserProfile
-  └── WorkoutSession[]
-        └── WorkoutExercise[]
-              └── SetLog[]
+WorkoutSession
+  └── WorkoutExercise[]
+        └── SetLog[]
 
 Exercise
   └── PersonalRecord[]
@@ -310,18 +307,14 @@ WorkoutSession
 
 Todos los IDs de entidades deben ser **UUIDs v4** (o equivalentes de alta entropía), NO enteros autoincrementales. Razones:
 
-- **Sync futuro:** si algún día se agrega sincronización entre dispositivos o backup en nube, los UUIDs evitan colisiones entre dispositivos.
+- **Sync futuro:** si algún día se agrega sincronización entre dispositivos o Backup en nube opcional, los UUIDs evitan colisiones entre dispositivos.
 - **Offline-first:** los IDs se generan en el dispositivo sin depender de un servidor central.
 - **Costo cero hoy:** usar UUIDs no añade complejidad ahora y previene una migración masiva después.
 
 Implementación sugerida:
-```typescript
-// utils/id.ts
-export function generateId(): string {
-  // crypto.randomUUID() está disponible en Hermes engine (React Native)
-  // Si no, fallback a nanoid o Date.now + Math.random
-  return crypto.randomUUID?.() ?? nanoid();
-}
+```dart
+// lib/utils/id.dart
+String generateId() => const Uuid().v4();
 ```
 
 ---
@@ -714,7 +707,7 @@ Permitir personalización sin complicar el producto.
 - Idioma.
 - Formato de fecha.
 - Semana inicia lunes/domingo.
-- Exportar datos.
+- Exportación manual de datos.
 - Borrar datos.
 
 ---
@@ -723,19 +716,19 @@ Permitir personalización sin complicar el producto.
 
 ## 10.1 Enfoque general
 
-Zenlift es una app móvil construida con React Native + Expo (managed workflow). La arquitectura debe ser local-first, simple, mantenible y preparada para crecer.
+Zenlift es una app móvil construida con Flutter y Dart. La arquitectura debe ser local-first, simple, mantenible y preparada para crecer.
 
 No se asume web, backend ni API en la versión actual.
 
 ### Arquitectura conceptual
 
 ```text
-React Native App (Expo SDK 56)
-  ├── UI Layer (React components + StyleSheet/theme)
-  ├── Navigation Layer (Expo Router, file-based routing)
-  ├── State Layer (Zustand stores + React Context para theme)
+Flutter App
+  ├── UI Layer (Widgets + Flutter ThemeData)
+  ├── Navigation Layer (go_router)
+  ├── State Layer (flutter_riverpod providers/controllers)
   ├── Domain Logic (funciones puras de cálculo: volumen, 1RM, PRs)
-  ├── Local Persistence (SQLite para datos, MMKV para settings)
+  ├── Local Persistence (Drift/SQLite para datos, shared_preferences para settings)
   ├── Analytics Calculations (servicios de progreso y estadísticas)
   └── Device Features (haptics, keyboard, timer)
 ```
@@ -755,70 +748,54 @@ React Native App (Expo SDK 56)
 
 ### Core
 
-- **React Native 0.85+** (vía Expo SDK 56).
-- **TypeScript 6** con strict mode.
-- **Expo** (managed workflow) — reduce configuración nativa al mínimo.
-- **Expo Router** — file-based routing, similar a Next.js App Router.
+- **Flutter** como framework móvil principal.
+- **Dart 3** con null safety y análisis estático estricto.
+- **go_router** para navegación declarativa y rutas tipadas a nivel de app.
 
 ### Estado
 
-- **Zustand** para estado global mínimo (workout activo, timer, preferencias).
-- **React Context** solo para theme (claro/oscuro/sistema).
-- **TanStack Query** innecesario (no hay API ni fetching).
+- **flutter_riverpod** para estado de features, controllers y dependencias.
+- Providers pequeños por feature para workout activo, settings, repositorios y tema.
+- Clientes de fetching remotos innecesarios en el MVP (no hay API ni backend).
 
 ### Persistencia local
 
-- **expo-sqlite** (`SQLiteDatabase`) con API async — para datos estructurados (workouts, rutinas, ejercicios, sets, PRs). API síncrona disponible si se necesita rendimiento extra.
-- **react-native-mmkv** — para settings, flags, preferencias y estado ligero. Lectura síncrona, cero latencia.
+- **Drift sobre SQLite** para datos estructurados (workouts, rutinas, ejercicios, sets, PRs), migraciones y repositorios testeables.
+- **shared_preferences** para settings, flags, preferencias y estado ligero.
 
 ### Formularios y validación
 
-- **React Hook Form** — manejo de formularios con mínimo re-render.
-- **Zod** — schemas de validación tipados.
+- Formularios propios con widgets controlados y validación de dominio en Dart.
+- Validadores simples cerca de cada feature; schemas complejos solo si el flujo lo exige.
 
 ### UI y rendimiento
 
-- **@shopify/flash-list** — obligatorio para listas con inputs (Active Workout, biblioteca de ejercicios). Reemplaza FlatList con mejor performance en scroll.
-- **Componentes propios** con StyleSheet — sin dependencia de UI kits pesados.
-- **react-native-reanimated** (si Expo lo incluye) para animaciones de PR, timer, transiciones.
+- **ListView.builder**, **SliverList** y widgets separados para listas largas con inputs.
+- **Componentes propios** con Flutter widgets y ThemeData — sin dependencia de UI kits pesados.
+- Animaciones nativas de Flutter para PRs, timer y transiciones puntuales.
 
 ### Gráficas
 
-- **react-native-svg** + **victory-native** — gráficas de progreso (línea, barra).
-- Alternativa: **react-native-gifted-charts** para gráficas más simples.
-- Recharts NO aplica (es web-only).
+- **fl_chart** para gráficas de progreso (línea, barra).
+- Mantener wrappers propios para no acoplar pantallas al paquete de gráficas.
 
 ### Fechas
 
-- **date-fns** — ligero, tree-shakeable, sin dependencia de moment/luxon.
+- APIs de fecha de Dart y helpers propios para calendario, semana y formato.
 
 ### Feedback háptico
 
-- **expo-haptics** — vibración al completar set, al detectar PR, al terminar timer.
+- Feedback háptico con APIs/plugins de Flutter cuando se implemente vibración al completar set, detectar PR o terminar timer.
 
 ---
 
 ## 10.3 Capas internas recomendadas
 
 ```text
-src/
-  app/                    # Expo Router: file-based routes
-    (tabs)/
-      index.tsx           # Home
-      routines.tsx        # Lista de rutinas
-      history.tsx         # Historial
-      settings.tsx        # Configuración
-    routine/
-      [id].tsx            # Detalle de rutina
-    workout/
-      active.tsx          # Workout en curso (LA PANTALLA CRÍTICA)
-      summary.tsx         # Resumen post-workout
-    exercise/
-      index.tsx           # Biblioteca de ejercicios
-      [id].tsx            # Detalle de ejercicio
-    progress/
-      index.tsx           # Progreso general
-      [exerciseId].tsx    # Progreso por ejercicio
+lib/
+  app/                    # go_router, app shell, providers globales
+    router.dart
+    app.dart
   features/               # Lógica de negocio por feature
     home/
     routines/
@@ -828,60 +805,59 @@ src/
     progress/
     settings/
   domain/
-    entities/             # Tipos TypeScript puros
+    entities/             # Modelos de dominio Dart puros
     services/             # Lógica de negocio (cálculos, PRs, estadísticas)
     calculations/         # Funciones puras: volumen, 1RM, conversión
   storage/
-    database/
-      connection.ts       # Singleton de conexión SQLite
-      schema.ts           # SQL DDL
+    drift/
+      app_database.dart   # Drift database y tablas
     repositories/         # Patrón repository por entidad
     migrations/           # Sistema de migraciones versionado
-  components/
-    ui/                   # Componentes genéricos reutilizables
+  widgets/
+    ui/                   # Widgets genéricos reutilizables
     workout/              # Componentes específicos de workout
     charts/               # Wrappers de gráficas
   utils/
-    dates/                # Helpers de date-fns
+    dates/                # Helpers de fechas
     units/                # Conversión kg↔lb, formateo
     formatters/           # Formateo de números, duración
   theme/                  # Colores, tipografía, spacing
-  providers/              # ThemeProvider, DatabaseProvider
+  providers/              # Providers Riverpod compartidos
 ```
 
 ### Principio
 
-Las pantallas no deben contener lógica pesada de cálculo. Las estadísticas, PRs, volumen y progresión deben estar en `domain/services/` y `domain/calculations/` como funciones puras, testeables unitariamente sin montar componentes React.
+Las pantallas no deben contener lógica pesada de cálculo. Las estadísticas, PRs, volumen y progresión deben estar en `domain/services/` y `domain/calculations/` como funciones puras, testeables unitariamente sin montar widgets Flutter.
 
 ---
 
-## 10.4 Arquitectura de estado (Zustand)
+## 10.4 Arquitectura de estado (flutter_riverpod)
 
 ### Stores principales
 
-```typescript
-// stores/activeWorkoutStore.ts
-interface ActiveWorkoutStore {
-  session: WorkoutSession | null;
-  exercises: WorkoutExerciseWithSets[];  // ejercicios + sus sets
-  timerSeconds: number;
-  timerRunning: boolean;
-  // Acciones
-  startWorkout: (routineId?: string, routineDayId?: string) => void;
-  addSet: (exerciseId: string, set: Omit<SetLog, 'id'>) => void;
-  completeSet: (exerciseId: string, setId: string) => void;
-  updateSet: (setId: string, updates: Partial<SetLog>) => void;
-  finishWorkout: () => Promise<WorkoutSummary>;
-  recoverSession: () => Promise<void>; // al reabrir la app
+```dart
+// features/workout/application/active_workout_controller.dart
+class ActiveWorkoutState {
+  final WorkoutSession? session;
+  final List<WorkoutExerciseWithSets> exercises;
+  final int timerSeconds;
+  final bool timerRunning;
 }
 
-// stores/settingsStore.ts
-interface SettingsStore {
-  weightUnit: 'kg' | 'lb';
-  theme: 'light' | 'dark' | 'system';
-  weeklyGoal: number;
-  onboardingComplete: boolean;
-  // Persistido en MMKV
+class ActiveWorkoutController extends Notifier<ActiveWorkoutState> {
+  void startWorkout({String? routineId, String? routineDayId}) {}
+  Future<void> addSet(String exerciseId, SetLogInput set) async {}
+  Future<void> completeSet(String exerciseId, String setId) async {}
+  Future<void> updateSet(String setId, SetLogPatch updates) async {}
+  Future<WorkoutSummary> finishWorkout() async {}
+  Future<void> recoverSession() async {}
+}
+
+class SettingsState {
+  final WeightUnit weightUnit;
+  final ThemeModePreference theme;
+  final int weeklyGoal;
+  final bool onboardingComplete;
 }
 ```
 
@@ -889,10 +865,10 @@ interface SettingsStore {
 
 ### Reglas de estado
 
-- **Workout activo en Zustand** (no en React state) — sobrevive a re-renders y cambios de pantalla.
+- **Workout activo en Riverpod** (no en state local de widget) — sobrevive a rebuilds y cambios de pantalla.
 - **Autosave en cada set completado** — el store persiste a SQLite inmediatamente tras cada `completeSet()`.
 - **Recuperación al iniciar** — `recoverSession()` busca una sesión con `status='active'` en SQLite y reconstruye el store.
-- **Settings en MMKV** — lectura síncrona, sin async, disponible inmediatamente al arrancar.
+- **Settings en shared_preferences** — preferencias ligeras disponibles al arrancar.
 
 ---
 
@@ -901,19 +877,20 @@ interface SettingsStore {
 ### Jerarquía de errores
 
 ```
-ErrorBoundary (React)         ← captura crashes de UI, muestra pantalla de recovery
-  └── Try/catch en repositories ← operaciones SQLite
-       └── Result<T, E> pattern  ← funciones de dominio (cálculos, PRs)
+Flutter error handling         ← captura errores de UI, muestra pantalla de recovery
+  └── Try/catch en repositories ← operaciones Drift/SQLite
+       └── Result<T, E> pattern ← funciones de dominio (cálculos, PRs)
 ```
 
 ### Base de datos
 
-```typescript
-// storage/database/errors.ts
+```dart
+// storage/drift/database_error.dart
 class DatabaseError extends Error {
-  constructor(message: string, public readonly cause?: unknown) {
-    super(message);
-  }
+  DatabaseError(this.message, [this.cause]);
+
+  final String message;
+  final Object? cause;
 }
 
 // Todo repository debe:
@@ -926,14 +903,16 @@ class DatabaseError extends Error {
 ### Workout activo (crítico)
 
 - Si una operación SQLite falla durante un workout, **reintentar hasta 3 veces con backoff**.
-- Si los reintentos fallan, guardar el set en una **cola en memoria** (MMKV) y reintentar en el siguiente set exitoso.
+- Si los reintentos fallan, guardar el set en una **cola local temporal** y reintentar en el siguiente set exitoso.
 - **Nunca perder un set** — es preferible duplicar (y des-duplicar al recuperar) que perder datos.
 
 ### Cálculos (funciones puras)
 
 - Usar **Result<T, E> pattern** (Neverthrow o implementación propia simple):
-```typescript
-type Result<T, E = Error> = { ok: true; value: T } | { ok: false; error: E };
+```dart
+sealed class Result<T> {
+  const Result();
+}
 ```
 - Las funciones de cálculo nunca lanzan excepciones — siempre retornan Result.
 
@@ -945,18 +924,18 @@ type Result<T, E = Error> = { ok: true; value: T } | { ok: false; error: E };
 
 | Métrica | Objetivo | Medición |
 |---|---|---|
-| Tiempo de arranque (cold start) | < 2 segundos | `expo-splash-screen` + timing manual |
+| Tiempo de arranque (cold start) | < 2 segundos | timing manual y profiling de Flutter |
 | Tiempo para registrar un set | < 3 segundos | Medir desde que el usuario toca el input hasta que el set aparece como completado |
-| Scroll en Active Workout (30 rows con inputs) | 60 FPS, sin lag visible | FlashList + `estimatedItemSize` |
+| Scroll en Active Workout (30 rows con inputs) | 60 FPS, sin lag visible | Flutter DevTools + profiling |
 | Carga de historial (100 sesiones) | < 500ms | SQLite con índices apropiados |
-| Persistencia de set | < 100ms (async, no bloqueante) | `runAsync` de expo-sqlite |
+| Persistencia de set | < 100ms (async, no bloqueante) | Drift write medido en repository |
 
 ### Técnicas de optimización
 
-- **FlashList en TODAS las listas** con inputs editables. FlatList estándar tiene problemas de reciclaje con TextInputs.
-- **`estimatedItemSize`** en FlashList — mejora drásticamente el scroll inicial.
-- **React.memo** en SetRow y ExerciseCard — evita re-renders de toda la lista cuando un solo set cambia.
-- **useCallback** en handlers de sets — las referencias estables evitan re-renders.
+- **ListView.builder/SliverList** en listas largas con inputs editables.
+- **Keys estables** en filas de sets y ejercicios para conservar estado de inputs durante scroll.
+- **Widgets pequeños y const constructors** cuando aplique — evita rebuilds costosos de toda la lista.
+- **Providers selectivos** — cada fila observa solo el estado que necesita.
 - **SQLite WAL mode** — lecturas concurrentes sin bloquear escrituras:
   ```sql
   PRAGMA journal_mode = WAL;
@@ -980,40 +959,36 @@ El teclado es un problema crítico en la Active Workout Screen. El usuario alter
 
 ### Reglas
 
-- **Teclado numérico** (`keyboardType="numeric"`) para peso y reps.
-- **NO usar KeyboardAvoidingView** — causa jumps de layout que rompen la experiencia de registro rápido.
-- En su lugar: **scroll automático al input enfocado** (FlashList tiene `scrollToIndex`).
+- **Teclado numérico** (`TextInputType.number`) para peso y reps.
+- **NO depender de ajustes globales de teclado** que causen jumps de layout y rompan la experiencia de registro rápido.
+- En su lugar: **scroll automático al input enfocado** con `ScrollController` o `Scrollable.ensureVisible`.
 - **Botones +/-** junto a cada input — permiten ajustar peso/reps sin teclear (útil con una mano, sudor, prisa).
-- **Cerrar teclado al hacer tap en "completar set"** — `Keyboard.dismiss()`.
+- **Cerrar teclado al hacer tap en "completar set"** con `FocusScope.of(context).unfocus()`.
 - **El teclado NO debe empujar el header** — la duración del workout debe permanecer visible.
 
 ---
 
-## 10.9 Estrategia de backup y exportación
+## 10.9 Exportación manual de datos y Backup en nube opcional
 
-### Export (P2)
+### Exportación manual de datos (P2)
 
 - **Formato JSON** — un solo archivo `.zenlift` que contiene todo: ejercicios, rutinas, sesiones, sets, PRs, settings.
-- Implementar con `expo-file-system` + `expo-sharing`:
-  ```typescript
-  // Generar JSON del estado completo
-  const backup = await backupService.exportAll();
-  // Escribir a caché
-  const path = FileSystem.cacheDirectory + 'zenlift_backup_2026-05-24.json';
-  await FileSystem.writeAsStringAsync(path, JSON.stringify(backup));
-  // Compartir (guardar en Drive, enviar por WhatsApp, etc.)
-  await Sharing.shareAsync(path);
+- Implementar con `file_picker` + `share_plus`:
+  ```dart
+  final exportData = await dataExportService.createExport();
+  final file = await exportFileWriter.writeJson(exportData);
+  await SharePlus.instance.share(ShareParams(files: [XFile(file.path)]));
   ```
 
 ### Import (P2)
 
-- Leer archivo `.zenlift` con `expo-document-picker`.
-- Validar schema con Zod antes de insertar.
+- Leer archivo `.zenlift` con `file_picker`.
+- Validar estructura en Dart antes de insertar.
 - Estrategia: **merge**, no replace — insertar solo lo que no existe (por UUID), actualizar settings.
 
-### Backup automático (P3)
+### Exportación automática local (P3)
 
-- Opcionalmente, respaldar a un archivo en `FileSystem.documentDirectory` cada N workouts.
+- Opcionalmente, exportar cada N workouts a un archivo `.zenlift` dentro del directorio de documentos de la app obtenido con `path_provider` (`getApplicationDocumentsDirectory()`), escribiendo el JSON con APIs normales de Dart (`dart:io`, `File.writeAsString`).
 - No requiere backend ni nube. El usuario decide si lo copia manualmente.
 
 ---
@@ -1022,7 +997,7 @@ El teclado es un problema crítico en la Active Workout Screen. El usuario alter
 
 ### Principio de IDs
 
-Todos los IDs son **UUIDs** (texto), generados en el dispositivo con `crypto.randomUUID()` o `nanoid()`. No se usan enteros autoincrementales. Ver sección 8.3 para justificación.
+Todos los IDs son **UUIDs** (texto), generados en el dispositivo con el paquete Dart `uuid` (`Uuid().v4()`). No se usan enteros autoincrementales. Ver sección 8.3 para justificación.
 
 ---
 
@@ -1176,7 +1151,7 @@ Tabla de relación many-to-many entre exercises y muscle_groups.
 
 ## 11.11 app_settings
 
-Tabla key-value para preferencias que requieren persistencia estructurada. Para settings de alta frecuencia (tema, unidad), usar MMKV en su lugar.
+Tabla key-value para preferencias que requieren persistencia estructurada. Para settings ligeros (tema, unidad), usar shared_preferences.
 
 | Campo | Tipo | Descripción |
 |---|---|---|
@@ -1473,9 +1448,8 @@ Esta es probablemente la pantalla más importante de todo Zenlift.
 
 - Peso: kg/lb.
 - Tema oscuro por defecto; claro/sistema como opción configurable.
-- Timer por defecto.
 - Objetivo semanal.
-- Exportar datos.
+- Exportación manual de datos.
 - Importar datos, si aplica.
 - Borrar datos.
 - About Zenlift.
@@ -1491,12 +1465,12 @@ El registro de un set debe sentirse casi instantáneo.
 ### 15.2 Recomendaciones
 
 - Inputs grandes (mínimo 48px de altura para cumplir con touch targets de accesibilidad).
-- Teclado numérico (`keyboardType="numeric"`).
+- Teclado numérico (`TextInputType.number`).
 - Botones +/- a los lados de cada input para ajustar sin teclear (crítico para uso con una mano o sudor).
 - Valores anteriores precargados del último workout con el mismo ejercicio.
 - Check rápido (tap en botón check, o swipe right en la fila del set).
 - Evitar modales y alerts — toda interacción debe ser inline.
-- **Haptic feedback** (`expo-haptics`) al completar un set: una vibración corta confirma la acción sin necesidad de mirar la pantalla.
+- **Haptic feedback** con APIs/plugins de Flutter al completar un set: una vibración corta confirma la acción sin necesidad de mirar la pantalla.
 - **El set row debe tener al menos 56px de altura** — touch target mínimo para uso en movimiento.
 
 ### 15.3 Ejemplo de set row
@@ -1519,15 +1493,15 @@ Un usuario debe poder registrar una serie en menos de 3 segundos.
 ### 15.5 Accesibilidad
 
 - **Contraste mínimo 4.5:1** en texto de peso/reps (WCAG AA).
-- **Labels accesibles:** cada input debe tener `accessibilityLabel` (ej: "Peso para serie 2, valor anterior 60 kilogramos").
+- **Labels accesibles:** cada input debe exponer un label con `Semantics(label: ...)` o `semanticLabel` cuando aplique (ej: "Peso para serie 2, valor anterior 60 kilogramos").
 - **TalkBack/VoiceOver:** el botón de check debe anunciar "Serie completada. 62.5 kilogramos, 8 repeticiones".
 - **Tamaño de fuente mínimo 16dp** en inputs — evita zoom automático en iOS y mejora legibilidad.
 
 ### 15.6 Comportamiento del teclado
 
-- `returnKeyType="next"` en input de peso → salta al input de reps.
-- `returnKeyType="done"` en input de reps → completa el set automáticamente (mismo efecto que tap en ✓).
-- `blurOnSubmit={false}` en peso para mantener el teclado abierto al saltar a reps.
+- `textInputAction: TextInputAction.next` en input de peso → salta al input de reps.
+- `textInputAction: TextInputAction.done` en input de reps → completa el set automáticamente (mismo efecto que tap en ✓).
+- En `onSubmitted`, usar `FocusScope` para mover el foco de peso a reps sin cerrar el teclado; al enviar reps, completar el set y cerrar o mantener foco según el flujo activo.
 - El contenedor del set row NO debe moverse al aparecer el teclado (el timer está en un header fijo).
 - Si el usuario hace scroll durante la edición, el input enfocado no debe perder el foco.
 
@@ -1636,8 +1610,8 @@ Validar que el usuario puede:
 - Estimated 1RM.
 - Distribución por músculo.
 - Calendario de consistencia.
-- Exportar datos.
-- Backup opcional.
+- Exportación manual de datos.
+- Backup en nube opcional.
 - Importación futura.
 - Widgets o accesos rápidos.
 
@@ -1723,9 +1697,8 @@ Incluye:
 
 - Freemium.
 - Premium features.
-- Backup en la nube opcional.
+- Backup en nube opcional.
 - Sincronización entre dispositivos, si se agrega backend en el futuro.
-- Exportación avanzada.
 - Plantillas premium.
 - Estadísticas premium.
 
@@ -1749,8 +1722,8 @@ Premium:
 - Estadísticas avanzadas.
 - Historial ilimitado, si se decide limitar.
 - Plantillas avanzadas.
-- Backup en nube.
-- Exportación.
+- Backup en nube opcional.
+- Exportación manual de datos.
 - Temas personalizados.
 - Insights avanzados.
 
@@ -1775,7 +1748,7 @@ Ventajas:
 
 - Ingreso recurrente.
 - Permite financiar mejoras.
-- Compatible con backup, sync y features cloud futuras.
+- Compatible con Backup en nube opcional, sync y features cloud futuras.
 
 Desventajas:
 
@@ -1856,7 +1829,7 @@ Mitigación:
 
 - Persistencia inmediata a SQLite en cada set completado (no al final del workout).
 - Recuperación de sesión activa al reabrir la app (buscar `status='active'` en SQLite).
-- Cola de reintentos en MMKV si SQLite falla temporalmente.
+- Cola de reintentos local si SQLite falla temporalmente.
 - Timestamps en cada operación para detectar y resolver duplicados.
 - Tests automatizados de recuperación de sesión.
 
@@ -1881,11 +1854,11 @@ La mayoría del mercado Android usa dispositivos de gama media-baja (2-4 GB RAM)
 
 Mitigación:
 
-- FlashList en TODAS las listas con inputs.
+- Listas Flutter eficientes para pantallas con inputs.
 - SQLite WAL mode para no bloquear lecturas.
 - Evitar animaciones pesadas y librerías UI infladas.
 - Medir tiempo de arranque y memoria en un dispositivo de gama baja (ej: Moto G, 3GB RAM).
-- APK objetivo < 30 MB (sin contar assets nativos de Expo).
+- APK objetivo razonable para Android de gama media-baja.
 
 ### 21.6 Abandono por onboarding complejo
 
@@ -1922,8 +1895,8 @@ Si el usuario tiene que alternar constantemente entre peso y reps tocando inputs
 
 Mitigación:
 
-- returnKeyType="next" en peso → salta automáticamente a reps.
-- returnKeyType="done" en reps → completa el set automáticamente.
+- `textInputAction: TextInputAction.next` en peso → salta automáticamente a reps.
+- `textInputAction: TextInputAction.done` en reps → completa el set automáticamente.
 - Botones +/- para ajustar sin teclear (útil con una mano).
 - Teclado numérico (no alfanumérico) en ambos inputs.
 
@@ -1988,8 +1961,8 @@ Mitigación:
 - Insights textuales.
 - Plantillas inteligentes.
 - Distribución muscular.
-- Exportación.
-- Backup opcional.
+- Exportación manual de datos.
+- Backup en nube opcional.
 
 ---
 
@@ -2012,8 +1985,8 @@ Zenlift MVP se considera exitoso si:
 
 ### 24.1 Fase 1 — Estructura base
 
-- Configurar React Native.
-- Configurar TypeScript.
+- Configurar Flutter.
+- Configurar Dart 3.
 - Configurar navegación.
 - Definir tema.
 - Definir estructura de carpetas.
@@ -2109,7 +2082,7 @@ Ese contexto importa más que una prueba cómoda en escritorio.
 
 Zenlift puede presentarse como un proyecto mobile fuerte porque demuestra:
 
-- React Native.
+- Flutter.
 - Arquitectura local-first.
 - Diseño de producto B2C.
 - Mobile UX.
@@ -2121,13 +2094,13 @@ Zenlift puede presentarse como un proyecto mobile fuerte porque demuestra:
 
 ### 26.1 Descripción para CV
 
-**Zenlift — React Native workout tracker app**
+**Zenlift — Flutter workout tracker app**
 
-Diseñé y desarrollé una aplicación móvil de seguimiento de entrenamientos enfocada en usuarios de gimnasio, permitiendo crear rutinas, registrar series, pesos y repeticiones, consultar historial, detectar records personales y visualizar progreso de fuerza. La app fue construida con React Native, arquitectura local-first y persistencia en dispositivo para funcionar de forma confiable durante entrenamientos reales.
+Diseñé y desarrollé una aplicación móvil de seguimiento de entrenamientos enfocada en usuarios de gimnasio, permitiendo crear rutinas, registrar series, pesos y repeticiones, consultar historial, detectar records personales y visualizar progreso de fuerza. La app fue construida con Flutter, arquitectura local-first y persistencia en dispositivo para funcionar de forma confiable durante entrenamientos reales.
 
 ### 26.2 Bullets para CV
 
-- Built a React Native workout tracker app focused on fast set logging, routine creation and workout history.
+- Built a Flutter workout tracker app focused on fast set logging, routine creation and workout history.
 - Designed a local-first data model for exercises, routines, workout sessions and set logs.
 - Implemented progress calculations including training volume, personal records and exercise history.
 - Created a mobile-first UX optimized for real gym usage, reducing friction during active workouts.
@@ -2251,94 +2224,94 @@ Documentar: tiempo por set, taps necesarios, momentos de confusión, features qu
 
 Todas las funciones en `domain/calculations/` y `domain/services/` deben tener tests unitarios.
 
-```typescript
-// domain/calculations/__tests__/volume.test.ts
-describe('calculateVolume', () => {
-  it('calcula volumen de un set: peso × reps', () => {
-    expect(calculateVolume(60, 10)).toBe(600);
+```dart
+// test/features/workout/domain/calculations/volume_test.dart
+import 'package:flutter_test/flutter_test.dart';
+
+void main() {
+  group('calculateVolume', () {
+    test('calcula volumen de un set: peso x reps', () {
+      expect(calculateVolume(60, 10), 600);
+    });
+    test('retorna 0 si peso es 0', () { ... });
+    test('retorna 0 si reps es 0', () { ... });
   });
-  it('retorna 0 si peso es 0', () => { ... });
-  it('retorna 0 si reps es 0', () => { ... });
-});
 
-describe('calculateSessionVolume', () => {
-  it('suma el volumen de todos los sets completados', () => { ... });
-  it('ignora sets no completados', () => { ... });
-  it('ignora warmup sets', () => { ... });
-});
-
-// domain/calculations/__tests__/oneRM.test.ts
-describe('estimate1RM (Epley)', () => {
-  it('calcula 1RM estimado con fórmula de Epley', () => {
-    expect(estimate1RM(80, 6)).toBeCloseTo(96, 0);
+  group('calculateSessionVolume', () {
+    test('suma el volumen de todos los sets completados', () { ... });
+    test('ignora sets no completados', () { ... });
+    test('ignora warmup sets', () { ... });
   });
-  it('retorna el peso si reps = 1', () => { ... });
-  it('maneja reps = 0', () => { ... });
-});
 
-// domain/services/__tests__/prDetection.test.ts
-describe('detectPRs', () => {
-  it('detecta nuevo PR de peso máximo', () => { ... });
-  it('detecta nuevo PR de volumen', () => { ... });
-  it('detecta nuevo estimated 1RM', () => { ... });
-  it('no detecta PR si no supera el anterior', () => { ... });
-  it('maneja primer workout (sin PRs previos)', () => { ... });
-});
+  group('estimate1RM (Epley)', () {
+    test('calcula 1RM estimado con formula de Epley', () {
+      expect(estimate1RM(80, 6), closeTo(96, 0.5));
+    });
+    test('retorna el peso si reps = 1', () { ... });
+    test('maneja reps = 0', () { ... });
+  });
 
-// utils/__tests__/units.test.ts
-describe('kgToLb', () => {
-  it('convierte 100 kg a 220.46 lb', () => { ... });
-});
-describe('lbToKg', () => {
-  it('convierte 220.46 lb a 100 kg', () => { ... });
-});
-describe('formatWeight', () => {
-  it('formatea en kg con 1 decimal', () => { ... });
-  it('formatea en lb sin decimales', () => { ... });
-});
+  group('detectPRs', () {
+    test('detecta nuevo PR de peso maximo', () { ... });
+    test('detecta nuevo PR de volumen', () { ... });
+    test('detecta nuevo estimated 1RM', () { ... });
+    test('no detecta PR si no supera el anterior', () { ... });
+    test('maneja primer workout sin PRs previos', () { ... });
+  });
+
+  group('unit conversion', () {
+    test('convierte 100 kg a 220.46 lb', () { ... });
+    test('convierte 220.46 lb a 100 kg', () { ... });
+    test('formatea en kg con 1 decimal', () { ... });
+    test('formatea en lb sin decimales', () { ... });
+  });
+}
 ```
 
 ### 29.3 Tests de integración (P1)
 
 Tests que ejercitan los repositorios contra una base de datos SQLite real (en memoria o archivo temporal).
 
-```typescript
-// storage/repositories/__tests__/exerciseRepo.test.ts
-describe('ExerciseRepo', () => {
-  let db: SQLiteDatabase;
-  let repo: ExerciseRepo;
+```dart
+// test/features/exercises/data/exercise_repository_test.dart
+import 'package:drift/drift.dart';
+import 'package:drift/native.dart';
+import 'package:flutter_test/flutter_test.dart';
 
-  beforeEach(async () => {
-    db = await openDatabaseAsync(':memory:');
-    await runMigrations(db);
-    repo = new ExerciseRepo(db);
+void main() {
+  late AppDatabase db;
+  late ExerciseRepository repo;
+
+  setUp(() {
+    db = AppDatabase(
+      DatabaseConnection(
+        NativeDatabase.memory(),
+        closeStreamsSynchronously: true,
+      ),
+    );
+    repo = DriftExerciseRepository(db);
   });
 
-  it('creates and retrieves an exercise', async () => { ... });
-  it('searches exercises by name (case insensitive)', async () => { ... });
-  it('filters by muscle group via exercise_muscles join', async () => { ... });
-  it('filters by equipment', async () => { ... });
-  it('updates an exercise', async () => { ... });
-  it('deletes an exercise and its muscle associations (CASCADE)', async () => { ... });
-});
+  tearDown(() async {
+    await db.close();
+  });
 
-// storage/repositories/__tests__/workoutRepo.test.ts
-describe('WorkoutRepo', () => {
-  it('creates a session, adds exercises, adds sets, completes session', async () => { ... });
-  it('getActiveSession returns null when no active session', async () => { ... });
-  it('getActiveSession returns the active session', async () => { ... });
-  it('getFullSession returns session with nested exercises and sets', async () => { ... });
-  it('recovers active session after simulated app close', async () => { ... });
-  it('completeSession calculates duration correctly', async () => { ... });
-});
-
-// storage/migrations/__tests__/migrations.test.ts
-describe('Migrations', () => {
-  it('applies v1 migration on fresh database', async () => { ... });
-  it('does not reapply already-applied migrations', async () => { ... });
-  it('migrates from v1 to v2 (future test)', async () => { ... });
-});
+  group('ExerciseRepository', () {
+    test('creates and retrieves an exercise', () async { ... });
+    test('searches exercises by name case-insensitively', () async { ... });
+    test('filters by muscle group via exercise_muscles join', () async { ... });
+    test('filters by equipment', () async { ... });
+    test('updates an exercise', () async { ... });
+    test('deletes an exercise and its muscle associations with cascade', () async { ... });
+  });
+}
 ```
+
+Cubrir tambien repositorios de workout y migraciones:
+
+- `WorkoutRepository`: crear sesion, agregar ejercicios, agregar sets, completar sesion, recuperar sesion activa y leer una sesion completa con ejercicios/sets anidados.
+- Recuperacion: cerrar la instancia de Drift, abrir otra contra el mismo archivo temporal y verificar que la sesion activa persiste.
+- Migraciones: usar `MigrationTestHelper` o una base temporal para validar creacion fresca, upgrades entre versiones y que las migraciones no destruyen datos existentes.
 
 ### 29.4 Tests manuales (P0 — críticos)
 
@@ -2355,10 +2328,9 @@ Casos que no se pueden automatizar fácilmente y DEBEN probarse manualmente:
 
 ### 29.5 Herramientas de testing
 
-- **Jest** — test runner (incluido en Expo/RN).
-- **jest-expo** — preset para tests en entorno Expo.
-- **@testing-library/react-native** — para tests de componentes (P2, post-MVP).
-- **expo-sqlite con :memory:** — para tests de integración de repositorios (sin tocar la DB real del usuario).
+- **flutter_test** — unit, widget y repository tests.
+- **integration_test** — pruebas del core loop cuando cambian navegación, persistencia o finalización de workout.
+- **Drift con base en memoria** — para tests de integración de repositorios (sin tocar la DB real del usuario).
 
 ---
 
@@ -2378,58 +2350,50 @@ name: CI
 on: [push, pull_request]
 
 jobs:
-  typecheck:
+  analyze:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with: { node-version: '20' }
-      - run: npm ci
-      - run: npx tsc --noEmit
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+      - run: flutter pub get
+      - run: flutter analyze
 
   test:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - run: npm ci
-      - run: npx jest --coverage
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+      - run: flutter pub get
+      - run: flutter test
 ```
 
-### 30.3 Build con EAS (Expo Application Services)
+### 30.3 Build de release Android
 
 ```bash
 # Desarrollo
-eas build --profile development --platform android
+flutter run
 
-# Preview (APK para testers)
-eas build --profile preview --platform android
+# Tests
+flutter analyze
+flutter test
 
 # Producción (AAB para Play Store)
-eas build --profile production --platform android
+flutter build appbundle --release
 
-# Submit a Play Store
-eas submit --platform android --profile production
+# Publicación
+# Subir el AAB desde Google Play Console o una acción CI dedicada.
 ```
 
-### 30.4 Perfiles de build (eas.json)
+### 30.4 Perfiles de build
 
-```json
-{
-  "build": {
-    "development": {
-      "developmentClient": true,
-      "distribution": "internal"
-    },
-    "preview": {
-      "distribution": "internal",
-      "android": { "buildType": "apk" }
-    },
-    "production": {
-      "distribution": "store",
-      "android": { "buildType": "app-bundle" }
-    }
-  }
-}
+```text
+development: flutter run en dispositivo/emulador
+preview: flutter build apk --release para testers internos
+production: flutter build appbundle --release para Play Store
 ```
 
 ### 30.5 Versionado
@@ -2438,16 +2402,16 @@ eas submit --platform android --profile production
 - `MAJOR` — cambios que rompen compatibilidad de datos (migración de schema incompatible).
 - `MINOR` — nuevas features.
 - `PATCH` — bug fixes.
-- Versión en `app.json` → `expo.version` y `expo.android.versionCode` (entero incremental).
+- Versión en `pubspec.yaml` → `version: MAJOR.MINOR.PATCH+VERSION_CODE`.
 - VersionCode = `MAJOR * 10000 + MINOR * 100 + PATCH`.
 
 ### 30.6 Release checklist
 
 Antes de cada release a Play Store:
 
-- [ ] `npx tsc --noEmit` pasa sin errores.
-- [ ] `npx jest` pasa sin fallos.
-- [ ] La app compila con `eas build --profile production`.
+- [ ] `flutter analyze` pasa sin errores.
+- [ ] `flutter test` pasa sin fallos.
+- [ ] La app compila con `flutter build appbundle --release`.
 - [ ] Prueba manual en dispositivo Android físico (no solo emulador).
 - [ ] Prueba de upgrade desde versión anterior (si aplica).
 - [ ] Migraciones de DB ejecutadas correctamente en upgrade.
@@ -2461,14 +2425,14 @@ Antes de cada release a Play Store:
 
 Zenlift maneja datos de salud/ejercicio. Aunque son locales, la protección es importante:
 
-- **Todos los datos se almacenan localmente** en SQLite y MMKV. No se envían a ningún servidor.
+- **Todos los datos se almacenan localmente** en SQLite y shared_preferences. No se envían a ningún servidor.
 - **No hay tracking, analytics ni telemetría** en el MVP. Si se agrega en el futuro, debe ser opt-in.
 - **No se recopila información personal** — sin email, sin nombre, sin registro.
-- **El backup manual** (.zenlift JSON) es responsabilidad del usuario. Si se agrega backup en nube, debe ser cifrado.
+- **La Exportación manual de datos** (.zenlift JSON) es responsabilidad del usuario. Si se agrega Backup en nube opcional, debe ser cifrado.
 
 ### 31.2 Cifrado (futuro)
 
-Si se agrega backup en nube (P3/v2.0):
+Si se agrega Backup en nube opcional (P3/v2.0):
 
 - Cifrar el archivo .zenlift con AES-256 antes de subir.
 - Clave derivada de un passphrase del usuario (PBKDF2).
@@ -2485,16 +2449,16 @@ Zenlift debe pedir los MÍNIMOS permisos necesarios:
 
 Permisos que NO se deben pedir:
 
-- `INTERNET` — solo si se agrega backup en nube (futuro).
+- `INTERNET` — solo si se agrega Backup en nube opcional (futuro).
 - `ACCESS_NETWORK_STATE` — innecesario para app offline.
-- `READ/WRITE_EXTERNAL_STORAGE` — innecesario (FileSystem usa scoped storage).
+- `READ/WRITE_EXTERNAL_STORAGE` — innecesario para el flujo de Exportación manual de datos.
 - Location, Contacts, Camera, Microphone — nunca.
 
 ### 31.4 Seguridad del código
 
-- **No hardcodear secretos** — aunque no hay API keys en el MVP, si se agregan en el futuro usar `expo-secure-store` o variables de entorno de EAS.
-- **SQL injection:** usar siempre consultas parametrizadas (`runAsync(sql, [params])`), NUNCA concatenación de strings.
-- **Dependencias:** revisar `npm audit` regularmente. Actualizar dependencias con vulnerabilidades conocidas.
+- **No hardcodear secretos** — aunque no hay API keys en el MVP, si se agregan en el futuro usar almacenamiento seguro o configuración de build apropiada.
+- **SQL injection:** usar siempre APIs parametrizadas de Drift/SQLite, NUNCA concatenación de strings.
+- **Dependencias:** revisar `flutter pub outdated` y avisos de seguridad. Actualizar dependencias con vulnerabilidades conocidas.
 
 ---
 
@@ -2512,7 +2476,7 @@ Ver documento complementario: `docs/ai_development_strategy.md`.
 | **spike** | Skill de Hermes | Prototipos desechables para validar decisiones |
 | **Claude Code** (`claude -p`) | Terminal | One-shots de código, refactors, tests |
 | **Codex** (`codex exec`) | Terminal | Features con integración GitHub |
-| **OpenCode** (`opencode run`) | Terminal | Provider-agnostic, bueno para RN |
+| **OpenCode** (`opencode run`) | Terminal | Provider-agnostic, bueno para tareas móviles |
 
 ### 32.2 Flujo de trabajo IA
 
@@ -2523,9 +2487,9 @@ Blueprint → Spikes (validar) → Plan (writing-plans)
 
 ### 32.3 Lo que la IA hace bien
 
-- Escribir modelos de datos, migraciones SQL, tipos TypeScript.
+- Escribir modelos de datos, migraciones SQL, tipos Dart.
 - Implementar funciones puras (cálculos de volumen, 1RM, PRs, conversiones).
-- Construir componentes React Native, hooks, navegación.
+- Construir widgets Flutter, controllers Riverpod y navegación.
 - Escribir tests unitarios y de integración.
 - Revisar código (spec compliance + code quality).
 
@@ -2554,8 +2518,6 @@ Blueprint → Spikes (validar) → Plan (writing-plans)
 | **Bro Split** | Rutina que entrena un grupo muscular por día (ej: lunes pecho, martes espalda). |
 | **Drop Set** | Técnica donde reduces el peso después de llegar al fallo y sigues haciendo reps. |
 | **Epley** | Fórmula para estimar 1RM: `weight × (1 + reps/30)`. |
-| **FlashList** | Componente de Shopify que reemplaza FlatList con mejor rendimiento en scroll. |
-| **MMKV** | Almacenamiento key-value de alto rendimiento (Tencent). |
 | **PR** | Personal Record — mejor marca personal en un ejercicio. |
 | **Push/Pull/Legs (PPL)** | Rutina de 3 días: empuje, tracción, pierna. |
 | **RIR** | Reps In Reserve — cuántas repeticiones te quedaban antes del fallo. (No implementado en MVP). |
@@ -2565,4 +2527,3 @@ Blueprint → Spikes (validar) → Plan (writing-plans)
 | **Upper/Lower** | Rutina de 2-4 días alternando tren superior e inferior. |
 | **Volumen** | weight × reps — medida de trabajo total en un set/ejercicio/sesión. |
 | **Warmup Set** | Set de calentamiento — no cuenta para volumen ni PRs. |
-| **Zustand** | Librería de estado global minimalista para React. |

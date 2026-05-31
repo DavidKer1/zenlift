@@ -10,7 +10,7 @@ Zenlift debe sentirse como un compañero de entrenamiento: rápido, claro y conf
 
 - App móvil personal de seguimiento de entrenamientos.
 - Diario de progreso para rutinas, ejercicios, cargas, series y repeticiones.
-- Producto mobile-first construido con React Native + Expo.
+- Producto mobile-first construido con Flutter y Dart.
 - App local-first que debe funcionar bien sin conexión.
 - Producto distribuible en Play Store.
 

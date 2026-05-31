@@ -2,13 +2,13 @@
 
 ## Purpose
 
-Defines the behavior for importing a `.zenlift` JSON file, validating its structure with Zod, and merging its data into the local SQLite database by UUID without overwriting existing records.
+Defines the behavior for importing a `.zenlift` JSON file, validating its structure, and merging its data into the local SQLite database by UUID without overwriting existing records.
 
 ## Requirements
 
 ### Requirement: Import reads a .zenlift file
 
-The system SHALL allow the user to pick a `.zenlift` file via `expo-document-picker`, validate its structure with Zod, and merge its data into the local SQLite database by UUID.
+The system SHALL allow the user to pick a `.zenlift` file via the Flutter file picker, validate its structure, and merge its data into the local SQLite database by UUID.
 
 #### Scenario: Successful file pick
 
@@ -32,7 +32,7 @@ The system SHALL allow the user to pick a `.zenlift` file via `expo-document-pic
 
 ### Requirement: Import validates .zenlift file structure
 
-The system SHALL validate the `.zenlift` file structure using a Zod schema before importing any data.
+The system SHALL validate the `.zenlift` file structure before importing any data.
 
 #### Scenario: Valid file passes validation
 

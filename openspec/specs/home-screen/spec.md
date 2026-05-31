@@ -32,12 +32,12 @@ The system SHALL display a primary CTA button labeled "Start Workout" that navig
 #### Scenario: User taps Start Workout
 
 - **WHEN** the user taps the "Start Workout" button on the Home Screen
-- **THEN** the app SHALL navigate to the routines screen using Expo Router
+- **THEN** the app SHALL navigate to the routines screen using go_router
 
 #### Scenario: Start Workout button uses primary color
 
 - **WHEN** the Start Workout button renders
-- **THEN** the button background SHALL use the primary color `#F97316` and the text SHALL be white
+- **THEN** the button background SHALL use the primary color `#CFBCFF` and the text SHALL use the on-primary color
 
 ### Requirement: Quick Workout button starts active workout
 
@@ -180,16 +180,16 @@ The system SHALL render the Home Screen as a vertically scrollable view containi
 #### Scenario: Scrollable when content exceeds viewport
 
 - **WHEN** all sections render with content (including empty states)
-- **THEN** the screen SHALL be scrollable via `ScrollView` or `FlashList`
+- **THEN** the screen SHALL be scrollable via a Flutter scrollable widget
 
-### Requirement: Home Screen data fetching uses useCallback and useEffect
+### Requirement: Home Screen data fetching stays outside widget build
 
-The system SHALL fetch data from repositories using React's `useCallback` and `useEffect` hooks, keeping the screen component thin.
+The system SHALL fetch data from repositories through controllers or providers, keeping the screen widget thin.
 
 #### Scenario: Data fetched on mount
 
-- **WHEN** the Home Screen component mounts
-- **THEN** a `useEffect` with empty dependency array SHALL trigger data fetching for the calendar widget and all remaining Home sections
+- **WHEN** the Home Screen widget initializes
+- **THEN** the relevant controller or provider SHALL trigger data fetching for the calendar widget and all remaining Home sections
 
 #### Scenario: Calendar widget data comes from repository layer
 
@@ -199,7 +199,7 @@ The system SHALL fetch data from repositories using React's `useCallback` and `u
 #### Scenario: Callbacks are memoized
 
 - **WHEN** data fetching functions are defined
-- **THEN** each function SHALL be wrapped in `useCallback` to prevent unnecessary re-renders
+- **THEN** they SHALL live in the controller or provider layer to prevent unnecessary widget rebuild work
 
 #### Scenario: Errors are handled gracefully
 

@@ -6,7 +6,7 @@ Defines the behavior of the Routine Create/Edit form screen, which allows users 
 ## Requirements
 
 ### Requirement: Create route renders empty form
-The system SHALL render a routine creation form at `app/routine/create.tsx` with all fields empty and default values.
+The system SHALL render a routine creation form through `lib/app/routine_editor_route.dart` and `lib/features/routines/presentation/routine_editor_screen.dart` with all fields empty and default values.
 
 #### Scenario: Create screen loads with empty defaults
 - **WHEN** user navigates to `/routine/create`
@@ -14,7 +14,7 @@ The system SHALL render a routine creation form at `app/routine/create.tsx` with
 - **AND** the submit button label reads "Crear rutina"
 
 ### Requirement: Edit route loads existing routine data
-The system SHALL render a routine edit form at `app/routine/edit/[id].tsx` pre-populated with the existing routine's data.
+The system SHALL render a routine edit form through `lib/app/routine_editor_route.dart` and `lib/features/routines/presentation/routine_editor_screen.dart` pre-populated with the existing routine's data.
 
 #### Scenario: Edit screen loads with routine data
 - **WHEN** user navigates to `/routine/edit/<valid-id>`
@@ -27,8 +27,8 @@ The system SHALL render a routine edit form at `app/routine/edit/[id].tsx` pre-p
 - **THEN** an error state is displayed indicating the routine was not found
 - **AND** a button to go back to routines list is shown
 
-### Requirement: Form validation with Zod
-The system SHALL validate the form using a Zod schema before submission.
+### Requirement: Form validation
+The system SHALL validate the form before submission.
 
 #### Scenario: Name is required
 - **WHEN** user submits the form with an empty name

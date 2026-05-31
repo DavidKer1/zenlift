@@ -24,17 +24,17 @@ To reduce tokens, do not open the full blueprint by default.
 
 ## Context7
 
-Use Context7 MCP to fetch current documentation whenever the user asks about a library, framework, SDK, API, CLI tool, or cloud service. This includes React, React Native, Expo, Expo Router, SQLite, Zustand, FlashList, Zod, EAS, and similar tools.
+Use Context7 MCP to fetch current documentation whenever the user asks about a library, framework, SDK, API, CLI tool, or cloud service. This includes Flutter, Dart, go_router, Riverpod, Drift, SQLite, shared_preferences, fl_chart, file_picker, share_plus, Android Gradle, Xcode, and similar tools.
 
 Always start with `resolve-library-id` unless the user provides an exact `/org/project` library ID, then call `query-docs` with the selected library and the full question.
 
 Do not use Context7 for general refactors, business logic debugging, code review, or general programming concepts.
 
-## Expo
+## Flutter
 
-Expo has changed. Before writing Expo or React Native code, read the exact versioned Expo docs for the project SDK. Current project rule: read `https://docs.expo.dev/versions/v55.0.0/` before writing code.
+Before writing Flutter or Dart code that depends on framework, package, CLI, platform, or build-system behavior, verify the current project package versions in `pubspec.yaml` and fetch current docs with Context7.
 
-If the installed Expo SDK differs from this instruction, verify the installed version and mention the mismatch before implementation.
+Use `flutter analyze` and focused `flutter test` commands for verification. Use `flutter test integration_test/core_loop_test.dart` when touching navigation, persistence, or the core workout loop.
 
 ## Product Rules
 
@@ -49,27 +49,16 @@ If the installed Expo SDK differs from this instruction, verify the installed ve
 
 ## Implementation Rules
 
-- Keep domain calculations in pure functions under domain services/calculations.
-- Keep screens thin; avoid heavy business logic in route files.
-- Use SQLite for structured workout data and MMKV for lightweight settings/state.
-- Use FlashList for large lists or lists with editable inputs.
+- Keep domain calculations in pure Dart under feature domain layers.
+- Keep route widgets and screens thin; avoid heavy business logic in route files.
+- Use Drift/SQLite for structured workout data and shared_preferences for lightweight settings/state.
+- Keep repositories behind feature-level domain contracts.
 - Avoid UI kits that add unnecessary weight.
-- Add tests for calculations, PR detection, unit conversion, repositories, migrations, and active-session recovery when touching those areas.
+- Add tests for calculations, PR detection, unit conversion, repositories, schema changes, and active-session recovery when touching those areas.
 
-## AI Testing With agent-browser
+## Testing
 
-- Use `agent-browser` for smoke testing UI or navigation changes when an Expo web URL, preview, or local dev server is available.
-- Prioritize the core loop smoke path: create routine, start workout, log sets, finish session, and confirm history/progress.
-- Capture failures with reproducible steps, the URL, visible error text, and a screenshot when possible.
-- Do not treat `agent-browser` as a replacement for Jest, typecheck, SQLite repository tests, or Android physical-device validation.
+- Use `flutter analyze` for static analysis.
+- Use `flutter test` for unit, widget, repository, controller, and theme tests.
+- Use `flutter test integration_test/core_loop_test.dart` for the core loop when navigation, storage, or workout completion changes.
 - Still test on Android hardware for keyboard ergonomics, haptics, offline behavior, performance, and active-session recovery.
-
-## Graphify
-
-This project maintains a graphify knowledge graph under `.graphify/`. Before answering architecture or codebase questions, check `.graphify/GRAPH_REPORT.md` and `.graphify/graph.json` — the graph may already have the answer at lower token cost than reading raw files.
-
-- **Graph exists at** `.graphify/graph.json` (726 nodes, 952 edges, 55 communities).
-- **Rebuild after significant code changes:** run `/graphify src` to refresh AST extraction. No LLM needed for code-only rebuilds.
-- **Query the graph:** use `/graphify query "<question>"` to traverse the graph instead of searching raw files.
-- **Never commit** `.graphify/branch.json`, `.graphify/worktree.json`, `.graphify/needs_update`, or `.graphify/cache/` (gitignored).
-- If `.graphify/needs_update` exists or the graph is stale, warn the user and suggest a rebuild before relying on semantic results.

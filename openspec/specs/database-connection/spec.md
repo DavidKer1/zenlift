@@ -5,22 +5,22 @@ TBD - created by archiving change db-connection-singleton. Update Purpose after 
 ## Requirements
 ### Requirement: Singleton database instance
 
-The system SHALL provide a single database instance via `getDatabase()` that always returns the same `SQLite.SQLiteDatabase` object throughout the application lifecycle.
+The system SHALL provide a single Drift `AppDatabase` instance for the application lifecycle.
 
 #### Scenario: First call opens database
 
-- **WHEN** `getDatabase()` is called for the first time
-- **THEN** the system opens `zenlift.db` via `SQLite.openDatabaseAsync`, activates WAL mode and foreign keys, runs migrations, and returns the database instance
+- **WHEN** the application creates the first `AppDatabase`
+- **THEN** the database is constructed with `openZenliftDatabaseConnection()`, which returns a `LazyDatabase` backed by `NativeDatabase.createInBackground` for `zenlift.db`
 
 #### Scenario: Subsequent calls return same instance
 
-- **WHEN** `getDatabase()` is called after the database has already been opened
+- **WHEN** application code reads the database dependency after the first `AppDatabase` has been created
 - **THEN** the system returns the existing database instance immediately without re-running initialization
 
 #### Scenario: Concurrent calls do not duplicate initialization
 
-- **WHEN** multiple callers invoke `getDatabase()` simultaneously before the first initialization completes
-- **THEN** all callers receive the same promise and initialization executes exactly once
+- **WHEN** multiple callers read the database dependency while Drift is lazily opening the connection
+- **THEN** all callers share the same `AppDatabase` and underlying `LazyDatabase` open operation instead of creating duplicate database connections
 
 ### Requirement: WAL journal mode
 
@@ -29,7 +29,7 @@ The system SHALL enable Write-Ahead Logging (WAL) journal mode on the database c
 #### Scenario: WAL mode is active
 
 - **WHEN** the database connection is initialized
-- **THEN** `PRAGMA journal_mode` returns `wal`
+- **THEN** `MigrationStrategy.beforeOpen` executes `PRAGMA journal_mode = WAL` before the connection is used
 
 ### Requirement: Foreign key enforcement
 
@@ -38,21 +38,21 @@ The system SHALL enable foreign key constraint enforcement on the database conne
 #### Scenario: Foreign keys are enforced
 
 - **WHEN** the database connection is initialized
-- **THEN** `PRAGMA foreign_keys` returns `1`
+- **THEN** `MigrationStrategy.beforeOpen` executes `PRAGMA foreign_keys = ON` before the connection is used
 
 ### Requirement: Automatic migration execution
 
-The system SHALL execute pending database migrations automatically during initialization, before returning the database instance.
+The system SHALL execute pending Drift migrations automatically during connection opening, before the database is used.
 
 #### Scenario: Migrations run on first open
 
-- **WHEN** `getDatabase()` initializes the connection
-- **THEN** `runMigrations(db)` is called and completes before `getDatabase()` resolves
+- **WHEN** the first query, transaction, or stream causes the `LazyDatabase` to open
+- **THEN** the `AppDatabase.migration` `MigrationStrategy` runs the required `onCreate` or `onUpgrade` path before user data operations proceed
 
 #### Scenario: Failed migration prevents database use
 
 - **WHEN** a migration fails during initialization
-- **THEN** the `initPromise` is cleared, the error is thrown, and no database instance is stored
+- **THEN** Drift surfaces the migration error to the caller and the database dependency MUST NOT be treated as ready for use
 
 ### Requirement: Graceful teardown
 
@@ -61,10 +61,9 @@ The system SHALL support closing the database connection and resetting the singl
 #### Scenario: Close database
 
 - **WHEN** `closeDatabase()` is called
-- **THEN** the database connection is closed and the singleton instance is set to `null`
+- **THEN** `database.close()` is awaited and the stored `AppDatabase` instance is cleared
 
 #### Scenario: Reset for testing
 
 - **WHEN** `resetDatabaseInstance()` is called
-- **THEN** the database connection is closed and the singleton state is cleared, identical to `closeDatabase()`
-
+- **THEN** `database.close()` is awaited when an instance exists and the singleton state is cleared, identical to `closeDatabase()`

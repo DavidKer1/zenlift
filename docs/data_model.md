@@ -9,20 +9,19 @@
 - El historial es conceptualmente inmutable, pero editable por el usuario.
 - Si una sesión pasada cambia, las estadísticas se recalculan.
 
-## Flutter migration notes
+## Implementación actual
 
-La implementación Flutter temporal en `flutter-version/` conserva este modelo con Drift/SQLite:
+La implementación usa Drift/SQLite como almacenamiento estructurado local:
 
 - Tablas en snake_case con IDs de texto y foreign keys con cascade donde aplica.
 - Repositorios por feature en `features/<feature>/data`, contratos en `features/<feature>/domain`.
-- `app_settings` se exporta junto al backup `.zenlift`; las preferencias activas también se espejan desde SharedPreferences para que export/import/delete sean consistentes.
-- El puente de migración de primer arranque conserva el contrato no destructivo: no debe borrar SQLite/MMKV de Expo y solo marca cutover cuando importación y verificación pasan.
+- `app_settings` se incluye junto al backup `.zenlift`; las preferencias activas también se espejan desde shared_preferences para que backup/import/delete sean consistentes.
+- `_migrations` registra migraciones de schema SQLite aplicadas.
 
 ## Entidades principales
 
 | Entidad | Rol |
 |---|---|
-| UserProfile | Perfil local del usuario. |
 | MuscleGroup | Grupo muscular seed. |
 | Exercise | Ejercicio seed o personalizado. |
 | ExerciseMuscle | Relación many-to-many exercise/muscle con role. |
@@ -41,16 +40,14 @@ La implementación Flutter temporal en `flutter-version/` conserva este modelo c
 ```text
 MuscleGroup <-> ExerciseMuscle <-> Exercise
 
-UserProfile
-  -> Routine[]
-    -> RoutineDay[]
-      -> RoutineExercise[]
-        -> Exercise
+Routine
+  -> RoutineDay[]
+    -> RoutineExercise[]
+      -> Exercise
 
-UserProfile
-  -> WorkoutSession[]
-    -> WorkoutExercise[]
-      -> SetLog[]
+WorkoutSession
+  -> WorkoutExercise[]
+    -> SetLog[]
 
 Exercise
   -> PersonalRecord[]
@@ -193,7 +190,7 @@ PR types: `max_weight`, `max_volume`, `max_reps`, `estimated_1rm`, `max_session_
 
 ### app_settings
 
-Key-value para preferencias estructuradas. Settings de alta frecuencia van en MMKV.
+Key-value para preferencias estructuradas. Settings de alta frecuencia y helpers ligeros de recuperación van en shared_preferences.
 
 | Campo | Tipo |
 |---|---|

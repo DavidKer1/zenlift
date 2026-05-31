@@ -156,6 +156,6 @@ Verify that an implementation matches the change artifacts (specs, tasks, design
 Use clear markdown with:
 - Table for summary scorecard
 - Grouped lists for issues (CRITICAL/WARNING/SUGGESTION)
-- Code references in format: `file.ts:123`
+- Code references in format: `lib/path/to/file.dart:123`
 - Specific, actionable recommendations
 - No vague suggestions like "consider reviewing"

@@ -410,7 +410,7 @@ Use `GET /api/v1/projects/:id/components/:componentId` to fetch each screen's co
 
 The component `code` is a complete HTML document — save it directly to a `.html` file. No build step needed.
 
-### Native frameworks (React Native, SwiftUI, etc.)
+### Native frameworks
 
 Use both the HTML code and the screenshots together:
 
@@ -427,14 +427,14 @@ Sleek uses [Iconify](https://iconify.design) icons in the format `prefix:name` (
 
 When implementing icons:
 
-1. **Check if the project already has an icon system** that supports the same sets Sleek uses (Solar, Hugeicons, Material Symbols, MDI). If so, use it. Note: `@expo/vector-icons` does **not** support these sets — do not use it as a substitute.
+1. **Check if the project already has an icon system** that supports the same sets Sleek uses (Solar, Hugeicons, Material Symbols, MDI). If so, use it. Do not substitute an incompatible vector icon package for these sets.
 2. **Otherwise, fetch the SVGs from the Iconify API and embed them in the code:**
    ```
    GET https://api.iconify.design/{prefix}/{name}.svg
    ```
    Example: `https://api.iconify.design/solar/heart-bold.svg`
 
-   Collect all icon names from the HTML, fetch their SVGs, and save them as static assets or string constants in the codebase. For **React Native / Expo**, render them with `react-native-svg`'s `SvgXml` component — this works in Expo Go with no additional native dependencies.
+   Collect all icon names from the HTML, fetch their SVGs, and save them as static assets or string constants in the codebase. Use the native framework's supported SVG rendering path.
 
 #### Fonts
 

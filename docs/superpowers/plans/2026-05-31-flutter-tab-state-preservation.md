@@ -12,14 +12,14 @@
 
 ## File Structure
 
-- Modify `flutter-version/test/navigation/router_test.dart`: add a regression test proving a stateful tab widget keeps its local state after leaving and returning to the tab.
-- Modify `flutter-version/lib/features/home/presentation/zenlift_tab_shell.dart`: accept `StatefulNavigationShell`, render it as the `Scaffold.body`, and switch tabs with `goBranch`.
-- Modify `flutter-version/lib/app/router.dart`: replace the `ShellRoute` with `StatefulShellRoute.indexedStack` and convert each tab destination into a `StatefulShellBranch`.
+- Modify `test/navigation/router_test.dart`: add a regression test proving a stateful tab widget keeps its local state after leaving and returning to the tab.
+- Modify `lib/features/home/presentation/zenlift_tab_shell.dart`: accept `StatefulNavigationShell`, render it as the `Scaffold.body`, and switch tabs with `goBranch`.
+- Modify `lib/app/router.dart`: replace the `ShellRoute` with `StatefulShellRoute.indexedStack` and convert each tab destination into a `StatefulShellBranch`.
 
 ### Task 1: Add State Preservation Regression Test
 
 **Files:**
-- Modify: `flutter-version/test/navigation/router_test.dart`
+- Modify: `test/navigation/router_test.dart`
 
 - [ ] **Step 1: Add a test-only key**
 
@@ -99,7 +99,7 @@ class _HomeRouteStubState extends State<_HomeRouteStub> {
 Run:
 
 ```bash
-cd flutter-version && flutter test test/navigation/router_test.dart --plain-name "bottom navigation preserves tab widget state between switches"
+flutter test test/navigation/router_test.dart --plain-name "bottom navigation preserves tab widget state between switches"
 ```
 
 Expected: FAIL because returning to Home shows `Home counter: 0`.
@@ -107,12 +107,12 @@ Expected: FAIL because returning to Home shows `Home counter: 0`.
 ### Task 2: Move The Tab Shell To `StatefulShellRoute.indexedStack`
 
 **Files:**
-- Modify: `flutter-version/lib/features/home/presentation/zenlift_tab_shell.dart`
-- Modify: `flutter-version/lib/app/router.dart`
+- Modify: `lib/features/home/presentation/zenlift_tab_shell.dart`
+- Modify: `lib/app/router.dart`
 
 - [ ] **Step 1: Update `ZenliftTabShell`**
 
-Replace `flutter-version/lib/features/home/presentation/zenlift_tab_shell.dart` with:
+Replace `lib/features/home/presentation/zenlift_tab_shell.dart` with:
 
 ```dart
 import 'package:flutter/material.dart';
@@ -171,7 +171,7 @@ class ZenliftTabDestination {
 
 - [ ] **Step 2: Replace the `ShellRoute` with `StatefulShellRoute.indexedStack`**
 
-In `flutter-version/lib/app/router.dart`, replace the existing `ShellRoute(...)` block with:
+In `lib/app/router.dart`, replace the existing `ShellRoute(...)` block with:
 
 ```dart
       StatefulShellRoute.indexedStack(
@@ -240,7 +240,7 @@ In `flutter-version/lib/app/router.dart`, replace the existing `ShellRoute(...)`
 
 - [ ] **Step 3: Remove `_buildTabPage`**
 
-Delete this helper from `flutter-version/lib/app/router.dart`:
+Delete this helper from `lib/app/router.dart`:
 
 ```dart
 Page<void> _buildTabPage(GoRouterState state, Widget child) {
@@ -253,7 +253,7 @@ Page<void> _buildTabPage(GoRouterState state, Widget child) {
 Run:
 
 ```bash
-cd flutter-version && flutter test test/navigation/router_test.dart --plain-name "bottom navigation preserves tab widget state between switches"
+flutter test test/navigation/router_test.dart --plain-name "bottom navigation preserves tab widget state between switches"
 ```
 
 Expected: PASS.
@@ -261,14 +261,14 @@ Expected: PASS.
 ### Task 3: Verify Navigation Regressions
 
 **Files:**
-- Test: `flutter-version/test/navigation/router_test.dart`
+- Test: `test/navigation/router_test.dart`
 
 - [ ] **Step 1: Run the full navigation test file**
 
 Run:
 
 ```bash
-cd flutter-version && flutter test test/navigation/router_test.dart
+flutter test test/navigation/router_test.dart
 ```
 
 Expected: PASS.
@@ -278,7 +278,7 @@ Expected: PASS.
 Run:
 
 ```bash
-cd flutter-version && flutter analyze
+flutter analyze
 ```
 
 Expected: PASS with no analyzer issues.

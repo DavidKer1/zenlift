@@ -9,14 +9,14 @@ The tab bar SHALL hide visual tab labels while preserving accessible names for e
 
 #### Scenario: Screen reader announces tab destination
 - **WHEN** a screen reader focuses any bottom tab target
-- **THEN** the tab target SHALL expose the destination name: Home, Routines, History, or Settings
+- **THEN** the tab target SHALL provide the destination name: Home, Routines, History, or Settings
 
 #### Scenario: Labels are not visually rendered
 - **WHEN** the bottom tab bar renders
 - **THEN** no visible text label SHALL render inside the tab bar for Home, Routines, History, or Settings
 
 ### Requirement: Four primary tabs
-The app shell SHALL expose four primary tabs: Home, Routines, History, and Settings.
+The app shell SHALL provide four primary tabs: Home, Routines, History, and Settings.
 
 #### Scenario: Tabs are visible
 - **WHEN** the app root layout renders
@@ -86,18 +86,18 @@ The tab bar SHALL use minimalist icon presentation for all primary tabs. Active 
 - **THEN** the icon SHALL keep the same configured icon size as the inactive state
 - **AND** the icon container SHALL NOT resize or scale as part of the active state
 
-### Requirement: Tab interactions use Reanimated motion
-The tab bar SHALL use `react-native-reanimated` for modern, minimal focus and press transitions. Motion SHALL be subtle, finite, responsive, and limited to color and/or opacity changes for icon active-state animation.
+### Requirement: Tab interactions use Flutter animation motion
+The tab bar SHALL use Flutter animation primitives for modern, minimal focus and press transitions. Motion SHALL be subtle, finite, responsive, and limited to color and/or opacity changes for icon active-state animation.
 
 #### Scenario: Focus transition animates subtly
 - **WHEN** the active tab changes
-- **THEN** the newly active tab SHALL animate its visual state using Reanimated
+- **THEN** the newly active tab SHALL animate its visual state using Flutter animations
 - **AND** the animation SHALL be limited to subtle opacity and/or theme-aware color transitions
 - **AND** the animation SHALL NOT scale the icon up or down
 
 #### Scenario: Press feedback animates without layout shift
 - **WHEN** the user presses a tab
-- **THEN** the pressed tab SHALL provide Reanimated feedback without changing tab bar height or reflowing neighboring tabs
+- **THEN** the pressed tab SHALL provide animated feedback without changing tab bar height or reflowing neighboring tabs
 - **AND** the pressed tab SHALL NOT change the icon size
 
 #### Scenario: Animation remains minimal during workout use
@@ -105,9 +105,8 @@ The tab bar SHALL use `react-native-reanimated` for modern, minimal focus and pr
 - **THEN** they SHALL NOT loop, pulse indefinitely, bounce heavily, glow, resize icons, or block navigation input
 
 ### Requirement: Starter navigation is retired
-The active navigation surface SHALL not expose the default Expo starter Explore tab.
+The active navigation surface SHALL not show starter-template tabs.
 
 #### Scenario: Starter tab is absent
 - **WHEN** the tab bar renders
 - **THEN** it does not include an Explore tab
-

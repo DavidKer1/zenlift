@@ -1,45 +1,45 @@
-# data-export
+# Data Sharing
 
 ## Purpose
 
-Defines the behavior for exporting all local SQLite data as a `.zenlift` JSON file and sharing it via the native share sheet, including metadata and error handling.
+Defines the behavior for saving all local SQLite data as a `.zenlift` JSON file and sharing it via the native share sheet, including metadata and error handling.
 
 ## Requirements
 
-### Requirement: Export generates a .zenlift JSON file
+### Requirement: Data sharing generates a .zenlift JSON file
 
-The system SHALL export all local SQLite data (routines, exercises, workout sessions, set logs, personal records) as a single JSON file with the `.zenlift` extension, written to the app's cache directory and shared via the native share sheet using `expo-sharing`.
+The system SHALL save all local SQLite data (routines, exercises, workout sessions, set logs, personal records) as a single JSON file with the `.zenlift` extension, written to the app's cache directory and shared via the native share sheet using Flutter sharing support.
 
-#### Scenario: Successful export
+#### Scenario: Successful data share
 
-- **WHEN** the user taps "Export data"
+- **WHEN** the user taps "Share data"
 - **THEN** a `.zenlift` file is written to the cache directory and the native share sheet opens
 
-#### Scenario: Export file contains all data tables
+#### Scenario: Shared file contains all data tables
 
-- **WHEN** export completes
+- **WHEN** data sharing completes
 - **THEN** the JSON file contains keys for `routines`, `routine_days`, `routine_exercises`, `exercises`, `exercise_muscles`, `workout_sessions`, `workout_exercises`, `set_logs`, and `personal_records`
 
-#### Scenario: Export file includes metadata
+#### Scenario: Shared file includes metadata
 
-- **WHEN** export completes
+- **WHEN** data sharing completes
 - **THEN** the JSON file includes top-level `version`, `exportedAt` (ISO 8601), and `appVersion` fields
 
-#### Scenario: Export when no sharing is available
+#### Scenario: Sharing unavailable
 
-- **WHEN** `expo-sharing.isAvailableAsync()` returns false
+- **WHEN** native sharing is unavailable
 - **THEN** an error message is displayed to the user
 
-#### Scenario: Export with empty database
+#### Scenario: Share with empty database
 
 - **WHEN** the database has no workout data
 - **THEN** the JSON file contains empty arrays for all table keys
 
-### Requirement: Export error handling
+### Requirement: Data sharing error handling
 
-The system SHALL display an error message if the export fails for any reason (file system error, missing database, permission denied).
+The system SHALL display an error message if data sharing fails for any reason (file system error, missing database, permission denied).
 
-#### Scenario: File write fails
+#### Scenario: Shared file write fails
 
-- **WHEN** writing the export file to the cache directory fails
+- **WHEN** writing the shared file to the cache directory fails
 - **THEN** an error message is shown to the user

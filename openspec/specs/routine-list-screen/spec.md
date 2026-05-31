@@ -1,5 +1,7 @@
 # Routine List Screen
 
+## Purpose
+
 Specification for the Routine List screen, displaying all active routines with swipe-to-archive, suggested templates, and a FAB for creating new routines.
 
 ## Requirements

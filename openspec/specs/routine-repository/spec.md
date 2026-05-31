@@ -4,10 +4,10 @@
 TBD - created by archiving change routine-repository. Update Purpose after archive.
 ## Requirements
 ### Requirement: Routine repository class structure
-The system SHALL expose a `RoutineRepo` class that accepts a database instance via its constructor and provides methods for all routine CRUD operations.
+The system SHALL provide a routine repository implementation that accepts a Drift database instance via its constructor and provides methods for all routine CRUD operations.
 
 #### Scenario: Class is constructable with database
-- **WHEN** `new RoutineRepo(db)` is called with an expo-sqlite database instance
+- **WHEN** the routine repository is constructed with a Drift database instance
 - **THEN** the instance is created without errors and the `db` parameter is stored for use in all methods
 
 ### Requirement: List routines with optional archive filter

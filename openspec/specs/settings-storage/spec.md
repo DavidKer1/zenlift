@@ -2,18 +2,18 @@
 
 ## Purpose
 
-Defines the persistent storage of user preferences (weight unit, theme mode, weekly goal) in MMKV with namespaced keys, defaults, clamping, and a reactive `useSettings` hook.
+Defines the persistent storage of user preferences (weight unit, theme mode, weekly goal) in SharedPreferences with namespaced keys, defaults, clamping, and reactive app state.
 
 ## Requirements
 
 ### Requirement: Weight unit preference storage
 
-The system SHALL persist the user's weight unit preference (`kg` or `lb`) in MMKV under the key `zenlift.settings.weight_unit` and default to `kg` when no value is stored.
+The system SHALL persist the user's weight unit preference (`kg` or `lb`) in SharedPreferences under the key `zenlift.settings.weight_unit` and default to `kg` when no value is stored.
 
 #### Scenario: Default unit is kg
 
-- **WHEN** no weight_unit value exists in MMKV
-- **THEN** the settings hook returns `kg`
+- **WHEN** no weight_unit value exists in SharedPreferences
+- **THEN** the settings state returns `kg`
 
 #### Scenario: User changes to lb
 
@@ -22,17 +22,17 @@ The system SHALL persist the user's weight unit preference (`kg` or `lb`) in MMK
 
 #### Scenario: Invalid value falls back to default
 
-- **WHEN** a non-`kg`/`lb` value is stored in the MMKV key
-- **THEN** the settings hook returns `kg`
+- **WHEN** a non-`kg`/`lb` value is stored in the SharedPreferences key
+- **THEN** the settings state returns `kg`
 
 ### Requirement: Theme mode preference storage
 
-The system SHALL persist the theme mode (`light`, `dark`, or `system`) in MMKV under the key `zenlift.settings.theme_mode` and default to `dark` when no value is stored.
+The system SHALL persist the theme mode (`light`, `dark`, or `system`) in SharedPreferences under the key `zenlift.settings.theme_mode` and default to `dark` when no value is stored.
 
 #### Scenario: Default theme is dark
 
-- **WHEN** no theme_mode value exists in MMKV
-- **THEN** the settings hook returns `dark`
+- **WHEN** no theme_mode value exists in SharedPreferences
+- **THEN** the settings state returns `dark`
 
 #### Scenario: User selects light mode
 
@@ -51,12 +51,12 @@ The system SHALL persist the theme mode (`light`, `dark`, or `system`) in MMKV u
 
 ### Requirement: Weekly goal preference storage
 
-The system SHALL persist the user's weekly workout goal (integer 1-7) in MMKV under the key `zenlift.settings.weekly_goal` and default to `3` when no value is stored.
+The system SHALL persist the user's weekly workout goal (integer 1-7) in SharedPreferences under the key `zenlift.settings.weekly_goal` and default to `3` when no value is stored.
 
 #### Scenario: Default weekly goal is 3
 
-- **WHEN** no weekly_goal value exists in MMKV
-- **THEN** the settings hook returns `3`
+- **WHEN** no weekly_goal value exists in SharedPreferences
+- **THEN** the settings state returns `3`
 
 #### Scenario: User changes weekly goal
 
@@ -68,25 +68,25 @@ The system SHALL persist the user's weekly workout goal (integer 1-7) in MMKV un
 - **WHEN** weekly goal is set to `0` or `8`
 - **THEN** the value is clamped to `1` or `7` respectively before being stored
 
-### Requirement: Settings hook provides reactive values
+### Requirement: Settings state provides reactive values
 
-The system SHALL provide a `useSettings` React hook that returns the current values for launch-phase settings and setter functions, and SHALL re-render consuming components when any setting changes via MMKV listener.
+The system SHALL provide a Riverpod-backed settings controller or equivalent app state that returns the current values for launch-phase settings and setter functions, and SHALL update consuming widgets when any setting changes.
 
 #### Scenario: Hook returns all settings
 
-- **WHEN** `useSettings()` is called
+- **WHEN** the settings state is read
 - **THEN** the returned object contains `weightUnit`, `themeMode`, `weeklyGoal`, and their corresponding setter functions
 
 #### Scenario: Component re-renders on change
 
 - **WHEN** a setting value is changed via its setter
-- **THEN** all components consuming `useSettings` re-render with the new value
+- **THEN** all widgets consuming the settings state rebuild with the new value
 
-### Requirement: Settings MMKV namespace isolation
+### Requirement: Settings SharedPreferences namespace isolation
 
-The system SHALL prefix all settings keys with `zenlift.settings.` to avoid collisions with other MMKV consumers.
+The system SHALL prefix all settings keys with `zenlift.settings.` to avoid collisions with other SharedPreferences consumers.
 
 #### Scenario: All keys use the namespace prefix
 
 - **WHEN** any setting is read or written
-- **THEN** the MMKV key starts with `zenlift.settings.`
+- **THEN** the SharedPreferences key starts with `zenlift.settings.`

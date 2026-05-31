@@ -1,6 +1,8 @@
 # Routine Detail Screen
 
-Purpose: Specification for the Routine Detail screen, showing routine days, exercises, and providing duplicate, archive, delete, reorder, and start workout actions.
+## Purpose
+
+Specification for the Routine Detail screen, showing routine days, exercises, and providing duplicate, archive, delete, reorder, and start workout actions.
 
 ## Requirements
 
@@ -142,8 +144,8 @@ The system SHALL create a new active workout session populated with the exercise
 
 ### Requirement: Screen is thin with no heavy business logic
 
-The system SHALL keep the route file `app/routine/[id].tsx` free of business logic; domain calculations and data operations SHALL be delegated to repositories and services.
+The system SHALL keep the Flutter route/screen file `lib/app/routine_detail_route.dart` free of business logic; domain calculations and data operations SHALL be delegated to repositories and services.
 
 #### Scenario: Route file composition
-- **WHEN** inspecting `app/routine/[id].tsx`
+- **WHEN** inspecting `lib/app/routine_detail_route.dart`
 - **THEN** it contains only UI rendering, navigation, and calls to repository methods; no volume calculations, PR detection, or complex state transformations

@@ -8,21 +8,21 @@ Persistent overlay for the active workout session. The modal provides the full w
 
 ### Requirement: Modal renders when a workout session is active
 
-The system SHALL render an active workout overlay when `useActiveWorkoutStore.session` is non-null.
+The system SHALL render an active workout overlay when the active workout session exposed by app state, controller, or session provider is non-null.
 
 #### Scenario: Modal appears when workout starts
 
-- **WHEN** a workout session becomes active in the store
+- **WHEN** a workout session becomes active in app state
 - **THEN** the active workout modal SHALL appear in its expanded state showing the full workout interface
 
 #### Scenario: Modal is absent when no session exists
 
-- **WHEN** no workout session is active in the store
+- **WHEN** no workout session is active in app state
 - **THEN** the active workout modal SHALL NOT render
 
 ### Requirement: Minimized state renders only the active workout header
 
-The active workout modal SHALL render only a compact header row when minimized. The minimized state SHALL NOT expose any workout body content, sheet background, list content, cancel row, or bottom bar above or behind the header.
+The active workout modal SHALL render only a compact header row when minimized. The minimized state SHALL NOT show any workout body content, sheet background, list content, cancel row, or bottom bar above or behind the header.
 
 #### Scenario: Minimized header is the only visible workout UI
 
@@ -72,7 +72,7 @@ The modal SHALL display a horizontal header row containing the workout name, ela
 #### Scenario: Header row layout
 
 - **WHEN** the modal renders a header in either state
-- **THEN** the header row SHALL display items in a horizontal `flexDirection: 'row'` layout: workout name (left, truncated), timer with orange dot (center), chevron button (right)
+- **THEN** the header SHALL use a horizontal Flutter `Row`, `Flex`, or equivalent layout with workout name (left, truncated), primary-colored elapsed timer text, and chevron button (right)
 
 #### Scenario: Chevron toggles state
 
@@ -84,35 +84,35 @@ The modal SHALL display a horizontal header row containing the workout name, ela
 - **WHEN** the user taps the minimized active workout header outside destructive controls
 - **THEN** the modal SHALL expand to the full workout surface
 
-### Requirement: Header transition uses Reanimated shared motion on native
+### Requirement: Header transition preserves identity with Flutter animations
 
-The transition between minimized and expanded states SHALL use Reanimated 4 shared motion for the header identity on native platforms. The implementation SHALL use stable shared transition tags or an equivalent Reanimated 4 shared transition approach for the header container and key header content.
+The transition between minimized and expanded states SHALL preserve the header identity using Flutter animation primitives such as `AnimatedSwitcher`, `AnimatedPositioned`, `AnimatedAlign`, `AnimationController`, or equivalent widget-driven animation for the header container and key header content.
 
 #### Scenario: Header identity is preserved while expanding
 
-- **WHEN** the user expands the minimized active workout header on a native platform
+- **WHEN** the user expands the minimized active workout header
 - **THEN** the header SHALL animate into the expanded workout header as the same perceived UI element
 - **AND** the transition SHALL NOT flash, duplicate permanently, or jump between unrelated positions
 
 #### Scenario: Header identity is preserved while minimizing
 
-- **WHEN** the user minimizes the expanded workout surface on a native platform
+- **WHEN** the user minimizes the expanded workout surface
 - **THEN** the expanded header SHALL animate into the minimized header position above the tab navigation
 - **AND** the final minimized state SHALL contain only one interactive header
 
-### Requirement: Web fallback preserves minimized behavior
+### Requirement: Animation fallback preserves minimized behavior
 
-The active workout modal SHALL remain functional on platforms where Reanimated shared element transitions are unavailable. The fallback SHALL preserve the same minimized and expanded states even if the transition uses shared values, timing, opacity, or layout animation instead of shared element transitions.
+The active workout modal SHALL remain functional when advanced transition primitives are unavailable or disabled. The fallback SHALL preserve the same minimized and expanded states even if the transition uses opacity, size, alignment, or positional animation instead of a shared-header transition.
 
-#### Scenario: Shared elements are unavailable
+#### Scenario: Advanced transition primitives are unavailable
 
-- **WHEN** the app runs on a platform that does not support Reanimated shared element transitions
+- **WHEN** the app runs without the preferred shared-header transition
 - **THEN** the active workout modal SHALL still expand and minimize without runtime errors
 - **AND** the minimized state SHALL still show only the header above the bottom tab navigation
 
 ### Requirement: Timer runs continuously in both states
 
-The elapsed workout timer SHALL continue updating every second via `setInterval` based on `session.started_at`, regardless of whether the modal is expanded or minimized.
+The elapsed workout timer SHALL continue updating every second using a Dart `Timer`, ticker, `AnimationController`, or equivalent Flutter timing mechanism based on the session start time, regardless of whether the modal is expanded or minimized.
 
 #### Scenario: Timer updates while minimized
 
@@ -126,7 +126,7 @@ The elapsed workout timer SHALL continue updating every second via `setInterval`
 
 ### Requirement: Modal overlays tabs and persists across tab switches
 
-The modal SHALL render above all tab content and SHALL remain visible when the user switches between Home, Routines, History, and Settings tabs. It SHALL be mounted in `src/app/_layout.tsx` after `AppTabs`. When minimized, only its header SHALL appear above the bottom tab navigation and the tab navigation SHALL remain visible and usable.
+The modal SHALL render above all tab content and SHALL remain visible when the user switches between Home, Routines, History, and Settings tabs. It SHALL be mounted in the root Flutter app shell after the tab shell. When minimized, only its header SHALL appear above the bottom tab navigation and the tab navigation SHALL remain visible and usable.
 
 #### Scenario: Modal stays visible on tab switch
 
@@ -139,9 +139,9 @@ The modal SHALL render above all tab content and SHALL remain visible when the u
 - **THEN** the bottom tab navigation SHALL remain anchored to the bottom of the screen
 - **AND** the minimized header SHALL sit above it without replacing or partially covering tab targets
 
-### Requirement: Modal uses pointerEvents box-none
+### Requirement: Modal preserves Flutter hit testing when minimized
 
-The overlay container SHALL use `pointerEvents="box-none"` so it does not block interaction with the tab bar behind it when the modal is minimized. The minimized header SHALL only capture touches within its visible bounds, and the expanded surface SHALL capture touches while expanded.
+The overlay container SHALL use Flutter hit testing semantics, such as `Stack` layering, `IgnorePointer`, or equivalent pointer behavior, so it does not block interaction with the tab bar behind it when the modal is minimized. The minimized header SHALL only capture touches within its visible bounds, and the expanded surface SHALL capture touches while expanded.
 
 #### Scenario: Tab bar is tappable when minimized
 
@@ -163,9 +163,9 @@ The expanded modal SHALL support minimization through a swipe-down gesture.
 - **WHEN** the user performs a downward swipe gesture on the expanded workout surface
 - **THEN** the modal SHALL minimize to the header-only state
 
-### Requirement: GestureHandlerRootView is present at root
+### Requirement: App root supports modal gesture handling
 
-The app root layout SHALL wrap content in `GestureHandlerRootView` to enable gesture recognition in the modal.
+The app root layout SHALL provide the Flutter gesture handling and overlay structure required for the modal to recognize swipe and tap gestures across the tab shell.
 
 #### Scenario: Gestures are recognized
 

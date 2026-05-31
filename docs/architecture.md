@@ -2,7 +2,7 @@
 
 ## Enfoque
 
-Zenlift es una app móvil local-first con React Native + Expo. No se asume backend, web app ni API para el MVP.
+Zenlift es una app móvil local-first construida con Flutter y Dart. No se asume backend, web app ni API para el MVP.
 
 Objetivos técnicos:
 
@@ -15,21 +15,17 @@ Objetivos técnicos:
 
 ## Stack recomendado
 
-- React Native vía Expo managed workflow.
-- TypeScript strict.
-- Expo Router para navegación file-based.
-- Zustand para estado global mínimo.
-- React Context solo para theme.
-- expo-sqlite para datos estructurados.
-- react-native-mmkv para settings, flags y estado ligero.
-- React Hook Form + Zod para formularios y validación.
-- FlashList para listas con inputs o listas grandes.
-- StyleSheet y componentes propios, sin UI kits pesados.
-- date-fns para fechas.
-- expo-haptics para feedback al completar sets.
-- react-native-svg + victory-native o gifted-charts para gráficas.
+- Flutter para UI mobile-first.
+- Dart 3 con análisis estricto.
+- go_router para navegación declarativa.
+- flutter_riverpod para estado compartido cuando sea necesario.
+- Drift con SQLite para datos estructurados.
+- shared_preferences para settings, flags y estado ligero de recuperación.
+- Flutter ThemeData y widgets propios, sin UI kits pesados.
+- fl_chart para gráficas.
+- file_picker y share_plus para backup local y compartir datos.
 
-TanStack Query no es necesario mientras no haya API.
+TanStack Query o capas de red no son necesarias mientras no haya API.
 
 ## Theme
 
@@ -40,30 +36,16 @@ El tema es monocromático con profundidad por capas tonales (surface hierarchy).
 ## Estructura sugerida
 
 ```text
-src/
-  app/                    # Expo Router routes
-  features/               # Lógica por feature
-  domain/
-    entities/             # Tipos puros
-    services/             # PRs, estadísticas, reglas de negocio
-    calculations/         # volumen, 1RM, unidades
-  storage/
-    database/             # conexión, schema, migraciones
-    repositories/         # acceso a SQLite
-    migrations/
-  components/
-    ui/
-    workout/
-    charts/
-  utils/
-    dates/
-    units/
-    formatters/
-  theme/
-  providers/
+lib/
+  app/                    # Bootstrap, router y composición de rutas
+  core/                   # Fecha, UUIDs y primitivas compartidas
+  features/               # Application, domain, data y presentation por feature
+  storage/                # Drift database, connection, schema y seeds
+  theme/                  # Tokens y helpers de ThemeData
+  widgets/                # Widgets reutilizables compartidos
 ```
 
-Las pantallas no deben contener lógica pesada. Cálculos, PRs, volumen y progresión viven en `domain/services/` o `domain/calculations/`.
+Las pantallas no deben contener lógica pesada. Cálculos, PRs, volumen y progresión viven en capas `domain` de features o servicios puros testeables.
 
 ## Estado
 
@@ -76,29 +58,29 @@ Estado global mínimo:
 
 Reglas:
 
-- Workout activo en Zustand, no solo en React state.
+- Workout activo coordinado desde controladores de feature, no solo estado local de un widget.
 - Autosave a SQLite en cada set completado.
-- `recoverSession()` reconstruye el store desde una sesión `status='active'`.
-- Settings de alta frecuencia en MMKV.
-- El resto se carga desde repositorios.
+- La recuperación reconstruye el estado desde una sesión `status='active'` y helpers ligeros persistidos.
+- Settings y estado ligero de recuperación en shared_preferences.
+- El resto se carga desde repositorios Drift.
 
 ## Errores
 
 Jerarquía:
 
 ```text
-ErrorBoundary de React
+Flutter ErrorWidget / zonas de bootstrap
   -> try/catch en repositories
-  -> Result<T, E> en funciones de dominio
+  -> Result<T, E> o estados explícitos en funciones de dominio/controladores
 ```
 
 Reglas:
 
 - Todo repository envuelve SQLite en try/catch.
-- Relanzar como `DatabaseError` con contexto.
+- Relanzar como error de base de datos con contexto.
 - No tragar errores silenciosamente.
-- Las funciones puras de cálculo no lanzan excepciones; retornan `Result`.
-- Durante workout activo, nunca perder un set: reintentar SQLite hasta 3 veces y usar cola temporal en MMKV si hace falta.
+- Las funciones puras de cálculo no deben depender de widgets ni navegación.
+- Durante workout activo, nunca perder un set: reintentar SQLite y conservar estado ligero de recuperación en shared_preferences si hace falta.
 
 ## Performance
 
@@ -112,10 +94,9 @@ Targets:
 
 Reglas:
 
-- FlashList en listas con inputs.
-- `estimatedItemSize` siempre que se use FlashList.
-- `React.memo` en filas de set y cards repetidas.
-- `useCallback` para handlers de sets.
+- Usar listas perezosas de Flutter para colecciones largas.
+- Extraer filas repetidas a widgets pequeños y const-friendly.
+- Evitar rebuilds amplios con providers/controladores bien acotados.
 - SQLite en WAL mode.
 - Índices en foreign keys y filtros frecuentes.
 - Batch inserts para seed data.
@@ -124,28 +105,27 @@ Reglas:
 
 El teclado es crítico en Active Workout.
 
-- Usar `keyboardType="numeric"` para peso y reps.
-- Evitar `KeyboardAvoidingView` si causa saltos de layout.
-- Hacer scroll automático al input enfocado.
+- Usar teclado numérico para peso y reps.
+- Evitar saltos de layout al enfocar inputs.
+- Hacer scroll automático al input enfocado cuando aplique.
 - Mantener la duración visible en header fijo.
 - Botones +/- junto a inputs para ajustar sin teclear.
-- `returnKeyType="next"` en peso.
-- `returnKeyType="done"` en reps para completar set.
+- Acción next en peso.
+- Acción done en reps para completar set.
 
-## Backup y exportación
+## Backup y datos
 
 P2:
 
-- Exportar un JSON completo `.zenlift`.
-- Usar `expo-file-system` + `expo-sharing`.
-- Importar con `expo-document-picker`.
-- Validar con Zod.
+- Generar un JSON completo `.zenlift`.
+- Usar file_picker y share_plus para seleccionar y compartir archivos locales.
+- Validar estructura antes de importar.
 - Estrategia de import: merge por UUID, no replace.
 
 ## Seguridad y privacidad
 
 - MVP sin registro, email, backend, analytics ni telemetría.
-- Datos locales en SQLite/MMKV.
+- Datos locales en SQLite y shared_preferences.
 - Permisos mínimos.
 - No pedir Location, Contacts, Camera o Microphone.
 - Usar consultas SQL parametrizadas siempre.

@@ -91,14 +91,14 @@ The system SHALL render each exercise as a card showing: exercise name, primary 
 - **WHEN** user taps the ExerciseCard (not the star button)
 - **THEN** the app SHALL navigate to exercise detail for that exercise
 
-### Requirement: FlashList with estimated item size
+### Requirement: Efficient virtualized exercise list
 
-The system SHALL use FlashList with `estimatedItemSize` for the exercise list to ensure smooth scrolling with 25+ exercises.
+The system SHALL use an efficient Flutter list for the exercise list to ensure smooth scrolling with 25+ exercises.
 
 #### Scenario: Scroll through 25 exercises
 - **WHEN** the list contains 25+ exercises
 - **THEN** scrolling SHALL maintain 60 FPS
-- **AND** FlashList SHALL be configured with `estimatedItemSize=72`
+- **AND** list item layout SHALL use stable sizing appropriate for 72px-tall rows
 
 ### Requirement: Empty state when no results
 
@@ -119,11 +119,11 @@ The system SHALL display a Floating Action Button with a "+" icon that navigates
 
 ### Requirement: FilterChip selected and unselected states
 
-The system SHALL render FilterChip with distinct visual states for selected and unselected. Selected chips SHALL use primary color, unselected chips SHALL use muted/outlined style.
+The system SHALL render FilterChip with distinct visual states for selected and unselected. Selected chips SHALL use the primary container color, unselected chips SHALL use muted/outlined style.
 
 #### Scenario: Chip selected
 - **WHEN** a filter chip is in selected state
-- **THEN** the chip SHALL have primary color background (#F97316) with white text
+- **THEN** the chip SHALL have primary container background (`#6750A4`) with on-primary-container text
 - **AND** HA minimum touch target of 48px height
 
 #### Scenario: Chip unselected

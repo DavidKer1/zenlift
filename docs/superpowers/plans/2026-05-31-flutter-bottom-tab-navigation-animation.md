@@ -12,14 +12,14 @@
 
 ## File Structure
 
-- Modify `flutter-version/test/navigation/router_test.dart`: add a regression widget test proving bottom tab taps do not keep the outgoing tab screen in the tree during route transition frames.
-- Modify `flutter-version/lib/app/router.dart`: replace tab-route `builder` usage with `pageBuilder` returning `NoTransitionPage<void>` for the five bottom tab destinations.
-- Do not modify `flutter-version/lib/features/home/presentation/zenlift_tab_shell.dart`: the shell already selects the correct tab and delegates taps through `context.go`.
+- Modify `test/navigation/router_test.dart`: add a regression widget test proving bottom tab taps do not keep the outgoing tab screen in the tree during route transition frames.
+- Modify `lib/app/router.dart`: replace tab-route `builder` usage with `pageBuilder` returning `NoTransitionPage<void>` for the five bottom tab destinations.
+- Do not modify `lib/features/home/presentation/zenlift_tab_shell.dart`: the shell already selects the correct tab and delegates taps through `context.go`.
 
 ### Task 1: Regression Test For Non-Overlapping Tab Switches
 
 **Files:**
-- Modify: `flutter-version/test/navigation/router_test.dart`
+- Modify: `test/navigation/router_test.dart`
 
 - [ ] **Step 1: Add the failing widget test**
 
@@ -45,7 +45,7 @@ Add this test after `bottom navigation taps switch tab routes inside the shell`:
 Run:
 
 ```bash
-cd flutter-version && flutter test test/navigation/router_test.dart --plain-name "bottom navigation tab switches do not overlap route pages"
+flutter test test/navigation/router_test.dart --plain-name "bottom navigation tab switches do not overlap route pages"
 ```
 
 Expected: FAIL because the outgoing home tab is still present during the first transition frame.
@@ -53,7 +53,7 @@ Expected: FAIL because the outgoing home tab is still present during the first t
 ### Task 2: Make Tab Routes Transitionless
 
 **Files:**
-- Modify: `flutter-version/lib/app/router.dart`
+- Modify: `lib/app/router.dart`
 
 - [ ] **Step 1: Add a helper for tab pages**
 
@@ -87,7 +87,7 @@ Apply the same `pageBuilder` + `_buildTabPage` structure to `ZenliftRoutes.routi
 Run:
 
 ```bash
-cd flutter-version && flutter test test/navigation/router_test.dart --plain-name "bottom navigation tab switches do not overlap route pages"
+flutter test test/navigation/router_test.dart --plain-name "bottom navigation tab switches do not overlap route pages"
 ```
 
 Expected: PASS.
@@ -95,14 +95,14 @@ Expected: PASS.
 ### Task 3: Verify Existing Navigation Behavior
 
 **Files:**
-- Test: `flutter-version/test/navigation/router_test.dart`
+- Test: `test/navigation/router_test.dart`
 
 - [ ] **Step 1: Run the full navigation test file**
 
 Run:
 
 ```bash
-cd flutter-version && flutter test test/navigation/router_test.dart
+flutter test test/navigation/router_test.dart
 ```
 
 Expected: PASS, including initial routes, tab selection, standalone detail routes, and pop back to previous tab.
@@ -112,7 +112,7 @@ Expected: PASS, including initial routes, tab selection, standalone detail route
 Run:
 
 ```bash
-cd flutter-version && flutter analyze
+flutter analyze
 ```
 
 Expected: PASS with no analyzer issues introduced by the route changes.
@@ -121,4 +121,4 @@ Expected: PASS with no analyzer issues introduced by the route changes.
 
 - Spec coverage: the plan addresses the reported left-to-right tab animation and overlap by removing page transitions only from bottom tabs.
 - Placeholder scan: no placeholder instructions remain; each code-changing step includes concrete code.
-- Type consistency: `_buildTabPage` returns `Page<void>` and uses `NoTransitionPage<void>`, which is exported by `go_router` 17.2.3.
+- Type consistency: `_buildTabPage` returns `Page<void>` and uses `NoTransitionPage<void>`, which is provided by `go_router` 17.2.3.

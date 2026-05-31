@@ -17,7 +17,7 @@ The system SHALL load an exercise and its associated muscle groups from SQLite w
 - **THEN** a back navigation option is available
 
 ### Requirement: Muscle badges display with correct colors
-The system SHALL display muscle group badges in the exercise header with colors defined in `src/theme/muscleColors.ts`.
+The system SHALL display muscle group badges in the exercise header with colors defined in the Flutter theme.
 
 #### Scenario: Exercise with multiple muscles
 - **WHEN** an exercise has primary and secondary muscle groups
@@ -127,19 +127,18 @@ The system SHALL provide a "Quick Workout" action that creates or updates an act
 - **AND** the system navigates to the active workout screen
 
 ### Requirement: Exercise detail uses tonal surfaces
-The system SHALL render the exercise detail screen with `#0C0B10` background, exercise info in `#18191D` cards with 12px radius, and data values in JetBrains Mono at appropriate opacity levels.
+The system SHALL render the exercise detail screen with `#141218` background, exercise info in surface container cards with 12px radius, and data values in JetBrains Mono at appropriate opacity levels.
 
 #### Scenario: Exercise detail renders
 - **WHEN** an exercise detail screen renders
-- **THEN** info cards SHALL use `#18191D` background with 12px radius and 20px padding
+- **THEN** info cards SHALL use surface container background with 12px radius and 20px padding
 - **AND** numerical data SHALL use JetBrains Mono font
 - **AND** labels SHALL use Inter at 50% white opacity
 
 ### Requirement: Chart and history use monochromatic styling
-The system SHALL render progress charts and history lists using white strokes/accents on `#18191D` card backgrounds without colored data series.
+The system SHALL render progress charts and history lists using theme-aware strokes/accents on surface container card backgrounds.
 
 #### Scenario: Progress chart renders
 - **WHEN** a progress chart renders
 - **THEN** chart lines and dots SHALL use white at varying opacities (80% for primary series, 50% for secondary)
-- **AND** the chart background SHALL be `#18191D`
-
+- **AND** the chart background SHALL use a surface container color
