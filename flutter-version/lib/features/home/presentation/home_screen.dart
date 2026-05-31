@@ -10,8 +10,7 @@ import '../domain/home_dashboard.dart';
 typedef HomeDashboardLoader = Future<HomeDashboardState> Function();
 typedef HomeAction = Future<void> Function();
 typedef HomeRoutineAction = Future<void> Function(HomeRoutineSummary routine);
-typedef HomeRepeatWorkoutAction =
-    Future<void> Function(HomeLatestWorkout workout);
+typedef HomeRepeatWorkoutAction = Future<void> Function(HomeLatestWorkout workout);
 typedef HomeNow = DateTime Function();
 
 class HomeScreen extends StatefulWidget {
@@ -94,9 +93,9 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   void _showMessage(String message) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(message), behavior: SnackBarBehavior.floating),
-    );
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text(message), behavior: SnackBarBehavior.floating));
   }
 
   @override
@@ -121,8 +120,7 @@ class _HomeScreenState extends State<HomeScreen> {
               label: 'Start Workout',
               isPrimary: true,
               isBusy: _isActionRunning,
-              onPressed: () =>
-                  _runAction(widget.onStartWorkout, 'Could not open routines.'),
+              onPressed: () => _runAction(widget.onStartWorkout, 'Could not open routines.'),
             ),
             const SizedBox(height: ZenliftSpacing.stackSm),
             _StartWorkoutButton(
@@ -130,10 +128,8 @@ class _HomeScreenState extends State<HomeScreen> {
               label: 'Quick Workout',
               isPrimary: false,
               isBusy: _isActionRunning,
-              onPressed: () => _runAction(
-                widget.onQuickWorkout,
-                'Could not start a quick workout.',
-              ),
+              onPressed: () =>
+                  _runAction(widget.onQuickWorkout, 'Could not start a quick workout.'),
             ),
             const SizedBox(height: ZenliftSpacing.stackMd),
             _CalendarWorkoutCard(
@@ -155,14 +151,10 @@ class _HomeScreenState extends State<HomeScreen> {
             _CurrentRoutineCard(
               key: const Key('home-current-routine-card'),
               routine: state.currentRoutine,
-              onCreateRoutine: () => _runAction(
-                widget.onCreateRoutine,
-                'Could not open routine creation.',
-              ),
-              onOpenRoutine: (routine) => _runAction(
-                () => widget.onOpenRoutine(routine),
-                'Could not open routine.',
-              ),
+              onCreateRoutine: () =>
+                  _runAction(widget.onCreateRoutine, 'Could not open routine creation.'),
+              onOpenRoutine: (routine) =>
+                  _runAction(() => widget.onOpenRoutine(routine), 'Could not open routine.'),
             ),
             const SizedBox(height: ZenliftSpacing.stackMd),
             _RecentPersonalRecordsCard(
@@ -191,9 +183,7 @@ class _Greeting extends StatelessWidget {
         children: [
           Text(
             'Ready when you are',
-            style: Theme.of(
-              context,
-            ).textTheme.bodyMedium?.copyWith(color: colors.onSurfaceVariant),
+            style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: colors.onSurfaceVariant),
           ),
           const SizedBox(height: 4),
           Text(
@@ -225,9 +215,7 @@ class _StartWorkoutButton extends StatelessWidget {
   Widget build(BuildContext context) {
     final colors = Theme.of(context).colorScheme;
     final foreground = isPrimary ? colors.onPrimary : colors.onSurface;
-    final background = isPrimary
-        ? colors.primary
-        : ZenliftColors.surfaceContainer;
+    final background = isPrimary ? colors.primary : ZenliftColors.surfaceContainer;
 
     return SizedBox(
       width: double.infinity,
@@ -236,9 +224,7 @@ class _StartWorkoutButton extends StatelessWidget {
         style: FilledButton.styleFrom(
           backgroundColor: background,
           foregroundColor: foreground,
-          shape: const RoundedRectangleBorder(
-            borderRadius: BorderRadius.all(ZenliftRadii.pill),
-          ),
+          shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(ZenliftRadii.pill)),
         ),
         onPressed: isBusy ? null : onPressed,
         child: Text(label),
@@ -269,8 +255,7 @@ class _CalendarWorkoutCard extends StatelessWidget {
     final title = latestWorkout?.title ?? 'No workouts completed yet';
     final frequency = latestWorkout == null
         ? 'Start a workout to fill your calendar'
-        : latestWorkout.frequencyKind ==
-              HomeWorkoutFrequencyKind.matchingRoutineContext
+        : latestWorkout.frequencyKind == HomeWorkoutFrequencyKind.matchingRoutineContext
         ? '${latestWorkout.frequencyCount} matching workouts'
         : '${latestWorkout.frequencyCount} total workouts';
 
@@ -302,12 +287,24 @@ class _CalendarWorkoutCard extends StatelessWidget {
             children: [
               for (final month in months)
                 Expanded(
-                  child: Wrap(
-                    spacing: 5,
-                    runSpacing: 5,
+                  child: Column(
                     children: [
-                      for (final day in month.days)
-                        _CalendarDot(isActive: activeDates.contains(day)),
+                      for (final week in month.weeks)
+                        Padding(
+                          padding: const EdgeInsets.only(bottom: 5),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              for (var i = 0; i < week.length; i++) ...[
+                                if (i > 0) const SizedBox(width: 5),
+                                if (week[i] == null)
+                                  const SizedBox(width: 5, height: 5)
+                                else
+                                  _CalendarDot(isActive: activeDates.contains(week[i])),
+                              ],
+                            ],
+                          ),
+                        ),
                     ],
                   ),
                 ),
@@ -332,20 +329,18 @@ class _CalendarWorkoutCard extends StatelessWidget {
                               title,
                               maxLines: 2,
                               overflow: TextOverflow.ellipsis,
-                              style: Theme.of(context).textTheme.bodyLarge
-                                  ?.copyWith(fontWeight: FontWeight.w600),
+                              style: Theme.of(
+                                context,
+                              ).textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.w600),
                             ),
                             const SizedBox(height: 2),
                             Text(
                               frequency,
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
-                              style: Theme.of(context).textTheme.bodyMedium
-                                  ?.copyWith(
-                                    color: Theme.of(
-                                      context,
-                                    ).colorScheme.onSurfaceVariant,
-                                  ),
+                              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                color: Theme.of(context).colorScheme.onSurfaceVariant,
+                              ),
                             ),
                           ],
                         ),
@@ -387,9 +382,7 @@ class _WeeklyActivityCard extends StatelessWidget {
             activity.hasActivity
                 ? '${activity.workoutCount} workouts logged this week'
                 : 'No activity this week',
-            style: Theme.of(
-              context,
-            ).textTheme.bodyMedium?.copyWith(color: colors.onSurfaceVariant),
+            style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: colors.onSurfaceVariant),
           ),
           const SizedBox(height: ZenliftSpacing.stackMd),
           Row(
@@ -397,9 +390,7 @@ class _WeeklyActivityCard extends StatelessWidget {
               for (var index = 0; index < weekdays.length; index += 1)
                 Expanded(
                   child: Padding(
-                    padding: EdgeInsets.only(
-                      right: index == weekdays.length - 1 ? 0 : 8,
-                    ),
+                    padding: EdgeInsets.only(right: index == weekdays.length - 1 ? 0 : 8),
                     child: Column(
                       children: [
                         Container(
@@ -409,20 +400,17 @@ class _WeeklyActivityCard extends StatelessWidget {
                             color: activity.activeDays[index]
                                 ? colors.primary
                                 : ZenliftColors.outlineVariant,
-                            borderRadius: BorderRadius.circular(
-                              ZenliftRadii.small,
-                            ),
+                            borderRadius: BorderRadius.circular(ZenliftRadii.small),
                           ),
                         ),
                         const SizedBox(height: 6),
                         Text(
                           weekdays[index],
-                          style: Theme.of(context).textTheme.labelMedium
-                              ?.copyWith(
-                                color: activity.activeDays[index]
-                                    ? colors.onSurface
-                                    : colors.onSurfaceVariant,
-                              ),
+                          style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                            color: activity.activeDays[index]
+                                ? colors.onSurface
+                                : colors.onSurfaceVariant,
+                          ),
                         ),
                       ],
                     ),
@@ -483,9 +471,9 @@ class _CurrentRoutineCard extends StatelessWidget {
                 ),
                 Text(
                   'Create a routine to track your progress',
-                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: colors.onSurfaceVariant,
-                  ),
+                  style: Theme.of(
+                    context,
+                  ).textTheme.bodyMedium?.copyWith(color: colors.onSurfaceVariant),
                 ),
                 const SizedBox(height: ZenliftSpacing.stackMd),
                 OutlinedButton(
@@ -504,15 +492,15 @@ class _CurrentRoutineCard extends StatelessWidget {
                     children: [
                       Text(
                         routine.name,
-                        style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                          fontWeight: FontWeight.w600,
-                        ),
+                        style: Theme.of(
+                          context,
+                        ).textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.w600),
                       ),
                       Text(
                         '${routine.dayCount} days · ${routine.exerciseCount} exercises',
-                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          color: colors.onSurfaceVariant,
-                        ),
+                        style: Theme.of(
+                          context,
+                        ).textTheme.bodyMedium?.copyWith(color: colors.onSurfaceVariant),
                       ),
                     ],
                   ),
@@ -560,17 +548,16 @@ class _RecentPersonalRecordsCard extends StatelessWidget {
                 ),
                 Text(
                   'Complete workouts to set new records',
-                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: colors.onSurfaceVariant,
-                  ),
+                  style: Theme.of(
+                    context,
+                  ).textTheme.bodyMedium?.copyWith(color: colors.onSurfaceVariant),
                 ),
               ],
             )
           else
             for (final record in records) ...[
               _PrRow(record: record),
-              if (record != records.last)
-                const SizedBox(height: ZenliftSpacing.stackMd),
+              if (record != records.last) const SizedBox(height: ZenliftSpacing.stackMd),
             ],
         ],
       ),
@@ -594,15 +581,13 @@ class _PrRow extends StatelessWidget {
             children: [
               Text(
                 record.exerciseName,
-                style: Theme.of(
-                  context,
-                ).textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.w600),
+                style: Theme.of(context).textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.w600),
               ),
               Text(
                 '${_prTypeLabel(record.type)} · ${DateFormat.MMMd().format(record.achievedAt)}',
-                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  color: colors.onSurfaceVariant,
-                ),
+                style: Theme.of(
+                  context,
+                ).textTheme.bodyMedium?.copyWith(color: colors.onSurfaceVariant),
               ),
             ],
           ),
@@ -610,10 +595,9 @@ class _PrRow extends StatelessWidget {
         Text(
           _prValue(record),
           textAlign: TextAlign.right,
-          style: Theme.of(context).textTheme.labelMedium?.copyWith(
-            color: colors.primary,
-            fontWeight: FontWeight.w600,
-          ),
+          style: Theme.of(
+            context,
+          ).textTheme.labelMedium?.copyWith(color: colors.primary, fontWeight: FontWeight.w600),
         ),
       ],
     );
@@ -632,10 +616,7 @@ class _SectionCard extends StatelessWidget {
       label: semanticLabel,
       container: true,
       child: Card(
-        child: Padding(
-          padding: const EdgeInsets.all(ZenliftSpacing.cardPadding),
-          child: child,
-        ),
+        child: Padding(padding: const EdgeInsets.all(ZenliftSpacing.cardPadding), child: child),
       ),
     );
   }
@@ -663,9 +644,7 @@ class _CalendarDot extends StatelessWidget {
       width: 5,
       height: 5,
       decoration: BoxDecoration(
-        color: Theme.of(
-          context,
-        ).colorScheme.onSurface.withValues(alpha: isActive ? 0.85 : 0.12),
+        color: Theme.of(context).colorScheme.onSurface.withValues(alpha: isActive ? 0.85 : 0.12),
         borderRadius: BorderRadius.circular(ZenliftRadii.full),
       ),
     );
@@ -693,23 +672,39 @@ class _FrequencyRing extends StatelessWidget {
 }
 
 class _MonthGrid {
-  const _MonthGrid({required this.label, required this.days});
+  const _MonthGrid({required this.label, required this.weeks});
 
   final String label;
-  final List<String> days;
+  final List<List<String?>> weeks;
 }
 
 List<_MonthGrid> _visibleMonths(DateTime anchorDate) {
   return List<_MonthGrid>.generate(3, (index) {
     final monthDate = DateTime(anchorDate.year, anchorDate.month - 2 + index);
     final daysInMonth = DateTime(monthDate.year, monthDate.month + 1, 0).day;
-    return _MonthGrid(
-      label: DateFormat.MMM().format(monthDate),
-      days: List<String>.generate(daysInMonth, (dayIndex) {
-        final date = DateTime(monthDate.year, monthDate.month, dayIndex + 1);
-        return _dateKey(date);
-      }),
-    );
+    // DateTime.weekday: 1=Monday … 7=Sunday
+    final firstWeekday = DateTime(monthDate.year, monthDate.month, 1).weekday;
+
+    final weeks = <List<String?>>[];
+    var currentWeek = List<String?>.filled(7, null);
+    var dayOfWeek = firstWeekday - 1; // 0 = Monday
+
+    for (var day = 1; day <= daysInMonth; day++) {
+      final date = DateTime(monthDate.year, monthDate.month, day);
+      currentWeek[dayOfWeek] = _dateKey(date);
+      dayOfWeek++;
+      if (dayOfWeek == 7) {
+        weeks.add(currentWeek);
+        currentWeek = List<String?>.filled(7, null);
+        dayOfWeek = 0;
+      }
+    }
+    // Push the final partial week if any
+    if (dayOfWeek > 0) {
+      weeks.add(currentWeek);
+    }
+
+    return _MonthGrid(label: DateFormat.MMM().format(monthDate), weeks: weeks);
   });
 }
 
@@ -744,9 +739,7 @@ String _prValue(HomePersonalRecordSummary record) {
       : record.value.toStringAsFixed(1);
   return switch (record.type) {
     PersonalRecordType.maxReps => '$value reps',
-    PersonalRecordType.maxWeight ||
-    PersonalRecordType.estimatedOneRepMax => '$value kg',
-    PersonalRecordType.maxVolume ||
-    PersonalRecordType.maxSessionVolume => '$value kg',
+    PersonalRecordType.maxWeight || PersonalRecordType.estimatedOneRepMax => '$value kg',
+    PersonalRecordType.maxVolume || PersonalRecordType.maxSessionVolume => '$value kg',
   };
 }

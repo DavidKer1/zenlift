@@ -4,6 +4,8 @@ import 'package:go_router/go_router.dart';
 import 'package:zenlift/app/router.dart';
 import 'package:zenlift/theme/zenlift_theme.dart';
 
+const _homeCounterButtonKey = ValueKey('test.homeCounterButton');
+
 void main() {
   test('route catalog includes the mobile route map', () {
     expect(
@@ -114,6 +116,43 @@ void main() {
       expect(find.byKey(tabCase.screenKey), findsOneWidget);
       expect(selectedTabIndex(tester), tabCase.selectedIndex);
     }
+  });
+
+  testWidgets('bottom navigation tab switches do not overlap route pages', (
+    tester,
+  ) async {
+    await tester.pumpZenliftRoute();
+
+    await tester.tap(find.byKey(ZenliftRouteKeys.historyTab));
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 100));
+
+    expect(find.byKey(ZenliftRouteKeys.historyScreen), findsOneWidget);
+    expect(find.byKey(ZenliftRouteKeys.homeScreen), findsNothing);
+    expect(selectedTabIndex(tester), 3);
+  });
+
+  testWidgets('bottom navigation preserves tab widget state between switches', (
+    tester,
+  ) async {
+    await tester.pumpZenliftRoute();
+
+    expect(find.text('Home counter: 0'), findsOneWidget);
+
+    await tester.tap(find.byKey(_homeCounterButtonKey));
+    await tester.pump();
+
+    expect(find.text('Home counter: 1'), findsOneWidget);
+
+    await tester.tap(find.byKey(ZenliftRouteKeys.historyTab));
+    await tester.pumpAndSettle();
+
+    expect(find.byKey(ZenliftRouteKeys.historyScreen), findsOneWidget);
+
+    await tester.tap(find.byKey(ZenliftRouteKeys.homeTab));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Home counter: 1'), findsOneWidget);
   });
 
   for (final detailCase
@@ -256,12 +295,33 @@ GoRouter buildTestRouter({String initialLocation = ZenliftRoutes.home}) {
   );
 }
 
-class _HomeRouteStub extends StatelessWidget {
+class _HomeRouteStub extends StatefulWidget {
   const _HomeRouteStub({super.key});
 
   @override
+  State<_HomeRouteStub> createState() => _HomeRouteStubState();
+}
+
+class _HomeRouteStubState extends State<_HomeRouteStub> {
+  int _count = 0;
+
+  @override
   Widget build(BuildContext context) {
-    return const Scaffold(body: Center(child: Text('Home dashboard')));
+    return Scaffold(
+      body: Center(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text('Home counter: $_count'),
+            TextButton(
+              key: _homeCounterButtonKey,
+              onPressed: () => setState(() => _count += 1),
+              child: const Text('Increment home counter'),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }
 

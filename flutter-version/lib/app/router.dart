@@ -103,46 +103,65 @@ GoRouter buildZenliftRouter({
   return GoRouter(
     initialLocation: initialLocation,
     routes: <RouteBase>[
-      ShellRoute(
-        builder: (context, state, child) => ZenliftTabShell(
+      StatefulShellRoute.indexedStack(
+        builder: (context, state, navigationShell) => ZenliftTabShell(
           key: ZenliftRouteKeys.tabShell,
           navigationBarKey: ZenliftRouteKeys.navigationBar,
-          location: state.uri.path,
+          navigationShell: navigationShell,
           destinations: _zenliftTabDestinations,
-          child: child,
         ),
-        routes: <RouteBase>[
-          GoRoute(
-            path: ZenliftRoutes.home,
-            builder: (context, state) =>
-                homeBuilder?.call(context) ??
-                const HomeRoute(key: ZenliftRouteKeys.homeScreen),
+        branches: <StatefulShellBranch>[
+          StatefulShellBranch(
+            routes: <RouteBase>[
+              GoRoute(
+                path: ZenliftRoutes.home,
+                builder: (context, state) =>
+                    homeBuilder?.call(context) ??
+                    const HomeRoute(key: ZenliftRouteKeys.homeScreen),
+              ),
+            ],
           ),
-          GoRoute(
-            path: ZenliftRoutes.routines,
-            builder: (context, state) =>
-                routinesBuilder?.call(context) ??
-                const RoutinesRoute(key: ZenliftRouteKeys.routinesScreen),
+          StatefulShellBranch(
+            routes: <RouteBase>[
+              GoRoute(
+                path: ZenliftRoutes.routines,
+                builder: (context, state) =>
+                    routinesBuilder?.call(context) ??
+                    const RoutinesRoute(key: ZenliftRouteKeys.routinesScreen),
+              ),
+            ],
           ),
-          GoRoute(
-            path: ZenliftRoutes.exerciseLibrary,
-            builder: (context, state) =>
-                exerciseLibraryBuilder?.call(context) ??
-                const ExerciseLibraryRoute(
-                  key: ZenliftRouteKeys.exerciseLibraryScreen,
-                ),
+          StatefulShellBranch(
+            routes: <RouteBase>[
+              GoRoute(
+                path: ZenliftRoutes.exerciseLibrary,
+                builder: (context, state) =>
+                    exerciseLibraryBuilder?.call(context) ??
+                    const ExerciseLibraryRoute(
+                      key: ZenliftRouteKeys.exerciseLibraryScreen,
+                    ),
+              ),
+            ],
           ),
-          GoRoute(
-            path: ZenliftRoutes.history,
-            builder: (context, state) =>
-                historyBuilder?.call(context) ??
-                const HistoryRoute(key: ZenliftRouteKeys.historyScreen),
+          StatefulShellBranch(
+            routes: <RouteBase>[
+              GoRoute(
+                path: ZenliftRoutes.history,
+                builder: (context, state) =>
+                    historyBuilder?.call(context) ??
+                    const HistoryRoute(key: ZenliftRouteKeys.historyScreen),
+              ),
+            ],
           ),
-          GoRoute(
-            path: ZenliftRoutes.settings,
-            builder: (context, state) =>
-                settingsBuilder?.call(context) ??
-                const SettingsRoute(key: ZenliftRouteKeys.settingsScreen),
+          StatefulShellBranch(
+            routes: <RouteBase>[
+              GoRoute(
+                path: ZenliftRoutes.settings,
+                builder: (context, state) =>
+                    settingsBuilder?.call(context) ??
+                    const SettingsRoute(key: ZenliftRouteKeys.settingsScreen),
+              ),
+            ],
           ),
         ],
       ),

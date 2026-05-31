@@ -4,25 +4,23 @@ import 'package:go_router/go_router.dart';
 class ZenliftTabShell extends StatelessWidget {
   const ZenliftTabShell({
     required this.navigationBarKey,
-    required this.location,
+    required this.navigationShell,
     required this.destinations,
-    required this.child,
     super.key,
   });
 
   final Key navigationBarKey;
-  final String location;
+  final StatefulNavigationShell navigationShell;
   final List<ZenliftTabDestination> destinations;
-  final Widget child;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: child,
+      body: navigationShell,
       bottomNavigationBar: NavigationBar(
         key: navigationBarKey,
-        selectedIndex: _selectedIndex(location),
-        onDestinationSelected: (index) => context.go(destinations[index].path),
+        selectedIndex: navigationShell.currentIndex,
+        onDestinationSelected: navigationShell.goBranch,
         destinations: [
           for (final tab in destinations)
             NavigationDestination(
@@ -34,11 +32,6 @@ class ZenliftTabShell extends StatelessWidget {
         ],
       ),
     );
-  }
-
-  int _selectedIndex(String location) {
-    final index = destinations.indexWhere((tab) => tab.path == location);
-    return index < 0 ? 0 : index;
   }
 }
 
