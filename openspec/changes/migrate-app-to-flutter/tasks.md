@@ -100,6 +100,11 @@
   - [ ] Reject invalid or unsupported files before any SQLite/settings write.
   - [ ] Roll back inserted rows when import fails mid-transaction and preserve Expo SQLite/MMKV source data.
   - [ ] Require a verified fresh export before destructive migration cleanup or delete-all-data can proceed.
+  - [x] Add Drift data portability repository contract and implementation for exporting all required tables with metadata and text UUIDs.
+  - [x] Execute validated import plans against Drift in parent-before-child order, skipping existing UUIDs without overwriting local rows.
+  - [x] Wrap import and delete operations in Drift transactions so failed dependent writes roll back inserted rows.
+  - [x] Block delete-all-data unless a structurally valid `.zenlift` backup is supplied.
+  - [x] Add SQLite-backed tests for export metadata/tables, import skip/insert behavior, rollback on dependent failure, and backup-gated deletion.
   - [ ] Run `cd flutter-version && flutter test test/storage/data_export_test.dart test/storage/data_import_test.dart test/storage/data_delete_test.dart`.
 - [ ] 12. Add golden, widget, repository, domain, and integration smoke coverage.
   - [ ] Ensure the migrated areas have matching Dart tests before each screen is marked complete.
