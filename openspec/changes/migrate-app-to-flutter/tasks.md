@@ -94,7 +94,7 @@
   - [x] Add repository, controller, widget, and router tests for Routine Editor create/edit/save behavior.
   - [ ] Verify a set can be logged in under 3 seconds on Android hardware.
   - [ ] Test Active Workout recovery after app restart with completed sets present.
-  - [ ] Run `cd flutter-version && flutter test integration_test/core_loop_test.dart`.
+  - [x] Run `cd flutter-version && flutter test integration_test/core_loop_test.dart`.
 - [x] 11. Port export, import, and delete data.
   - [x] Export a `.zenlift` file containing all required tables, metadata, settings, and text UUIDs.
   - [x] Import valid files by merge-by-UUID with no overwrite of existing records.
@@ -116,6 +116,7 @@
   - [ ] Run Clean Architecture boundary scans: `rg -n "package:flutter|package:flutter_riverpod|package:drift|sqlite3|drift_database" flutter-version/lib/features/*/domain flutter-version/lib/core` and `rg -n "package:drift|drift_database|\\.g\\.dart" flutter-version/lib/features/*/presentation flutter-version/lib/features/*/application`; both should return no matches except documented false positives.
   - [ ] Run `cd flutter-version && flutter test`.
   - [ ] Run `cd flutter-version && flutter test integration_test/core_loop_test.dart` on an Android emulator or device.
+  - [x] Run `cd flutter-version && flutter test integration_test/core_loop_test.dart` on the available local iOS simulator target.
   - [ ] Run Maestro native smoke when installed and record skipped status when unavailable.
 - [ ] 13. Run parity gate and manual Android verification.
   - [ ] Run `cd flutter-version && flutter analyze`.
