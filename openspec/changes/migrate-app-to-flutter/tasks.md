@@ -50,6 +50,10 @@
 - [ ] 10. Port onboarding, home, routines, exercises, active workout, summary, history, and settings.
   - [ ] Keep screens thin and move business logic into feature application use cases/controllers, feature domain services, or domain repository contracts.
   - [ ] Do not pass Drift rows, generated database classes, or storage DTOs into presentation widgets.
+  - [x] Add Active Workout application controller for recovery, quick-start continuation/new-session behavior, routine-day exercise copy, previous-performance lookup, set defaults, completed-set retry/pending-write replay, set autosave operations, PR detection/persistence, finish validation, cancel, and summary output.
+  - [x] Replace the Active Workout placeholder with an injected Flutter UI slice for header timer, exercise cards, previous performance, editable set rows, set type, set notes, pending-save warning, add-set, complete toggle, finish/cancel, loading, and empty recovery states.
+  - [x] Wire `/workout/active` to recover persisted sessions through the Drift repository and active-session id store before showing the empty state or returning Home.
+  - [x] Add controller and widget tests for Active Workout recovery, quick-start, set logging, autosave callbacks, type/notes editing, completion toggle, finish validation, PR summary, route harnessing, and summary message.
   - [ ] Verify a set can be logged in under 3 seconds on Android hardware.
   - [ ] Test Active Workout recovery after app restart with completed sets present.
   - [ ] Run `cd flutter-version && flutter test integration_test/core_loop_test.dart`.

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:go_router/go_router.dart';
 import 'package:zenlift/app/router.dart';
 import 'package:zenlift/theme/zenlift_theme.dart';
 
@@ -168,7 +169,7 @@ void main() {
   testWidgets('standalone route pop returns to the previous tab route', (
     tester,
   ) async {
-    final router = buildZenliftRouter(initialLocation: ZenliftRoutes.routines);
+    final router = buildTestRouter(initialLocation: ZenliftRoutes.routines);
     await tester.pumpWidget(
       MaterialApp.router(theme: buildZenliftDarkTheme(), routerConfig: router),
     );
@@ -193,9 +194,27 @@ extension on WidgetTester {
     return pumpWidget(
       MaterialApp.router(
         theme: buildZenliftDarkTheme(),
-        routerConfig: buildZenliftRouter(initialLocation: initialLocation),
+        routerConfig: buildTestRouter(initialLocation: initialLocation),
       ),
     );
+  }
+}
+
+GoRouter buildTestRouter({String initialLocation = ZenliftRoutes.home}) {
+  return buildZenliftRouter(
+    initialLocation: initialLocation,
+    activeWorkoutBuilder: (context) => const _ActiveWorkoutRouteStub(
+      key: ZenliftRouteKeys.activeWorkoutScreen,
+    ),
+  );
+}
+
+class _ActiveWorkoutRouteStub extends StatelessWidget {
+  const _ActiveWorkoutRouteStub({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const Scaffold(body: Center(child: Text('Active workout')));
   }
 }
 

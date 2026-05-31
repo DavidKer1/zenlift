@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+import 'active_workout_route.dart';
 import '../features/exercises/presentation/exercise_detail_screen.dart';
 import '../features/exercises/presentation/exercise_library_screen.dart';
 import '../features/history/presentation/history_screen.dart';
@@ -11,7 +12,6 @@ import '../features/routines/presentation/routine_detail_screen.dart';
 import '../features/routines/presentation/routine_editor_screen.dart';
 import '../features/routines/presentation/routines_screen.dart';
 import '../features/settings/presentation/settings_screen.dart';
-import '../features/workout/presentation/active_workout_screen.dart';
 import '../features/workout/presentation/workout_summary_screen.dart';
 
 final zenliftRouter = buildZenliftRouter();
@@ -74,7 +74,10 @@ abstract final class ZenliftRouteKeys {
   static const workoutSummaryScreen = ValueKey('zenlift.screen.workoutSummary');
 }
 
-GoRouter buildZenliftRouter({String initialLocation = ZenliftRoutes.home}) {
+GoRouter buildZenliftRouter({
+  String initialLocation = ZenliftRoutes.home,
+  WidgetBuilder? activeWorkoutBuilder,
+}) {
   return GoRouter(
     initialLocation: initialLocation,
     routes: <RouteBase>[
@@ -149,9 +152,9 @@ GoRouter buildZenliftRouter({String initialLocation = ZenliftRoutes.home}) {
       ),
       GoRoute(
         path: ZenliftRoutes.activeWorkout,
-        builder: (context, state) => const ActiveWorkoutScreen(
-          key: ZenliftRouteKeys.activeWorkoutScreen,
-        ),
+        builder: (context, state) =>
+            activeWorkoutBuilder?.call(context) ??
+            const ActiveWorkoutRoute(key: ZenliftRouteKeys.activeWorkoutScreen),
       ),
       GoRoute(
         path: ZenliftRoutes.workoutSummary,
