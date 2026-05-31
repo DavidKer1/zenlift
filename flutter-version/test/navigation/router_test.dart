@@ -149,7 +149,7 @@ void main() {
         (
           path: ZenliftRoutes.onboarding,
           screenKey: ZenliftRouteKeys.onboardingScreen,
-          expectedTexts: <String>['Onboarding'],
+          expectedTexts: <String>['Welcome to Zenlift'],
         ),
       ]) {
     testWidgets('${detailCase.path} renders outside the tab shell', (
