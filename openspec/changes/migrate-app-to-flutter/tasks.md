@@ -73,6 +73,10 @@
   - [x] Replace the Routines placeholder with an injected Flutter UI slice for routine cards, active counts, pull-to-refresh, swipe/explicit archive, undo snackbar, empty state, suggested templates, create FAB, and open/create/template callbacks.
   - [x] Wire `/routines` to the Drift-backed routine repository while keeping generated storage rows out of presentation.
   - [x] Add controller and widget tests for Routines loading, archive/undo, empty state, suggested-template visibility, create/open/template callbacks, and route harnessing.
+  - [x] Add Routine Detail application controller for full routine loading, primary muscle lookup, inline name updates, duplication, archive/delete delegation, remove exercise, and exercise reordering.
+  - [x] Replace the Routine Detail placeholder with an injected Flutter UI slice for header actions, inline name edit, days, exercise targets, primary muscle dots, empty/error states, remove/reorder controls, edit/add callbacks, and start-workout per day.
+  - [x] Wire `/routine/:id` to Drift-backed routine/exercise repositories and active-workout routine-day start flow while keeping generated storage rows out of presentation.
+  - [x] Add controller and widget tests for Routine Detail load/name/duplicate/remove/reorder behavior, day rendering, header actions, start/add callbacks, missing-routine state, and route harnessing.
   - [ ] Verify a set can be logged in under 3 seconds on Android hardware.
   - [ ] Test Active Workout recovery after app restart with completed sets present.
   - [ ] Run `cd flutter-version && flutter test integration_test/core_loop_test.dart`.

@@ -5,12 +5,12 @@ import 'active_workout_route.dart';
 import 'exercise_library_route.dart';
 import 'history_route.dart';
 import 'home_route.dart';
+import 'routine_detail_route.dart';
 import 'routines_route.dart';
 import 'workout_summary_route.dart';
 import '../features/exercises/presentation/exercise_detail_screen.dart';
 import '../features/home/presentation/zenlift_tab_shell.dart';
 import '../features/onboarding/presentation/onboarding_screen.dart';
-import '../features/routines/presentation/routine_detail_screen.dart';
 import '../features/routines/presentation/routine_editor_screen.dart';
 import '../features/settings/presentation/settings_screen.dart';
 import '../features/workout/application/active_workout_controller.dart';
@@ -83,6 +83,7 @@ GoRouter buildZenliftRouter({
   WidgetBuilder? exerciseLibraryBuilder,
   WidgetBuilder? activeWorkoutBuilder,
   WidgetBuilder? workoutSummaryBuilder,
+  Widget Function(BuildContext context, String routineId)? routineDetailBuilder,
 }) {
   return GoRouter(
     initialLocation: initialLocation,
@@ -149,10 +150,14 @@ GoRouter buildZenliftRouter({
       ),
       GoRoute(
         path: ZenliftRoutes.routineDetail,
-        builder: (context, state) => RoutineDetailScreen(
-          key: ZenliftRouteKeys.routineDetailScreen,
-          routineId: state.pathParameters['id'] ?? '',
-        ),
+        builder: (context, state) {
+          final routineId = state.pathParameters['id'] ?? '';
+          return routineDetailBuilder?.call(context, routineId) ??
+              RoutineDetailRoute(
+                key: ZenliftRouteKeys.routineDetailScreen,
+                routineId: routineId,
+              );
+        },
       ),
       GoRoute(
         path: ZenliftRoutes.exerciseDetail,
