@@ -7,6 +7,9 @@ import '../../../theme/zenlift_radii.dart';
 import '../../../theme/zenlift_spacing.dart';
 import '../../../widgets/zenlift_button.dart';
 import '../../../widgets/zenlift_card.dart';
+import '../../exercises/domain/exercise.dart';
+import '../../exercises/domain/exercise_form.dart';
+import '../../exercises/domain/exercise_library.dart';
 import '../application/active_workout_controller.dart';
 import '../domain/entities/workout_repository_entities.dart';
 
@@ -23,6 +26,10 @@ typedef ActiveWorkoutUpdateSet =
     });
 typedef ActiveWorkoutToggleSet =
     Future<ActiveWorkoutState> Function(String setId);
+typedef ActiveWorkoutExerciseLoader =
+    Future<ExerciseLibraryState> Function({String query});
+typedef ActiveWorkoutAddExercise =
+    Future<ActiveWorkoutState> Function(String exerciseId);
 typedef ActiveWorkoutStateFallback = ActiveWorkoutState Function();
 typedef ActiveWorkoutFinish = Future<WorkoutSummary> Function();
 typedef ActiveWorkoutCancel = Future<void> Function();
@@ -35,6 +42,8 @@ class ActiveWorkoutScreen extends StatefulWidget {
     this.onAddSet,
     this.onUpdateSet,
     this.onToggleSet,
+    this.loadExercises,
+    this.onAddExercise,
     this.getLatestState,
     this.onFinish,
     this.onCancel,
@@ -45,6 +54,8 @@ class ActiveWorkoutScreen extends StatefulWidget {
   final ActiveWorkoutAddSet? onAddSet;
   final ActiveWorkoutUpdateSet? onUpdateSet;
   final ActiveWorkoutToggleSet? onToggleSet;
+  final ActiveWorkoutExerciseLoader? loadExercises;
+  final ActiveWorkoutAddExercise? onAddExercise;
   final ActiveWorkoutStateFallback? getLatestState;
   final ActiveWorkoutFinish? onFinish;
   final ActiveWorkoutCancel? onCancel;
@@ -144,6 +155,40 @@ class _ActiveWorkoutScreenState extends State<ActiveWorkoutScreen> {
         });
       }
     }
+  }
+
+  Future<void> _addExercise() async {
+    final loadExercises = widget.loadExercises;
+    final onAddExercise = widget.onAddExercise;
+    if (_isBusy || loadExercises == null || onAddExercise == null) {
+      return;
+    }
+
+    final selectedExerciseId = await showModalBottomSheet<String>(
+      context: context,
+      isScrollControlled: true,
+      useSafeArea: true,
+      builder: (context) {
+        return DraggableScrollableSheet(
+          expand: false,
+          initialChildSize: 0.82,
+          minChildSize: 0.45,
+          maxChildSize: 0.95,
+          builder: (context, scrollController) {
+            return _ExercisePickerSheet(
+              loadExercises: loadExercises,
+              scrollController: scrollController,
+            );
+          },
+        );
+      },
+    );
+
+    if (!mounted || selectedExerciseId == null) {
+      return;
+    }
+
+    await _runStateAction(() => onAddExercise(selectedExerciseId));
   }
 
   Future<void> _finish() async {
@@ -275,6 +320,10 @@ class _ActiveWorkoutScreenState extends State<ActiveWorkoutScreen> {
       );
     }
 
+    final bannerCount =
+        (_message == null ? 0 : 1) + (_state.hasPendingSetWrites ? 1 : 0);
+    final itemCount = bannerCount + _state.exercises.length + 1;
+
     return ListView.separated(
       padding: const EdgeInsets.fromLTRB(20, 16, 20, 24),
       itemBuilder: (context, index) {
@@ -287,9 +336,18 @@ class _ActiveWorkoutScreenState extends State<ActiveWorkoutScreen> {
             message: 'A completed set is pending save. Zenlift will retry it.',
           );
         }
-        final bannerCount =
-            (_message == null ? 0 : 1) + (_state.hasPendingSetWrites ? 1 : 0);
+
         final adjustedIndex = index - bannerCount;
+        if (adjustedIndex == _state.exercises.length) {
+          return _AddExerciseButton(
+            isBusy: _isBusy,
+            onPressed:
+                widget.loadExercises == null || widget.onAddExercise == null
+                ? null
+                : _addExercise,
+          );
+        }
+
         final exercise = _state.exercises[adjustedIndex];
         return _WorkoutExerciseCard(
           exercise: exercise,
@@ -333,10 +391,244 @@ class _ActiveWorkoutScreenState extends State<ActiveWorkoutScreen> {
       },
       separatorBuilder: (context, index) =>
           const SizedBox(height: ZenliftSpacing.stackMd),
-      itemCount:
-          _state.exercises.length +
-          (_message == null ? 0 : 1) +
-          (_state.hasPendingSetWrites ? 1 : 0),
+      itemCount: itemCount,
+    );
+  }
+}
+
+class _ExercisePickerSheet extends StatefulWidget {
+  const _ExercisePickerSheet({
+    required this.loadExercises,
+    required this.scrollController,
+  });
+
+  final ActiveWorkoutExerciseLoader loadExercises;
+  final ScrollController scrollController;
+
+  @override
+  State<_ExercisePickerSheet> createState() => _ExercisePickerSheetState();
+}
+
+class _ExercisePickerSheetState extends State<_ExercisePickerSheet> {
+  final _searchController = TextEditingController();
+  Timer? _debounce;
+  ExerciseLibraryState _state = ExerciseLibraryState.empty;
+  var _isLoading = true;
+  var _loadSequence = 0;
+  String? _message;
+
+  @override
+  void initState() {
+    super.initState();
+    unawaited(_reload());
+  }
+
+  @override
+  void dispose() {
+    _debounce?.cancel();
+    _searchController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _reload() async {
+    final requestSequence = ++_loadSequence;
+    final query = _searchController.text;
+
+    setState(() {
+      _isLoading = true;
+      _message = null;
+    });
+
+    try {
+      final state = await widget.loadExercises(query: query);
+      if (!mounted || requestSequence != _loadSequence) {
+        return;
+      }
+      setState(() {
+        _state = state;
+        _message = state.errorMessage;
+        _isLoading = false;
+      });
+    } catch (_) {
+      if (!mounted || requestSequence != _loadSequence) {
+        return;
+      }
+      setState(() {
+        _message = 'Could not load exercises.';
+        _isLoading = false;
+      });
+    }
+  }
+
+  void _onSearchChanged(String value) {
+    _debounce?.cancel();
+    _debounce = Timer(const Duration(milliseconds: 300), _reload);
+    setState(() {});
+  }
+
+  void _clearSearch() {
+    _debounce?.cancel();
+    _searchController.clear();
+    unawaited(_reload());
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = Theme.of(context).colorScheme;
+
+    return Padding(
+      padding: EdgeInsets.only(
+        left: ZenliftSpacing.lateral,
+        right: ZenliftSpacing.lateral,
+        top: ZenliftSpacing.stackMd,
+        bottom: MediaQuery.viewInsetsOf(context).bottom,
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: <Widget>[
+          Row(
+            children: <Widget>[
+              Expanded(
+                child: Text(
+                  'Choose exercise',
+                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                    color: colors.onSurface,
+                    fontWeight: FontWeight.w900,
+                  ),
+                ),
+              ),
+              IconButton(
+                tooltip: 'Close exercise picker',
+                onPressed: () => Navigator.of(context).pop(),
+                icon: const Icon(Icons.close),
+              ),
+            ],
+          ),
+          const SizedBox(height: ZenliftSpacing.stackSm),
+          TextField(
+            key: const Key('active-workout-exercise-search-field'),
+            controller: _searchController,
+            onChanged: _onSearchChanged,
+            textInputAction: TextInputAction.search,
+            decoration: InputDecoration(
+              prefixIcon: const Icon(Icons.search),
+              hintText: 'Search exercises',
+              suffixIcon: _searchController.text.trim().isEmpty
+                  ? null
+                  : IconButton(
+                      key: const Key('active-workout-clear-exercise-search'),
+                      tooltip: 'Clear search',
+                      onPressed: _clearSearch,
+                      icon: const Icon(Icons.close),
+                    ),
+              border: const OutlineInputBorder(
+                borderRadius: BorderRadius.all(
+                  Radius.circular(ZenliftRadii.medium),
+                ),
+              ),
+            ),
+          ),
+          const SizedBox(height: ZenliftSpacing.stackMd),
+          if (_message != null) ...[
+            _InlineMessage(message: _message!),
+            const SizedBox(height: ZenliftSpacing.stackMd),
+          ],
+          Expanded(
+            child: _isLoading
+                ? const Center(
+                    child: CircularProgressIndicator(
+                      key: Key('active-workout-exercise-picker-loading'),
+                    ),
+                  )
+                : _state.exercises.isEmpty
+                ? Center(
+                    child: Text(
+                      'No exercises found.',
+                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                        color: colors.onSurfaceVariant,
+                      ),
+                    ),
+                  )
+                : ListView.separated(
+                    controller: widget.scrollController,
+                    itemCount: _state.exercises.length,
+                    separatorBuilder: (context, index) =>
+                        const SizedBox(height: ZenliftSpacing.stackSm),
+                    itemBuilder: (context, index) {
+                      final item = _state.exercises[index];
+                      return _ExercisePickerTile(item: item);
+                    },
+                  ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _ExercisePickerTile extends StatelessWidget {
+  const _ExercisePickerTile({required this.item});
+
+  final ExerciseLibraryItem item;
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = Theme.of(context).colorScheme;
+    final ExerciseEntity exercise = item.exercise;
+    final subtitle = <String>[
+      if (item.primaryMuscle != null) item.primaryMuscle!.displayNameEs,
+      exerciseEquipmentLabel(exercise.equipment),
+    ].join(' · ');
+
+    return Material(
+      color: colors.surfaceContainerHigh,
+      borderRadius: const BorderRadius.all(ZenliftRadii.compactControl),
+      clipBehavior: Clip.antiAlias,
+      child: ListTile(
+        key: Key('active-workout-exercise-option-${item.exercise.id}'),
+        minVerticalPadding: 12,
+        leading: Icon(Icons.fitness_center, color: colors.primary),
+        title: Text(
+          exercise.name,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+          style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+            color: colors.onSurface,
+            fontWeight: FontWeight.w700,
+          ),
+        ),
+        subtitle: Text(
+          subtitle,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+          style: Theme.of(
+            context,
+          ).textTheme.bodySmall?.copyWith(color: colors.onSurfaceVariant),
+        ),
+        trailing: const Icon(Icons.add),
+        onTap: () => Navigator.of(context).pop(exercise.id),
+      ),
+    );
+  }
+}
+
+class _AddExerciseButton extends StatelessWidget {
+  const _AddExerciseButton({required this.isBusy, required this.onPressed});
+
+  final bool isBusy;
+  final VoidCallback? onPressed;
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: double.infinity,
+      child: ZenliftButton.secondary(
+        key: const Key('active-workout-add-exercise-button'),
+        label: 'Add exercise',
+        icon: Icons.add,
+        semanticLabel: 'Add exercise to active workout',
+        onPressed: isBusy ? null : onPressed,
+      ),
     );
   }
 }

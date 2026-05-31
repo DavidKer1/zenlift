@@ -1,6 +1,9 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:zenlift/features/exercises/domain/exercise.dart';
+import 'package:zenlift/features/exercises/domain/exercise_library.dart';
 import 'package:zenlift/features/workout/application/active_workout_controller.dart';
 import 'package:zenlift/features/workout/domain/entities/workout_repository_entities.dart';
 import 'package:zenlift/features/workout/presentation/active_workout_screen.dart';
@@ -13,6 +16,8 @@ void main() {
     ActiveWorkoutAddSet? onAddSet,
     ActiveWorkoutUpdateSet? onUpdateSet,
     ActiveWorkoutToggleSet? onToggleSet,
+    ActiveWorkoutExerciseLoader? loadExercises,
+    ActiveWorkoutAddExercise? onAddExercise,
     ActiveWorkoutStateFallback? getLatestState,
     ActiveWorkoutFinish? onFinish,
     ActiveWorkoutCancel? onCancel,
@@ -26,6 +31,8 @@ void main() {
           onAddSet: onAddSet,
           onUpdateSet: onUpdateSet,
           onToggleSet: onToggleSet,
+          loadExercises: loadExercises,
+          onAddExercise: onAddExercise,
           getLatestState: getLatestState,
           onFinish: onFinish,
           onCancel: onCancel,
@@ -78,6 +85,100 @@ void main() {
       find.byKey(const Key('active-workout-set-weight-set-1')),
       findsOneWidget,
     );
+  });
+
+  testWidgets('add exercise picker appends the selected exercise', (
+    tester,
+  ) async {
+    final loadedQueries = <String>[];
+    var addedExerciseId = '';
+
+    await tester.pumpWidget(
+      buildSubject(
+        initialState: _stateWithSets(sets: const <SetLogEntity>[]),
+        loadExercises: ({String query = ''}) async {
+          loadedQueries.add(query);
+          return _exerciseLibraryState();
+        },
+        onAddExercise: (exerciseId) async {
+          addedExerciseId = exerciseId;
+          return _stateWithAdditionalExercise();
+        },
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    await tester.tap(
+      find.byKey(const Key('active-workout-add-exercise-button')),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.text('Choose exercise'), findsOneWidget);
+    expect(find.text('Incline Dumbbell Press'), findsOneWidget);
+
+    await tester.tap(
+      find.byKey(const Key('active-workout-exercise-option-incline-db-press')),
+    );
+    await tester.pumpAndSettle();
+
+    expect(loadedQueries, <String>['']);
+    expect(addedExerciseId, 'incline-db-press');
+    expect(find.text('Bench Press'), findsOneWidget);
+    expect(find.text('Incline Dumbbell Press'), findsOneWidget);
+    expect(find.text('0/0 sets completed'), findsNWidgets(2));
+  });
+
+  testWidgets('exercise picker ignores stale search responses', (tester) async {
+    final initialLoad = Completer<ExerciseLibraryState>();
+    final slowSearch = Completer<ExerciseLibraryState>();
+    final fastSearch = Completer<ExerciseLibraryState>();
+
+    await tester.pumpWidget(
+      buildSubject(
+        initialState: _stateWithSets(sets: const <SetLogEntity>[]),
+        loadExercises: ({String query = ''}) {
+          return switch (query) {
+            '' => initialLoad.future,
+            'slow' => slowSearch.future,
+            'fast' => fastSearch.future,
+            _ => Future.value(_exerciseLibraryState(name: query)),
+          };
+        },
+        onAddExercise: (_) async => _stateWithSets(),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    await tester.tap(
+      find.byKey(const Key('active-workout-add-exercise-button')),
+    );
+    await tester.pump();
+
+    initialLoad.complete(_exerciseLibraryState(name: 'Initial Exercise'));
+    await tester.pump();
+
+    await tester.enterText(
+      find.byKey(const Key('active-workout-exercise-search-field')),
+      'slow',
+    );
+    await tester.pump(const Duration(milliseconds: 300));
+
+    await tester.enterText(
+      find.byKey(const Key('active-workout-exercise-search-field')),
+      'fast',
+    );
+    await tester.pump(const Duration(milliseconds: 300));
+
+    fastSearch.complete(_exerciseLibraryState(name: 'Fast Exercise'));
+    await tester.pump();
+
+    expect(find.text('Fast Exercise'), findsOneWidget);
+
+    slowSearch.complete(_exerciseLibraryState(name: 'Slow Exercise'));
+    await tester.pump();
+
+    expect(find.text('Fast Exercise'), findsOneWidget);
+    expect(find.text('Slow Exercise'), findsNothing);
   });
 
   testWidgets('editing weight and reps autosaves through callbacks', (
@@ -352,6 +453,71 @@ ActiveWorkoutState _stateWithSets({
             'workout-exercise-1': previousPerformance,
           },
     hasPendingSetWrites: hasPendingSetWrites,
+  );
+}
+
+ExerciseLibraryState _exerciseLibraryState({
+  String id = 'incline-db-press',
+  String name = 'Incline Dumbbell Press',
+}) {
+  return ExerciseLibraryState(
+    exercises: <ExerciseLibraryItem>[
+      ExerciseLibraryItem(
+        exercise: ExerciseEntity(
+          id: id,
+          name: name,
+          equipment: 'dumbbell',
+          category: 'strength',
+          isCustom: false,
+          isFavorite: false,
+          notes: null,
+          createdAt: null,
+          updatedAt: null,
+        ),
+        primaryMuscle: MuscleGroupEntity(
+          id: 'chest',
+          name: 'chest',
+          displayNameEs: 'Pecho',
+          color: '#cfbcff',
+        ),
+      ),
+    ],
+    muscleGroups: <MuscleGroupEntity>[],
+  );
+}
+
+ActiveWorkoutState _stateWithAdditionalExercise() {
+  final current = _stateWithSets(sets: const <SetLogEntity>[]);
+  return ActiveWorkoutState(
+    session: current.session,
+    exercises: <WorkoutExerciseWithSets>[
+      ...current.exercises,
+      const WorkoutExerciseWithSets(
+        workoutExercise: WorkoutExerciseEntity(
+          id: 'workout-exercise-2',
+          workoutSessionId: 'session-1',
+          exerciseId: 'incline-db-press',
+          sortOrder: 2,
+          notes: null,
+        ),
+        exercise: ExerciseEntity(
+          id: 'incline-db-press',
+          name: 'Incline Dumbbell Press',
+          equipment: 'dumbbell',
+          category: 'strength',
+          isCustom: false,
+          isFavorite: false,
+          notes: null,
+          createdAt: null,
+          updatedAt: null,
+        ),
+        sets: <SetLogEntity>[],
+      ),
+    ],
+    previousPerformanceByWorkoutExerciseId:
+        current.previousPerformanceByWorkoutExerciseId,
+    hasPendingSetWrites: current.hasPendingSetWrites,
+    lastError: current.lastError,
   );
 }
 
