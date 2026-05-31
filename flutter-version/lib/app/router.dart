@@ -5,13 +5,13 @@ import 'active_workout_route.dart';
 import 'exercise_library_route.dart';
 import 'history_route.dart';
 import 'home_route.dart';
+import 'routines_route.dart';
 import 'workout_summary_route.dart';
 import '../features/exercises/presentation/exercise_detail_screen.dart';
 import '../features/home/presentation/zenlift_tab_shell.dart';
 import '../features/onboarding/presentation/onboarding_screen.dart';
 import '../features/routines/presentation/routine_detail_screen.dart';
 import '../features/routines/presentation/routine_editor_screen.dart';
-import '../features/routines/presentation/routines_screen.dart';
 import '../features/settings/presentation/settings_screen.dart';
 import '../features/workout/application/active_workout_controller.dart';
 
@@ -78,6 +78,7 @@ abstract final class ZenliftRouteKeys {
 GoRouter buildZenliftRouter({
   String initialLocation = ZenliftRoutes.home,
   WidgetBuilder? homeBuilder,
+  WidgetBuilder? routinesBuilder,
   WidgetBuilder? historyBuilder,
   WidgetBuilder? exerciseLibraryBuilder,
   WidgetBuilder? activeWorkoutBuilder,
@@ -104,7 +105,8 @@ GoRouter buildZenliftRouter({
           GoRoute(
             path: ZenliftRoutes.routines,
             builder: (context, state) =>
-                const RoutinesScreen(key: ZenliftRouteKeys.routinesScreen),
+                routinesBuilder?.call(context) ??
+                const RoutinesRoute(key: ZenliftRouteKeys.routinesScreen),
           ),
           GoRoute(
             path: ZenliftRoutes.exerciseLibrary,

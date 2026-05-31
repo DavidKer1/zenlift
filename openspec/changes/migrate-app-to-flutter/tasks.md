@@ -69,6 +69,10 @@
   - [x] Replace the Exercise Library placeholder with an injected Flutter UI slice for search debounce, clear search, muscle/equipment chips, exercise cards, favorite toggle, empty state, create FAB, and detail navigation.
   - [x] Wire `/exercise` to Drift-backed exercise and muscle group repositories while keeping generated storage rows out of presentation.
   - [x] Add controller and widget tests for Exercise Library search/filter intersection, favorite toggle, empty state, create/open callbacks, and route harnessing.
+  - [x] Add Routines list application controller for active routine loading, archive, undo archive, ordered restore, and recoverable repository errors.
+  - [x] Replace the Routines placeholder with an injected Flutter UI slice for routine cards, active counts, pull-to-refresh, swipe/explicit archive, undo snackbar, empty state, suggested templates, create FAB, and open/create/template callbacks.
+  - [x] Wire `/routines` to the Drift-backed routine repository while keeping generated storage rows out of presentation.
+  - [x] Add controller and widget tests for Routines loading, archive/undo, empty state, suggested-template visibility, create/open/template callbacks, and route harnessing.
   - [ ] Verify a set can be logged in under 3 seconds on Android hardware.
   - [ ] Test Active Workout recovery after app restart with completed sets present.
   - [ ] Run `cd flutter-version && flutter test integration_test/core_loop_test.dart`.
