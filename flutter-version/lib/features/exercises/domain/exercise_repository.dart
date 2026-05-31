@@ -1,5 +1,6 @@
 import '../../../core/optional_field.dart';
 import 'exercise.dart';
+import 'exercise_form.dart';
 
 class CreateExerciseData {
   const CreateExerciseData({
@@ -63,11 +64,13 @@ abstract interface class ExerciseRepository {
   Future<List<ExerciseEntity>> search(String query);
   Future<List<ExerciseEntity>> getFavorites();
   Future<List<MuscleGroupEntity>> getMuscles(String exerciseId);
+  Future<List<MuscleEntry>> getMuscleEntries(String exerciseId);
   Future<ExerciseEntity> create(
     CreateExerciseData data,
     List<MuscleEntry> muscles,
   );
   Future<ExerciseEntity?> update(String id, UpdateExerciseData updates);
+  Future<ExerciseEntity> saveDraft(ExerciseDraft draft);
   Future<void> delete(String id);
   Future<ExerciseEntity?> toggleFavorite(String id);
   Future<void> addMuscle(

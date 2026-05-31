@@ -6,6 +6,7 @@ import 'package:zenlift/core/optional_field.dart';
 import 'package:zenlift/core/uuid/id_generator.dart';
 import 'package:zenlift/features/exercises/data/drift_exercise_repository.dart';
 import 'package:zenlift/features/exercises/domain/exercise.dart';
+import 'package:zenlift/features/exercises/domain/exercise_form.dart';
 import 'package:zenlift/features/exercises/domain/exercise_repository.dart';
 import 'package:zenlift/storage/drift/app_database.dart';
 
@@ -349,6 +350,54 @@ void main() {
       await expectLater(
         repository.removeMuscle('exercise-bench', 'muscle-chest'),
         throwsStateError,
+      );
+    },
+  );
+
+  test('saveDraft creates custom exercise with normalized muscles', () async {
+    final created = await repository.saveDraft(
+      const ExerciseDraft(
+        name: ' Incline Press ',
+        primaryMuscleGroupId: 'muscle-chest',
+        secondaryMuscleGroupIds: ['muscle-back', 'muscle-chest'],
+        equipment: 'barbell',
+        category: 'strength',
+        notes: '  Low incline  ',
+      ),
+    );
+
+    expect(created.id, 'exercise-new');
+    expect(created.name, 'Incline Press');
+    expect(created.isCustom, isTrue);
+    expect(created.notes, 'Low incline');
+    expect(
+      (await repository.getMuscleEntries(
+        created.id,
+      )).map((entry) => '${entry.muscleGroupId}:${entry.role.value}'),
+      <String>['muscle-chest:primary', 'muscle-back:secondary'],
+    );
+  });
+
+  test(
+    'saveDraft updates custom exercise and replaces muscle entries',
+    () async {
+      final updated = await repository.saveDraft(
+        const ExerciseDraft(
+          id: 'exercise-bench',
+          name: 'Flat Bench',
+          primaryMuscleGroupId: 'muscle-back',
+          equipment: 'dumbbell',
+          category: 'strength',
+        ),
+      );
+
+      expect(updated.name, 'Flat Bench');
+      expect(updated.equipment, 'dumbbell');
+      expect(
+        (await repository.getMuscleEntries(
+          updated.id,
+        )).map((entry) => '${entry.muscleGroupId}:${entry.role.value}'),
+        <String>['muscle-back:primary'],
       );
     },
   );

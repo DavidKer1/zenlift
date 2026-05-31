@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 
 import 'active_workout_route.dart';
 import 'exercise_detail_route.dart';
+import 'exercise_form_route.dart';
 import 'exercise_library_route.dart';
 import 'history_route.dart';
 import 'home_route.dart';
@@ -28,6 +29,8 @@ abstract final class ZenliftRoutes {
   static const routineCreate = '/routine/create';
   static const routineEdit = '/routine/edit/:id';
   static const exerciseDetail = '/exercise/:id';
+  static const exerciseCreate = '/exercise/create';
+  static const exerciseEdit = '/exercise/edit/:id';
   static const activeWorkout = '/workout/active';
   static const workoutSummary = '/workout/summary';
 
@@ -42,6 +45,8 @@ abstract final class ZenliftRoutes {
     routineCreate,
     routineEdit,
     exerciseDetail,
+    exerciseCreate,
+    exerciseEdit,
     activeWorkout,
     workoutSummary,
   ];
@@ -49,6 +54,7 @@ abstract final class ZenliftRoutes {
   static String routine(String id) => '/routine/$id';
   static String editRoutine(String id) => '/routine/edit/$id';
   static String exercise(String id) => '/exercise/$id';
+  static String editExercise(String id) => '/exercise/edit/$id';
 }
 
 abstract final class ZenliftRouteKeys {
@@ -71,6 +77,8 @@ abstract final class ZenliftRouteKeys {
   static const routineCreateScreen = ValueKey('zenlift.screen.routineCreate');
   static const routineEditScreen = ValueKey('zenlift.screen.routineEdit');
   static const exerciseDetailScreen = ValueKey('zenlift.screen.exerciseDetail');
+  static const exerciseCreateScreen = ValueKey('zenlift.screen.exerciseCreate');
+  static const exerciseEditScreen = ValueKey('zenlift.screen.exerciseEdit');
   static const activeWorkoutScreen = ValueKey('zenlift.screen.activeWorkout');
   static const workoutSummaryScreen = ValueKey('zenlift.screen.workoutSummary');
 }
@@ -86,6 +94,8 @@ GoRouter buildZenliftRouter({
   Widget Function(BuildContext context, String routineId)? routineDetailBuilder,
   Widget Function(BuildContext context, String exerciseId)?
   exerciseDetailBuilder,
+  WidgetBuilder? exerciseCreateBuilder,
+  Widget Function(BuildContext context, String exerciseId)? exerciseEditBuilder,
   WidgetBuilder? routineCreateBuilder,
   Widget Function(BuildContext context, String routineId)? routineEditBuilder,
 }) {
@@ -166,6 +176,25 @@ GoRouter buildZenliftRouter({
               RoutineDetailRoute(
                 key: ZenliftRouteKeys.routineDetailScreen,
                 routineId: routineId,
+              );
+        },
+      ),
+      GoRoute(
+        path: ZenliftRoutes.exerciseCreate,
+        builder: (context, state) =>
+            exerciseCreateBuilder?.call(context) ??
+            const ExerciseFormRoute.create(
+              key: ZenliftRouteKeys.exerciseCreateScreen,
+            ),
+      ),
+      GoRoute(
+        path: ZenliftRoutes.exerciseEdit,
+        builder: (context, state) {
+          final exerciseId = state.pathParameters['id'] ?? '';
+          return exerciseEditBuilder?.call(context, exerciseId) ??
+              ExerciseFormRoute.edit(
+                key: ZenliftRouteKeys.exerciseEditScreen,
+                exerciseId: exerciseId,
               );
         },
       ),

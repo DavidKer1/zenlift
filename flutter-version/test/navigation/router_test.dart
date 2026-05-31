@@ -19,6 +19,8 @@ void main() {
         ZenliftRoutes.routineCreate,
         ZenliftRoutes.routineEdit,
         ZenliftRoutes.exerciseDetail,
+        ZenliftRoutes.exerciseCreate,
+        ZenliftRoutes.exerciseEdit,
         ZenliftRoutes.activeWorkout,
         ZenliftRoutes.workoutSummary,
       ]),
@@ -137,6 +139,16 @@ void main() {
           expectedTexts: <String>['Exercise detail', 'bench-press'],
         ),
         (
+          path: ZenliftRoutes.exerciseCreate,
+          screenKey: ZenliftRouteKeys.exerciseCreateScreen,
+          expectedTexts: <String>['Create exercise'],
+        ),
+        (
+          path: '/exercise/edit/bench-press',
+          screenKey: ZenliftRouteKeys.exerciseEditScreen,
+          expectedTexts: <String>['Edit exercise', 'bench-press'],
+        ),
+        (
           path: ZenliftRoutes.activeWorkout,
           screenKey: ZenliftRouteKeys.activeWorkoutScreen,
           expectedTexts: <String>['Active workout'],
@@ -224,6 +236,13 @@ GoRouter buildTestRouter({String initialLocation = ZenliftRoutes.home}) {
     ),
     exerciseDetailBuilder: (context, exerciseId) => _ExerciseDetailRouteStub(
       key: ZenliftRouteKeys.exerciseDetailScreen,
+      exerciseId: exerciseId,
+    ),
+    exerciseCreateBuilder: (context) => const _ExerciseCreateRouteStub(
+      key: ZenliftRouteKeys.exerciseCreateScreen,
+    ),
+    exerciseEditBuilder: (context, exerciseId) => _ExerciseEditRouteStub(
+      key: ZenliftRouteKeys.exerciseEditScreen,
       exerciseId: exerciseId,
     ),
     activeWorkoutBuilder: (context) => const _ActiveWorkoutRouteStub(
@@ -328,6 +347,33 @@ class _ExerciseDetailRouteStub extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [const Text('Exercise detail'), Text(exerciseId)],
+        ),
+      ),
+    );
+  }
+}
+
+class _ExerciseCreateRouteStub extends StatelessWidget {
+  const _ExerciseCreateRouteStub({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const Scaffold(body: Center(child: Text('Create exercise')));
+  }
+}
+
+class _ExerciseEditRouteStub extends StatelessWidget {
+  const _ExerciseEditRouteStub({required this.exerciseId, super.key});
+
+  final String exerciseId;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Center(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [const Text('Edit exercise'), Text(exerciseId)],
         ),
       ),
     );

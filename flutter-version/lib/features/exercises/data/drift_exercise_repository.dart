@@ -4,6 +4,7 @@ import '../../../core/date/zenlift_clock.dart';
 import '../../../core/uuid/id_generator.dart';
 import '../../../storage/drift/app_database.dart' as drift_db;
 import '../domain/exercise.dart';
+import '../domain/exercise_form.dart';
 import '../domain/exercise_repository.dart';
 import 'exercise_mappers.dart';
 
@@ -122,6 +123,21 @@ class DriftExerciseRepository implements ExerciseRepository {
   }
 
   @override
+  Future<List<MuscleEntry>> getMuscleEntries(String exerciseId) async {
+    final rows = await (_database.select(
+      _database.exerciseMuscles,
+    )..where((table) => table.exerciseId.equals(exerciseId))).get();
+    return rows
+        .map(
+          (row) => MuscleEntry(
+            muscleGroupId: row.muscleGroupId,
+            role: MuscleRole.fromStorage(row.role),
+          ),
+        )
+        .toList();
+  }
+
+  @override
   Future<ExerciseEntity> create(
     CreateExerciseData data,
     List<MuscleEntry> muscles,
@@ -206,6 +222,88 @@ class DriftExerciseRepository implements ExerciseRepository {
     }
 
     return getById(id);
+  }
+
+  @override
+  Future<ExerciseEntity> saveDraft(ExerciseDraft draft) async {
+    final name = draft.name.trim();
+    final notes = _normalizedNotes(draft.notes);
+    final secondaryIds = draft.secondaryMuscleGroupIds
+        .where((id) => id != draft.primaryMuscleGroupId)
+        .toSet()
+        .toList();
+    final muscles = <MuscleEntry>[
+      MuscleEntry(
+        muscleGroupId: draft.primaryMuscleGroupId,
+        role: MuscleRole.primary,
+      ),
+      for (final muscleGroupId in secondaryIds)
+        MuscleEntry(muscleGroupId: muscleGroupId, role: MuscleRole.secondary),
+    ];
+    _validateExactlyOnePrimary(muscles);
+
+    final id = draft.id ?? _idGenerator.generate();
+    final now = _clock.now();
+
+    await _database.transaction(() async {
+      final existing = await (_database.select(
+        _database.exercises,
+      )..where((table) => table.id.equals(id))).getSingleOrNull();
+
+      if (existing == null) {
+        await _database
+            .into(_database.exercises)
+            .insert(
+              drift_db.ExercisesCompanion.insert(
+                id: id,
+                name: name,
+                equipment: draft.equipment,
+                category: draft.category,
+                isCustom: const Value(true),
+                isFavorite: const Value(false),
+                notes: Value(notes),
+                createdAt: Value(dateToStorage(now)),
+                updatedAt: Value(dateToStorage(now)),
+              ),
+            );
+      } else {
+        await (_database.update(
+          _database.exercises,
+        )..where((table) => table.id.equals(id))).write(
+          drift_db.ExercisesCompanion(
+            name: Value(name),
+            equipment: Value(draft.equipment),
+            category: Value(draft.category),
+            isCustom: const Value(true),
+            notes: Value(notes),
+            updatedAt: Value(dateToStorage(now)),
+          ),
+        );
+      }
+
+      await (_database.delete(
+        _database.exerciseMuscles,
+      )..where((table) => table.exerciseId.equals(id))).go();
+
+      for (final muscle in muscles) {
+        await _database
+            .into(_database.exerciseMuscles)
+            .insert(
+              drift_db.ExerciseMusclesCompanion.insert(
+                id: _idGenerator.generate(),
+                exerciseId: id,
+                muscleGroupId: muscle.muscleGroupId,
+                role: muscle.role.value,
+              ),
+            );
+      }
+    });
+
+    final saved = await getById(id);
+    if (saved == null) {
+      throw StateError('Saved exercise $id could not be read back.');
+    }
+    return saved;
   }
 
   @override
@@ -348,4 +446,9 @@ void _validateExactlyOnePrimary(List<MuscleEntry> muscles) {
   if (primaryCount != 1) {
     throw StateError('An exercise must have exactly one primary muscle.');
   }
+}
+
+String? _normalizedNotes(String? notes) {
+  final trimmed = notes?.trim() ?? '';
+  return trimmed.isEmpty ? null : trimmed;
 }

@@ -75,6 +75,11 @@ class _FakeExerciseRepository implements ExerciseRepository {
   }
 
   @override
+  Future<List<MuscleEntry>> getMuscleEntries(String exerciseId) {
+    throw UnimplementedError();
+  }
+
+  @override
   Future<void> addMuscle(
     String exerciseId,
     String muscleGroupId,
@@ -117,6 +122,11 @@ class _FakeExerciseRepository implements ExerciseRepository {
 
   @override
   Future<void> removeMuscle(String exerciseId, String muscleGroupId) {
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<ExerciseEntity> saveDraft(Object draft) {
     throw UnimplementedError();
   }
 

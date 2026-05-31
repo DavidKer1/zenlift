@@ -81,6 +81,11 @@
   - [x] Replace the Exercise Detail placeholder with an injected Flutter UI slice for header metadata, muscle badges, quick workout, custom-only edit/delete actions, best performance, recent history, PRs, and missing-exercise state.
   - [x] Wire `/exercise/:id` to Drift-backed exercise/workout repositories and active-workout quick-start flow while keeping generated storage rows out of presentation.
   - [x] Add controller and widget tests for Exercise Detail loading, best performance, missing state, custom action visibility, quick workout/edit callbacks, and route harnessing.
+  - [x] Add Exercise Form application controller for create/edit loading, muscle role loading, validation, duplicate-name detection, normalized draft saving, and missing-exercise state.
+  - [x] Add transactional custom exercise draft persistence for exercise fields and primary/secondary muscle associations.
+  - [x] Replace the Exercise Form gap with an injected Flutter UI slice for name, notes, primary muscle, secondary muscle chips, equipment, category, validation summary, save loading, missing edit state, and discard confirmation.
+  - [x] Wire `/exercise/create` and `/exercise/edit/:id` to Drift-backed exercise/muscle repositories and detail navigation while keeping generated storage rows out of presentation.
+  - [x] Add repository, controller, widget, and router tests for Exercise Form create/edit/save behavior.
   - [x] Add Routine Editor application controller for create/edit loading, exercise option loading, validation, normalized draft saving, and recoverable missing-routine state.
   - [x] Add transactional routine draft persistence for nested routine days and routine exercises while preserving text UUIDs and sort order.
   - [x] Replace the Routine Editor placeholder with an injected Flutter UI slice for name, description, goal, day add/remove/reorder, exercise picker search/equipment filter, target sets/reps, validation summary, save loading, missing edit state, and discard confirmation.
