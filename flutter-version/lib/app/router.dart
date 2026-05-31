@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import 'active_workout_route.dart';
+import 'history_route.dart';
 import 'home_route.dart';
 import '../features/exercises/presentation/exercise_detail_screen.dart';
 import '../features/exercises/presentation/exercise_library_screen.dart';
-import '../features/history/presentation/history_screen.dart';
 import '../features/home/presentation/zenlift_tab_shell.dart';
 import '../features/onboarding/presentation/onboarding_screen.dart';
 import '../features/routines/presentation/routine_detail_screen.dart';
@@ -77,6 +77,7 @@ abstract final class ZenliftRouteKeys {
 GoRouter buildZenliftRouter({
   String initialLocation = ZenliftRoutes.home,
   WidgetBuilder? homeBuilder,
+  WidgetBuilder? historyBuilder,
   WidgetBuilder? activeWorkoutBuilder,
 }) {
   return GoRouter(
@@ -111,7 +112,8 @@ GoRouter buildZenliftRouter({
           GoRoute(
             path: ZenliftRoutes.history,
             builder: (context, state) =>
-                const HistoryScreen(key: ZenliftRouteKeys.historyScreen),
+                historyBuilder?.call(context) ??
+                const HistoryRoute(key: ZenliftRouteKeys.historyScreen),
           ),
           GoRoute(
             path: ZenliftRoutes.settings,
