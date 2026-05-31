@@ -25,16 +25,15 @@ void main() {
     );
   });
 
-  testWidgets(
-    'initial route renders the Home placeholder inside the tab shell',
-    (tester) async {
-      await tester.pumpZenliftRoute();
+  testWidgets('initial route renders Home inside the tab shell', (
+    tester,
+  ) async {
+    await tester.pumpZenliftRoute();
 
-      expect(find.byKey(ZenliftRouteKeys.tabShell), findsOneWidget);
-      expect(find.byKey(ZenliftRouteKeys.homeScreen), findsOneWidget);
-      expect(selectedTabIndex(tester), 0);
-    },
-  );
+    expect(find.byKey(ZenliftRouteKeys.tabShell), findsOneWidget);
+    expect(find.byKey(ZenliftRouteKeys.homeScreen), findsOneWidget);
+    expect(selectedTabIndex(tester), 0);
+  });
 
   for (final tabCase in <({String path, Key screenKey, int selectedIndex})>[
     (
@@ -203,10 +202,21 @@ extension on WidgetTester {
 GoRouter buildTestRouter({String initialLocation = ZenliftRoutes.home}) {
   return buildZenliftRouter(
     initialLocation: initialLocation,
+    homeBuilder: (context) =>
+        const _HomeRouteStub(key: ZenliftRouteKeys.homeScreen),
     activeWorkoutBuilder: (context) => const _ActiveWorkoutRouteStub(
       key: ZenliftRouteKeys.activeWorkoutScreen,
     ),
   );
+}
+
+class _HomeRouteStub extends StatelessWidget {
+  const _HomeRouteStub({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const Scaffold(body: Center(child: Text('Home dashboard')));
+  }
 }
 
 class _ActiveWorkoutRouteStub extends StatelessWidget {

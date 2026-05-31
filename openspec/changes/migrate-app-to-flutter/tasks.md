@@ -50,6 +50,10 @@
 - [ ] 10. Port onboarding, home, routines, exercises, active workout, summary, history, and settings.
   - [ ] Keep screens thin and move business logic into feature application use cases/controllers, feature domain services, or domain repository contracts.
   - [ ] Do not pass Drift rows, generated database classes, or storage DTOs into presentation widgets.
+  - [x] Add Home dashboard domain summaries and application controller for greeting-supporting state, workout calendar activity, weekly activity, current routine, recent PRs with exercise names, and recoverable section errors.
+  - [x] Replace the Home placeholder with an injected Flutter UI slice for Start Workout, Quick Workout, calendar repeat, weekly activity, current routine, recent PRs, loading, empty states, refresh, and recoverable action errors.
+  - [x] Wire `/` to Drift-backed Home data and active-workout quick-start/repeat flows, including active-session continue/start-new choice before navigating to `/workout/active`.
+  - [x] Add controller and widget tests for Home dashboard data assembly, empty/error fallback, greeting, section rendering, and injected navigation/start callbacks.
   - [x] Add Active Workout application controller for recovery, quick-start continuation/new-session behavior, routine-day exercise copy, previous-performance lookup, set defaults, completed-set retry/pending-write replay, set autosave operations, PR detection/persistence, finish validation, cancel, and summary output.
   - [x] Replace the Active Workout placeholder with an injected Flutter UI slice for header timer, exercise cards, previous performance, editable set rows, set type, set notes, pending-save warning, add-set, complete toggle, finish/cancel, loading, and empty recovery states.
   - [x] Wire `/workout/active` to recover persisted sessions through the Drift repository and active-session id store before showing the empty state or returning Home.
