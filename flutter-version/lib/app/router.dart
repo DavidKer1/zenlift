@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import 'active_workout_route.dart';
+import 'exercise_library_route.dart';
 import 'history_route.dart';
 import 'home_route.dart';
 import 'workout_summary_route.dart';
 import '../features/exercises/presentation/exercise_detail_screen.dart';
-import '../features/exercises/presentation/exercise_library_screen.dart';
 import '../features/home/presentation/zenlift_tab_shell.dart';
 import '../features/onboarding/presentation/onboarding_screen.dart';
 import '../features/routines/presentation/routine_detail_screen.dart';
@@ -79,6 +79,7 @@ GoRouter buildZenliftRouter({
   String initialLocation = ZenliftRoutes.home,
   WidgetBuilder? homeBuilder,
   WidgetBuilder? historyBuilder,
+  WidgetBuilder? exerciseLibraryBuilder,
   WidgetBuilder? activeWorkoutBuilder,
   WidgetBuilder? workoutSummaryBuilder,
 }) {
@@ -107,9 +108,11 @@ GoRouter buildZenliftRouter({
           ),
           GoRoute(
             path: ZenliftRoutes.exerciseLibrary,
-            builder: (context, state) => const ExerciseLibraryScreen(
-              key: ZenliftRouteKeys.exerciseLibraryScreen,
-            ),
+            builder: (context, state) =>
+                exerciseLibraryBuilder?.call(context) ??
+                const ExerciseLibraryRoute(
+                  key: ZenliftRouteKeys.exerciseLibraryScreen,
+                ),
           ),
           GoRoute(
             path: ZenliftRoutes.history,

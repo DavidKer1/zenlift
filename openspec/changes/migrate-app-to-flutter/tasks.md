@@ -65,6 +65,10 @@
   - [x] Replace the Workout Summary placeholder with an injected Flutter UI slice for completion state, duration, volume, exercises, sets, PRs, notes, unavailable summary fallback, Home navigation, and History navigation.
   - [x] Wire Active Workout finish to navigate to `/workout/summary` with the generated summary and wire the summary route to persist notes through the workout repository.
   - [x] Add widget tests for Workout Summary stats, PR display, notes persistence callback, navigation callbacks, unavailable state, and route harnessing.
+  - [x] Add Exercise Library application controller for search, multi-muscle filtering, equipment filtering, primary muscle lookup, favorites, and recoverable repository errors.
+  - [x] Replace the Exercise Library placeholder with an injected Flutter UI slice for search debounce, clear search, muscle/equipment chips, exercise cards, favorite toggle, empty state, create FAB, and detail navigation.
+  - [x] Wire `/exercise` to Drift-backed exercise and muscle group repositories while keeping generated storage rows out of presentation.
+  - [x] Add controller and widget tests for Exercise Library search/filter intersection, favorite toggle, empty state, create/open callbacks, and route harnessing.
   - [ ] Verify a set can be logged in under 3 seconds on Android hardware.
   - [ ] Test Active Workout recovery after app restart with completed sets present.
   - [ ] Run `cd flutter-version && flutter test integration_test/core_loop_test.dart`.
