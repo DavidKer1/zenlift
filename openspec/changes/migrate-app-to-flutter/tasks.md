@@ -35,9 +35,10 @@
   - [ ] Run `cd flutter-version && flutter test test/storage`.
 - [ ] 7. Port settings, onboarding completion, and data bridge.
   - [ ] Preserve existing Expo SQLite/MMKV files during first launch and import into Flutter storage only through validated bridge logic.
-  - [ ] Write the Flutter cutover marker only after row counts, required UUIDs, and settings keys are verified.
-  - [ ] Abort cutover without deleting source data when validation, import, settings write, or verification fails.
-  - [ ] Run `cd flutter-version && flutter test test/storage/migration_bridge_test.dart test/storage/settings_store_test.dart`.
+  - [x] Write the Flutter cutover marker only after row counts, required UUIDs, and settings keys are verified.
+  - [x] Abort cutover without deleting source data when validation, import, settings write, or verification fails.
+  - [x] Add first-launch migration bridge settings, importer, verifier, cutover marker, and failure-retention primitives.
+  - [x] Run `cd flutter-version && flutter test test/storage/migration_bridge test/features/settings`.
 - [x] 8. Port navigation shell and all routes.
   - [x] Match the mobile route map and back behavior for onboarding, tabs, active workout, routine detail, exercise detail, history, summary, and settings.
   - [x] Keep route files thin by delegating behavior to feature presentation widgets and application controllers.
